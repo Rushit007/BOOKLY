@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database Service
+  postgres:
+    image: postgres:16-alpine
+    container_name: bookly_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: bookly_user
+      POSTGRES_PASSWORD: bookly_password
+      POSTGRES_DB: bookly_db
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./database-data:/var/lib/postgresql/data
+
+  # Redis Cache Service
+  redis:
+    image: redis:7-alpine
+    container_name: bookly_redis
+    restart: always
+    ports:
+      - '6379:6379'
+    volumes:
+      - ./redis-data:/data

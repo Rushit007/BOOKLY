@@ -1,0 +1,54 @@
+# Dependencies
+node_modules/
+/.pnpm
+/.yarn
+
+# Next.js build outputs
+frontend/.next/
+frontend/out/
+frontend/build/
+
+# NestJS build outputs
+backend/dist/
+backend/build/
+
+# Environment variables
+.env
+.env*.local
+.env.production
+frontend/.env*.local
+backend/.env
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Diagnostic / IDE / OS files
+.DS_Store
+*.pem
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+Thumbs.db
+
+# Prisma
+backend/prisma/migrations/*/migration.sql.bak
+
+# Docker data directories (local storage)
+database-data/
+redis-data/
+ 
+# TypeScript build info
+*.tsbuildinfo
+next-env.d.ts
+
