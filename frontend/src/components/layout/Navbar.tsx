@@ -7,11 +7,13 @@ import { ThemeToggle } from '../common/ThemeToggle';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { useAuth } from '../../context/AuthContext';
+import { useCompare } from '../../context/CompareContext';
 
 export function Navbar() {
   const router = useRouter();
   const { itemCount, openCartDrawer } = useCart();
   const { wishlistCount } = useWishlist();
+  const { compareBooks } = useCompare();
   const { user, isAuthenticated, logout } = useAuth();
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -48,6 +50,12 @@ export function Navbar() {
   const bookIcon = (
     <svg className='w-6 h-6' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
       <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253' />
+    </svg>
+  );
+
+  const compareIcon = (
+    <svg className='w-5 h-5' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
+      <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' />
     </svg>
   );
 
@@ -91,6 +99,30 @@ export function Navbar() {
               className='hidden lg:inline-flex px-3.5 py-2 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition'
             >
               Explore Catalog
+            </Link>
+
+            {/* BOOK MATCH Link */}
+            <Link
+              href='/book-match'
+              className='hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-indigo-500/10 to-cyan-500/10 border border-indigo-200/80 dark:border-indigo-800 text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:scale-105 transition shadow-xs'
+              title='BOOK MATCH - Find a book that fits you'
+            >
+              <span className='text-amber-500'>⚡</span>
+              <span>BOOK MATCH</span>
+            </Link>
+
+            {/* Compare Books Link */}
+            <Link
+              href='/compare'
+              className='relative p-2.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition'
+              title='Compare Books'
+            >
+              {compareIcon}
+              {compareBooks.length > 0 && (
+                <span className='absolute -top-1 -right-1 w-5 h-5 bg-indigo-600 text-white rounded-full text-xs font-bold flex items-center justify-center shadow-sm'>
+                  {compareBooks.length}
+                </span>
+              )}
             </Link>
 
             <ThemeToggle />
@@ -235,6 +267,26 @@ export function Navbar() {
               </div>
             </form>
             <div className='flex flex-col space-y-2 pt-2'>
+              <Link
+                href='/book-match'
+                onClick={() => setIsMobileMenuOpen(false)}
+                className='px-3 py-2 text-sm font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/50 rounded-xl flex items-center justify-between'
+              >
+                <span>⚡ BOOK MATCH</span>
+                <span className='text-[10px] uppercase font-bold tracking-wider'>Find A Book</span>
+              </Link>
+              <Link
+                href='/compare'
+                onClick={() => setIsMobileMenuOpen(false)}
+                className='px-3 py-2 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-between'
+              >
+                <span>Compare Books</span>
+                {compareBooks.length > 0 && (
+                  <span className='px-2 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 text-xs font-bold'>
+                    {compareBooks.length}/3
+                  </span>
+                )}
+              </Link>
               <Link
                 href='/#catalog'
                 onClick={() => setIsMobileMenuOpen(false)}

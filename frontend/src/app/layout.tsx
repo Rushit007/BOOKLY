@@ -3,6 +3,7 @@ import './globals.css';
 import { AppProviders } from '../context/AppProviders';
 import { Navbar } from '../components/layout/Navbar';
 import { CartDrawer } from '../components/layout/CartDrawer';
+import { CompareTray } from '../components/books/CompareTray';
 import { Footer } from '../components/layout/Footer';
 
 export const metadata: Metadata = {
@@ -21,6 +22,7 @@ export default function RootLayout({
         <AppProviders>
           <Navbar />
           <CartDrawer />
+          <CompareTray />
           <div className='flex-1'>{children}</div>
           <Footer />
         </AppProviders>

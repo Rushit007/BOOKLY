@@ -7,6 +7,7 @@ import { RatingStars } from '../common/RatingStars';
 import { Badge } from '../common/Badge';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
+import { useCompare } from '../../context/CompareContext';
 
 interface BookCardProps {
   book: Book;
@@ -15,13 +16,24 @@ interface BookCardProps {
 export function BookCard({ book }: BookCardProps) {
   const { addToCart } = useCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
+  const { isInCompare, addToCompare, removeFromCompare } = useCompare();
 
   const isFavorite = isInWishlist(book.id);
+  const inCompare = isInCompare(book.id);
   const discountedPrice =
     book.discount > 0
       ? Math.round(book.price * (1 - book.discount / 100))
       : book.price;
   const isOutOfStock = book.stock <= 0;
+
+  const handleToggleCompare = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (inCompare) {
+      removeFromCompare(book.id);
+    } else {
+      addToCompare(book);
+    }
+  };
 
   return (
     <div className='group relative flex flex-col bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 hover:border-indigo-300 dark:hover:border-indigo-800 shadow-xs hover:shadow-xl hover:shadow-indigo-500/5 transition-all duration-300 overflow-hidden'>
@@ -171,6 +183,22 @@ export function BookCard({ book }: BookCardProps) {
               Add
             </button>
           </div>
+
+          {/* Compare Toggle Button */}
+          <button
+            onClick={handleToggleCompare}
+            className={
+              'w-full mt-2 py-1.5 px-2 rounded-xl text-center text-[11px] font-semibold transition border flex items-center justify-center gap-1.5 ' +
+              (inCompare
+                ? 'bg-indigo-50 dark:bg-indigo-950/60 border-indigo-300 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300 font-bold'
+                : 'border-slate-200/80 dark:border-slate-800 text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-300 hover:bg-slate-50 dark:hover:bg-slate-800')
+            }
+          >
+            <svg className='w-3.5 h-3.5' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
+              <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' />
+            </svg>
+            <span>{inCompare ? '\u2713 In Compare' : '+ Compare'}</span>
+          </button>
         </div>
       </div>
     </div>

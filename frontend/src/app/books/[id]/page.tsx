@@ -10,6 +10,7 @@ import { Badge } from '../../../components/common/Badge';
 import { BookCard } from '../../../components/books/BookCard';
 import { useCart } from '../../../context/CartContext';
 import { useWishlist } from '../../../context/WishlistContext';
+import { useCompare } from '../../../context/CompareContext';
 
 export default function BookDetailPage() {
   const params = useParams();
@@ -17,12 +18,14 @@ export default function BookDetailPage() {
 
   const { addToCart } = useCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
+  const { isInCompare, addToCompare, removeFromCompare } = useCompare();
 
   const [book, setBook] = useState<Book | null>(null);
   const [relatedBooks, setRelatedBooks] = useState<Book[]>([]);
   const [quantity, setQuantity] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [addedMessage, setAddedMessage] = useState(false);
+  const [compareFeedback, setCompareFeedback] = useState<string | null>(null);
 
   useEffect(() => {
     async function loadBook() {
@@ -208,6 +211,7 @@ export default function BookDetailPage() {
               <button
                 onClick={() => toggleWishlist(book)}
                 aria-label='Wishlist'
+                title={isFavorite ? 'Remove from Wishlist' : 'Add to Wishlist'}
                 className={
                   'p-3.5 rounded-2xl border transition ' +
                   (isFavorite
@@ -219,11 +223,43 @@ export default function BookDetailPage() {
                   <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z' />
                 </svg>
               </button>
+
+              <button
+                onClick={() => {
+                  if (isInCompare(book.id)) {
+                    removeFromCompare(book.id);
+                    setCompareFeedback(`Removed "${book.title}" from comparison.`);
+                  } else {
+                    const res = addToCompare(book);
+                    setCompareFeedback(res.message);
+                  }
+                  setTimeout(() => setCompareFeedback(null), 3000);
+                }}
+                aria-label='Compare'
+                title='Compare this book'
+                className={
+                  'p-3.5 rounded-2xl border transition flex items-center justify-center ' +
+                  (isInCompare(book.id)
+                    ? 'bg-indigo-50 border-indigo-200 text-indigo-600 dark:bg-indigo-950/60 dark:border-indigo-800 dark:text-indigo-400 font-bold'
+                    : 'border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800')
+                }
+              >
+                <svg className='w-5 h-5' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
+                  <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' />
+                </svg>
+              </button>
             </div>
 
             {addedMessage && (
               <div className='p-3 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 text-xs font-semibold rounded-xl flex items-center gap-2'>
                 <span>&#10003;</span> Successfully added {quantity} copy to your shopping cart!
+              </div>
+            )}
+
+            {compareFeedback && (
+              <div className='p-3 bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300 text-xs font-semibold rounded-xl flex items-center justify-between'>
+                <span>{compareFeedback}</span>
+                <Link href='/compare' className='font-bold underline ml-2'>View Comparison</Link>
               </div>
             )}
           </div>

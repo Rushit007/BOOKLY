@@ -31,18 +31,24 @@ export function HeroSection() {
             </p>
 
             {/* CTA Buttons */}
-            <div className='flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2'>
+            <div className='flex flex-wrap items-center justify-center lg:justify-start gap-3 pt-2'>
               <Link
                 href='#catalog'
-                className='px-8 py-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/40 hover:-translate-y-0.5 transition-all duration-200'
+                className='px-7 py-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/40 hover:-translate-y-0.5 transition-all duration-200'
               >
                 Browse Books Catalog
               </Link>
               <Link
-                href='#featured'
-                className='px-8 py-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/80 text-slate-800 dark:text-slate-200 font-bold text-sm transition-all duration-200'
+                href='/book-match'
+                className='px-7 py-3.5 rounded-2xl bg-gradient-to-r from-amber-500/10 via-indigo-500/10 to-cyan-500/10 border border-indigo-200 dark:border-indigo-800 hover:border-indigo-400 text-indigo-700 dark:text-indigo-300 font-bold text-sm hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-1.5'
               >
-                Featured Bestsellers
+                <span>⚡ BOOK MATCH</span>
+              </Link>
+              <Link
+                href='/compare'
+                className='px-6 py-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/80 text-slate-800 dark:text-slate-200 font-bold text-sm transition-all duration-200'
+              >
+                Compare Books
               </Link>
             </div>
 
@@ -87,7 +93,7 @@ export function HeroSection() {
                   <div className='pt-2 flex items-center justify-between border-t border-slate-800'>
                     <span className='text-xl font-black text-white'>₹699</span>
                     <Link
-                      href='/books/book-1'
+                      href='/books/a3050526-24ed-471e-b4bc-d7f813e195c6'
                       className='px-4 py-2 bg-white text-slate-950 text-xs font-bold rounded-xl hover:bg-slate-100 transition'
                     >
                       Read Details →
