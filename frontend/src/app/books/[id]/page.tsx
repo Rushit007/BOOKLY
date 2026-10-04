@@ -327,47 +327,45 @@ export default function BookDetailPage() {
                         <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z' />
                       </svg>
                     </button>
+
+                    {/* Compare */}
+                    <button
+                      onClick={() => {
+                        if (isInCompare(book.id)) {
+                          removeFromCompare(book.id);
+                          setCompareFeedback(`Removed "${book.title}" from comparison.`);
+                        } else {
+                          const res = addToCompare(book);
+                          setCompareFeedback(res.message);
+                        }
+                        setTimeout(() => setCompareFeedback(null), 3000);
+                      }}
+                      aria-label='Compare'
+                      className={
+                        'w-11 h-11 border-2 flex items-center justify-center transition font-editorial-mono text-xs font-bold ' +
+                        (isInCompare(book.id)
+                          ? 'bg-[var(--bg-accent-blue)] border-[var(--border-main)] text-white'
+                          : 'border-[var(--border-main)] text-[var(--text-main)] hover:bg-[var(--bg-accent-yellow)]')
+                      }
+                    >
+                      ⇄
+                    </button>
                   </div>
+
+                  {addedMessage && (
+                    <div className='border border-[var(--bg-accent-mint)] bg-[var(--bg-accent-mint)]/10 p-3 font-editorial-mono text-[10px] text-[var(--bg-accent-mint)]'>
+                      ✓ Added {quantity} copy to your cart
+                    </div>
+                  )}
+                  {compareFeedback && (
+                    <div className='border border-[var(--bg-accent-blue)] bg-[var(--bg-accent-blue)]/10 p-3 font-editorial-mono text-[10px] text-[var(--bg-accent-blue)] flex items-center justify-between'>
+                      <span>{compareFeedback}</span>
+                      <Link href='/compare' className='font-bold underline ml-2'>View →</Link>
+                    </div>
+                  )}
                 </div>
               </>
             )}
-
-                {/* Compare */}
-                <button
-                  onClick={() => {
-                    if (isInCompare(book.id)) {
-                      removeFromCompare(book.id);
-                      setCompareFeedback(`Removed "${book.title}" from comparison.`);
-                    } else {
-                      const res = addToCompare(book);
-                      setCompareFeedback(res.message);
-                    }
-                    setTimeout(() => setCompareFeedback(null), 3000);
-                  }}
-                  aria-label='Compare'
-                  className={
-                    'w-11 h-11 border-2 flex items-center justify-center transition font-editorial-mono text-xs font-bold ' +
-                    (isInCompare(book.id)
-                      ? 'bg-[var(--bg-accent-blue)] border-[var(--border-main)] text-white'
-                      : 'border-[var(--border-main)] text-[var(--text-main)] hover:bg-[var(--bg-accent-yellow)]')
-                  }
-                >
-                  ⇄
-                </button>
-              </div>
-
-              {addedMessage && (
-                <div className='border border-[var(--bg-accent-mint)] bg-[var(--bg-accent-mint)]/10 p-3 font-editorial-mono text-[10px] text-[var(--bg-accent-mint)]'>
-                  ✓ Added {quantity} copy to your cart
-                </div>
-              )}
-              {compareFeedback && (
-                <div className='border border-[var(--bg-accent-blue)] bg-[var(--bg-accent-blue)]/10 p-3 font-editorial-mono text-[10px] text-[var(--bg-accent-blue)] flex items-center justify-between'>
-                  <span>{compareFeedback}</span>
-                  <Link href='/compare' className='font-bold underline ml-2'>View →</Link>
-                </div>
-              )}
-            </div>
 
             {/* Specs table */}
             <div className='border-t border-[var(--border-subtle)] pt-5 grid grid-cols-2 sm:grid-cols-3 gap-4'>
