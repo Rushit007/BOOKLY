@@ -2,11 +2,13 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Book } from '../../types/book';
 import { RatingStars } from '../common/RatingStars';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { useCompare } from '../../context/CompareContext';
+import { useAuth } from '../../context/AuthContext';
 
 interface BookCardProps {
   book: Book;
@@ -28,6 +30,8 @@ const GENRE_COLORS: Record<string, { bg: string; accent: string }> = {
 const BACKUP_COVER = 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=600&auto=format&fit=crop';
 
 export function BookCard({ book }: BookCardProps) {
+  const router = useRouter();
+  const { isAuthenticated } = useAuth();
   const { addToCart } = useCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
   const { isInCompare, addToCompare, removeFromCompare } = useCompare();
@@ -283,7 +287,13 @@ export function BookCard({ book }: BookCardProps) {
               Details
             </Link>
             <button
-              onClick={() => addToCart(book)}
+              onClick={() => {
+                if (!isAuthenticated) {
+                  router.push(`/register?redirect=${encodeURIComponent(`/books/${book.id}`)}`);
+                  return;
+                }
+                addToCart(book);
+              }}
               disabled={isOutOfStock}
               className='py-2.5 px-3 font-editorial-mono text-xs font-black uppercase tracking-wider border-2 border-[var(--border-main)] bg-[var(--text-main)] text-[var(--bg-page)] hover:bg-[var(--bg-accent-yellow)] hover:text-black hover:border-[var(--border-main)] transition-all disabled:opacity-40 disabled:cursor-not-allowed'
             >

@@ -28,11 +28,12 @@ export function middleware(request: NextRequest) {
     'Content-Security-Policy',
     [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval'",  // Next.js requires unsafe-inline/eval in dev
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://checkout.razorpay.com https://*.razorpay.com",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-      "font-src 'self' https://fonts.gstatic.com",
-      "img-src 'self' data: blob: https://covers.openlibrary.org https://images.unsplash.com https://books.google.com https://via.placeholder.com",
-      "connect-src 'self' http://localhost:3001 https://localhost:3001",
+      "font-src 'self' https://fonts.gstatic.com data:",
+      "img-src 'self' data: blob: https: http:",
+      "frame-src 'self' https://checkout.razorpay.com https://api.razorpay.com https://*.razorpay.com",
+      "connect-src 'self' http://localhost:4000 https://localhost:4000 http://localhost:3000 http://localhost:3001 https://*.onrender.com https://*.vercel.app https://api.razorpay.com https://*.razorpay.com",
       "frame-ancestors 'none'",
       "base-uri 'self'",
       "form-action 'self'",

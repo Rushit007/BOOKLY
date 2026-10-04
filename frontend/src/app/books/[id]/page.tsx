@@ -10,6 +10,7 @@ import { BookCard } from '../../../components/books/BookCard';
 import { useCart } from '../../../context/CartContext';
 import { useWishlist } from '../../../context/WishlistContext';
 import { useCompare } from '../../../context/CompareContext';
+import { useAuth } from '../../../context/AuthContext';
 
 export default function BookDetailPage() {
   const params = useParams();
@@ -218,70 +219,118 @@ export default function BookDetailPage() {
               )}
             </div>
 
-            {/* Synopsis */}
-            <div>
-              <p className='font-editorial-mono text-[9px] uppercase tracking-[0.18em] text-[var(--text-faint)] mb-2'>
-                Synopsis
-              </p>
-              <p className='font-editorial-sans text-sm text-[var(--text-muted)] leading-relaxed'>
-                {book.description}
-              </p>
-            </div>
-
-            {/* Quantity + Actions */}
-            <div className='space-y-3 pt-2'>
-              <div className='flex items-center gap-3'>
-                {/* Qty stepper */}
-                <div className='flex items-center border-2 border-[var(--border-main)]'>
-                  <button
-                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className='px-4 py-2.5 font-editorial-mono font-bold text-lg text-[var(--text-main)] hover:bg-[var(--bg-accent-yellow)] transition-colors border-r border-[var(--border-subtle)]'
-                  >
-                    −
-                  </button>
-                  <span className='px-5 py-2.5 font-editorial-mono text-sm font-bold text-[var(--text-main)] min-w-[3rem] text-center'>
-                    {quantity}
+            {/* Member Content or Auth Gate */}
+            {!isAuthenticated ? (
+              <div className='p-6 sm:p-8 border-2 border-black dark:border-white/20 bg-gradient-to-br from-[#ffe17c]/20 via-white to-neutral-50 dark:from-[#ffe17c]/10 dark:via-[#141414] dark:to-[#0c0c0c] shadow-[6px_6px_0px_#000] dark:shadow-[6px_6px_0px_rgba(255,255,255,0.1)] space-y-4'>
+                <div className='flex items-center gap-2'>
+                  <span className='px-2.5 py-1 bg-black text-[#ffe17c] font-editorial-mono text-[9px] font-black uppercase tracking-[0.2em]'>
+                    🔒 MEMBER ACCESS REQUIRED
                   </span>
-                  <button
-                    onClick={() => setQuantity(Math.min(book.stock || 99, quantity + 1))}
-                    className='px-4 py-2.5 font-editorial-mono font-bold text-lg text-[var(--text-main)] hover:bg-[var(--bg-accent-yellow)] transition-colors border-l border-[var(--border-subtle)]'
-                  >
-                    +
-                  </button>
+                  <span className='font-editorial-mono text-[10px] text-neutral-500'>
+                    Free Reader Pass
+                  </span>
                 </div>
 
-                {/* Add to Cart */}
-                <button
-                  onClick={handleAddToCart}
-                  disabled={isOutOfStock}
-                  className={
-                    'flex-1 py-3 text-[10px] font-bold uppercase tracking-widest border-2 transition flex items-center justify-center gap-2 font-editorial-mono ' +
-                    (isOutOfStock
-                      ? 'border-[var(--border-subtle)] text-[var(--text-faint)] cursor-not-allowed bg-[var(--bg-surface-elevated)]'
-                      : 'neo-btn-primary cursor-pointer')
-                  }
-                >
-                  <svg className='w-4 h-4' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
-                    <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z' />
-                  </svg>
-                  {isOutOfStock ? 'UNAVAILABLE' : 'ADD TO CART'}
-                </button>
+                <h3 className='font-cabinet font-800 text-xl sm:text-2xl text-neutral-900 dark:text-white leading-tight'>
+                  Register to Read Synopsis & Order This Edition
+                </h3>
 
-                {/* Wishlist */}
-                <button
-                  onClick={() => toggleWishlist(book)}
-                  aria-label='Wishlist'
-                  className={
-                    'w-11 h-11 border-2 flex items-center justify-center transition ' +
-                    (isFavorite
-                      ? 'bg-[var(--bg-accent-pink)] border-[var(--border-main)] text-white'
-                      : 'border-[var(--border-main)] text-[var(--text-main)] hover:bg-[var(--bg-accent-yellow)]')
-                  }
-                >
-                  <svg className='w-4 h-4' fill={isFavorite ? 'currentColor' : 'none'} viewBox='0 0 24 24' stroke='currentColor'>
-                    <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z' />
-                  </svg>
-                </button>
+                <p className='font-cabinet text-xs sm:text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed'>
+                  First time on BOOKLY? Full volume specifications, curator notes, reader discussions, and express dispatch are reserved for verified readers. Registration is 100% free and takes 30 seconds.
+                </p>
+
+                {/* Blurred preview of synopsis */}
+                <div className='relative overflow-hidden max-h-16 opacity-60 filter blur-[1.5px] select-none'>
+                  <p className='font-editorial-sans text-xs text-neutral-500'>
+                    {book.description}
+                  </p>
+                </div>
+
+                <div className='pt-2 flex flex-wrap items-center gap-3'>
+                  <Link
+                    href={`/register?redirect=${encodeURIComponent(`/books/${book.id}`)}`}
+                    className='py-3 px-6 font-cabinet font-800 text-xs uppercase tracking-widest text-black bg-[#ffe17c] hover:bg-[#fed053] border-2 border-black shadow-[3px_3px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition-all'
+                  >
+                    Create Free Account →
+                  </Link>
+                  <Link
+                    href={`/login?redirect=${encodeURIComponent(`/books/${book.id}`)}`}
+                    className='py-3 px-5 font-cabinet font-800 text-xs uppercase tracking-widest text-neutral-900 dark:text-white border-2 border-black dark:border-white/30 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors'
+                  >
+                    Sign In
+                  </Link>
+                </div>
+              </div>
+            ) : (
+              <>
+                {/* Synopsis */}
+                <div>
+                  <p className='font-editorial-mono text-[9px] uppercase tracking-[0.18em] text-[var(--text-faint)] mb-2'>
+                    Synopsis
+                  </p>
+                  <p className='font-editorial-sans text-sm text-[var(--text-muted)] leading-relaxed'>
+                    {book.description}
+                  </p>
+                </div>
+
+                {/* Quantity + Actions */}
+                <div className='space-y-3 pt-2'>
+                  <div className='flex items-center gap-3'>
+                    {/* Qty stepper */}
+                    <div className='flex items-center border-2 border-[var(--border-main)]'>
+                      <button
+                        onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                        className='px-4 py-2.5 font-editorial-mono font-bold text-lg text-[var(--text-main)] hover:bg-[var(--bg-accent-yellow)] transition-colors border-r border-[var(--border-subtle)]'
+                      >
+                        −
+                      </button>
+                      <span className='px-5 py-2.5 font-editorial-mono text-sm font-bold text-[var(--text-main)] min-w-[3rem] text-center'>
+                        {quantity}
+                      </span>
+                      <button
+                        onClick={() => setQuantity(Math.min(book.stock || 99, quantity + 1))}
+                        className='px-4 py-2.5 font-editorial-mono font-bold text-lg text-[var(--text-main)] hover:bg-[var(--bg-accent-yellow)] transition-colors border-l border-[var(--border-subtle)]'
+                      >
+                        +
+                      </button>
+                    </div>
+
+                    {/* Add to Cart */}
+                    <button
+                      onClick={handleAddToCart}
+                      disabled={isOutOfStock}
+                      className={
+                        'flex-1 py-3 text-[10px] font-bold uppercase tracking-widest border-2 transition flex items-center justify-center gap-2 font-editorial-mono ' +
+                        (isOutOfStock
+                          ? 'border-[var(--border-subtle)] text-[var(--text-faint)] cursor-not-allowed bg-[var(--bg-surface-elevated)]'
+                          : 'neo-btn-primary cursor-pointer')
+                      }
+                    >
+                      <svg className='w-4 h-4' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
+                        <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z' />
+                      </svg>
+                      {isOutOfStock ? 'UNAVAILABLE' : 'ADD TO CART'}
+                    </button>
+
+                    {/* Wishlist */}
+                    <button
+                      onClick={() => toggleWishlist(book)}
+                      aria-label='Wishlist'
+                      className={
+                        'w-11 h-11 border-2 flex items-center justify-center transition ' +
+                        (isFavorite
+                          ? 'bg-[var(--bg-accent-pink)] border-[var(--border-main)] text-white'
+                          : 'border-[var(--border-main)] text-[var(--text-main)] hover:bg-[var(--bg-accent-yellow)]')
+                      }
+                    >
+                      <svg className='w-4 h-4' fill={isFavorite ? 'currentColor' : 'none'} viewBox='0 0 24 24' stroke='currentColor'>
+                        <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z' />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
 
                 {/* Compare */}
                 <button

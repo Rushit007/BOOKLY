@@ -17,22 +17,41 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Helper to manage session cookies for Next.js middleware and persistent browser sessions
+function setAuthCookies(token: string, user: User) {
+  if (typeof document === 'undefined') return;
+  const maxAge = 60 * 60 * 24 * 30; // 30 days
+  document.cookie = `bookly_auth_token=${encodeURIComponent(token)}; path=/; max-age=${maxAge}; SameSite=Lax`;
+  document.cookie = `bookly_session=${encodeURIComponent(user.id)}; path=/; max-age=${maxAge}; SameSite=Lax`;
+}
+
+function clearAuthCookies() {
+  if (typeof document === 'undefined') return;
+  document.cookie = 'bookly_auth_token=; path=/; max-age=0; SameSite=Lax';
+  document.cookie = 'bookly_session=; path=/; max-age=0; SameSite=Lax';
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    // 1. Check localStorage first
     const savedUser = localStorage.getItem('bookly_user');
     const savedToken = localStorage.getItem('bookly_token');
+
     if (savedUser && savedToken) {
       try {
-        setUser(JSON.parse(savedUser));
+        const parsedUser = JSON.parse(savedUser);
+        setUser(parsedUser);
         setToken(savedToken);
         api.setToken(savedToken);
+        setAuthCookies(savedToken, parsedUser);
       } catch {
         localStorage.removeItem('bookly_user');
         localStorage.removeItem('bookly_token');
+        clearAuthCookies();
       }
     }
     setIsLoading(false);
@@ -44,6 +63,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setToken(res.accessToken);
     localStorage.setItem('bookly_user', JSON.stringify(res.user));
     localStorage.setItem('bookly_token', res.accessToken);
+    setAuthCookies(res.accessToken, res.user);
   };
 
   const register = async (dto: RegisterDto) => {
@@ -52,6 +72,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setToken(res.accessToken);
     localStorage.setItem('bookly_user', JSON.stringify(res.user));
     localStorage.setItem('bookly_token', res.accessToken);
+    setAuthCookies(res.accessToken, res.user);
   };
 
   const demoAdminLogin = () => {
@@ -62,10 +83,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       role: 'ADMIN',
       createdAt: '2026-01-01T00:00:00.000Z',
     };
+    const demoToken = 'demo_admin_jwt_token_2026';
     setUser(adminUser);
-    setToken('demo_admin_jwt_token_2026');
+    setToken(demoToken);
     localStorage.setItem('bookly_user', JSON.stringify(adminUser));
-    localStorage.setItem('bookly_token', 'demo_admin_jwt_token_2026');
+    localStorage.setItem('bookly_token', demoToken);
+    setAuthCookies(demoToken, adminUser);
   };
 
   const logout = () => {
@@ -74,6 +97,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setToken(null);
     localStorage.removeItem('bookly_user');
     localStorage.removeItem('bookly_token');
+    clearAuthCookies();
   };
 
   return (
