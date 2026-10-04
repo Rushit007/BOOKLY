@@ -5,10 +5,10 @@ import Link from 'next/link';
 import { api } from '../../services/api';
 import { Book, Category } from '../../types/book';
 import { RatingStars } from '../../components/common/RatingStars';
-import { Badge } from '../../components/common/Badge';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { useCompare } from '../../context/CompareContext';
+import { useToast } from '../../components/common/Toast';
 
 type ReadingPreference = 'any' | 'habits' | 'engineering' | 'inspiration';
 
@@ -16,11 +16,11 @@ export default function BookMatchPage() {
   const { addToCart } = useCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
   const { addToCompare, isInCompare } = useCompare();
+  const { showSuccess, showInfo } = useToast();
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [books, setBooks] = useState<Book[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
 
   // Preference states
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -64,60 +64,59 @@ export default function BookMatchPage() {
             ? Math.round(book.price * (1 - book.discount / 100))
             : book.price;
 
-        // 1. Category / Genre (35 pts)
+        // 1. Category Matching (35 pts)
         if (selectedCategory === 'all') {
           score += 35;
-          reasons.push('Fits your open genre preference');
-        } else if (
-          book.categoryId === selectedCategory ||
-          book.category?.slug === selectedCategory ||
-          book.category?.name?.toLowerCase() === selectedCategory.toLowerCase()
-        ) {
-          score += 35;
-          reasons.push(`Direct match in ${book.category?.name || 'selected genre'}`);
+          reasons.push('Fits broad general reading exploration');
         } else {
-          score += 10;
+          const matchCat =
+            book.category?.slug === selectedCategory ||
+            book.category?.id === selectedCategory ||
+            book.categoryId === selectedCategory;
+          if (matchCat) {
+            score += 35;
+            reasons.push(`Direct match in preferred genre: ${book.category?.name || 'Selected Category'}`);
+          } else {
+            score += 8;
+          }
         }
 
-        // 2. Budget (25 pts)
+        // 2. Budget Matching (25 pts)
         if (discountedPrice <= budget) {
           score += 25;
-          const savings = book.price - discountedPrice;
-          if (savings > 0) {
-            reasons.push(`Under your ${rupee}${budget} budget at ${rupee}${discountedPrice} (${book.discount}% off)`);
+          const saving = budget - discountedPrice;
+          if (saving > 100) {
+            reasons.push(`Comfortably within budget (${rupee}${saving} under target)`);
           } else {
-            reasons.push(`Fits your ${rupee}${budget} budget at ${rupee}${discountedPrice}`);
+            reasons.push(`Priced within budget at ${rupee}${discountedPrice}`);
           }
-        } else if (discountedPrice <= budget * 1.2) {
-          score += 15;
-          reasons.push(`Close to your budget (${rupee}${discountedPrice})`);
         } else {
-          score += 5;
+          const diff = discountedPrice - budget;
+          if (diff <= 150) {
+            score += 12;
+            reasons.push(`Slightly above budget (${rupee}${diff} over), but high editorial value`);
+          } else {
+            score += 0;
+          }
         }
 
-        // 3. Minimum Rating (20 pts)
+        // 3. Rating Standard (20 pts)
         if (book.rating >= minRating) {
           score += 20;
-          reasons.push(`High satisfaction rating of ${book.rating}★ (${book.numReviews}+ reviews)`);
-        } else if (book.rating >= minRating - 0.3) {
-          score += 12;
-          reasons.push(`Solid rating of ${book.rating}★`);
-        } else {
-          score += 5;
+          reasons.push(`Meets minimum rating standard (${book.rating}★ rating)`);
+        } else if (book.rating >= minRating - 0.4) {
+          score += 10;
         }
 
-        // 4. Availability (10 pts)
+        // 4. Stock Availability (10 pts)
         if (book.stock > 0) {
           score += 10;
-          reasons.push(`In stock for fast dispatch (${book.stock} copies)`);
+          reasons.push('In stock and ready for immediate 24h dispatch');
         } else {
-          if (!inStockOnly) {
-            score += 4;
-            reasons.push('Available on backorder');
-          }
+          score += 2;
         }
 
-        // 5. Reading Preference (10 pts)
+        // 5. Reading Focus (10 pts)
         const textToSearch = `${book.title} ${book.subtitle || ''} ${book.description}`.toLowerCase();
         if (readingGoal === 'habits') {
           if (
@@ -127,7 +126,7 @@ export default function BookMatchPage() {
             textToSearch.includes('mindset')
           ) {
             score += 10;
-            reasons.push('Matches your goal for building habits & practical systems');
+            reasons.push('Aligned with goal for building systematic habits');
           } else {
             score += 5;
           }
@@ -140,7 +139,7 @@ export default function BookMatchPage() {
             textToSearch.includes('program')
           ) {
             score += 10;
-            reasons.push('Curated for software craftsmanship & code quality');
+            reasons.push('Curated specifically for software craftsmanship');
           } else {
             score += 5;
           }
@@ -153,7 +152,7 @@ export default function BookMatchPage() {
             textToSearch.includes('journey')
           ) {
             score += 10;
-            reasons.push('Matches your search for inspirational & philosophical literature');
+            reasons.push('Curated for philosophical depth and inspiring prose');
           } else {
             score += 5;
           }
@@ -161,7 +160,6 @@ export default function BookMatchPage() {
           score += 10;
         }
 
-        // Cap at 100%
         const matchPercentage = Math.min(100, Math.max(20, Math.round(score)));
 
         return {
@@ -178,374 +176,405 @@ export default function BookMatchPage() {
       .sort((a, b) => b.matchPercentage - a.matchPercentage);
   }, [books, selectedCategory, budget, minRating, inStockOnly, readingGoal]);
 
-  const handleAddToCartWithNotice = (book: Book) => {
-    addToCart(book, 1);
-    setFeedbackMessage(`Added "${book.title}" to your cart!`);
-    setTimeout(() => setFeedbackMessage(null), 2500);
-  };
-
   const handleAddToCompareWithNotice = (book: Book) => {
     const res = addToCompare(book);
-    setFeedbackMessage(res.message);
-    setTimeout(() => setFeedbackMessage(null), 3000);
+    showInfo('Comparison Updated', res.message);
   };
 
+  const [showMatchInfoModal, setShowMatchInfoModal] = useState(false);
+
   return (
-    <main className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10'>
-      {/* Hero / Header */}
-      <div className='relative overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-900 via-indigo-800 to-slate-900 p-8 sm:p-12 text-white shadow-xl'>
-        <div className='relative z-10 max-w-2xl space-y-3'>
-          <div className='inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-bold text-cyan-300'>
-            <svg className='w-4 h-4' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
-              <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M13 10V3L4 14h7v7l9-11h-7z' />
-            </svg>
-            <span>Personalized Book Recommendation Engine</span>
+    <div className='min-h-screen bg-[var(--bg-page)] animate-fade-in pb-16'>
+      {/* Editorial Header */}
+      <div className='border-b-2 border-[var(--border-main)] bg-[var(--bg-surface)]'>
+        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14'>
+          <div className='flex flex-wrap items-center justify-between gap-3 mb-4'>
+            <div className='flex flex-wrap items-center gap-3'>
+              <span className='badge-pill-yellow px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-[2px_2px_0px_var(--border-main)]'>
+                ⚡ DETERMINISTIC ALGORITHM
+              </span>
+              <span className='badge-pill-mint px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-[2px_2px_0px_var(--border-main)]'>
+                PERSONALIZED MATCHING
+              </span>
+            </div>
+            <button
+              onClick={() => setShowMatchInfoModal(true)}
+              className='px-3.5 py-1.5 border-2 border-[var(--border-main)] bg-[var(--bg-accent-yellow)] text-black font-editorial-mono text-xs font-black uppercase tracking-wider hover:bg-black hover:text-white transition-colors flex items-center gap-1.5 shadow-sm'
+            >
+              <span>ℹ</span>
+              <span>How Match Works</span>
+            </button>
           </div>
 
-          <h1 className='text-3xl sm:text-5xl font-black tracking-tight text-white'>
-            BOOK MATCH
+          <h1 className='font-editorial-serif text-4xl sm:text-6xl text-[var(--text-main)] leading-[1.05]'>
+            Book <span className='italic font-normal editorial-highlighter'>Match</span> Engine
           </h1>
-          <p className='text-base sm:text-lg text-indigo-200 font-medium'>
-            &ldquo;Find a book that fits you&rdquo;
-          </p>
-          <p className='text-xs sm:text-sm text-slate-300 leading-relaxed pt-1'>
-            Select your reading genre, set your budget and rating standards, and let our deterministic catalog algorithm calculate your match score with personalized recommendations.
+          <p className='font-editorial-sans text-base text-[var(--text-muted)] mt-4 max-w-2xl leading-relaxed'>
+            Tune your genre taste, budget ceiling, and quality standard. Our catalog scoring algorithm ranks every volume by compatibility with zero corporate advertising bias.
           </p>
         </div>
-
-        {/* Ambient Decorative Shapes */}
-        <div className='absolute -right-10 -bottom-10 w-72 h-72 bg-cyan-500/20 rounded-full blur-3xl pointer-events-none' />
-        <div className='absolute right-20 top-0 w-64 h-64 bg-indigo-500/20 rounded-full blur-2xl pointer-events-none' />
       </div>
 
-      {feedbackMessage && (
-        <div className='p-4 bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300 rounded-2xl text-xs font-semibold flex items-center justify-between shadow-sm'>
-          <span>&#10003; {feedbackMessage}</span>
-          <button onClick={() => setFeedbackMessage(null)} className='text-sm font-bold'>&times;</button>
+      {/* Match Algorithm Info Modal */}
+      {showMatchInfoModal && (
+        <div className='fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in'>
+          <div className='max-w-lg w-full neo-card bg-[var(--bg-surface)] border-2 border-[var(--border-main)] p-6 sm:p-8 shadow-[8px_8px_0px_var(--border-main)] animate-scale-in'>
+            <div className='flex items-center justify-between border-b-2 border-[var(--border-main)] pb-3 mb-4'>
+              <div className='flex items-center gap-2.5'>
+                <span className='w-8 h-8 bg-[var(--bg-accent-yellow)] text-black flex items-center justify-center text-base font-black border border-black'>
+                  ⚡
+                </span>
+                <h3 className='font-editorial-serif text-2xl font-bold text-[var(--text-main)]'>
+                  Book Match Engine Details
+                </h3>
+              </div>
+              <button
+                onClick={() => setShowMatchInfoModal(false)}
+                className='text-xl font-bold text-[var(--text-main)] hover:text-rose-500'
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className='space-y-3 font-editorial-sans text-sm text-[var(--text-muted)] leading-relaxed'>
+              <p>
+                <strong>The 100-Point Compatibility Formula:</strong>
+              </p>
+              <div className='p-3.5 bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)] space-y-1.5 text-xs font-editorial-mono text-[var(--text-main)]'>
+                <div>• <strong>Genre Compatibility (35 pts):</strong> Direct match with your chosen topic focus.</div>
+                <div>• <strong>Budget Calibration (25 pts):</strong> Rewarded if priced within or under your target ceiling.</div>
+                <div>• <strong>Reader Rating Standard (20 pts):</strong> Based on verified community review sentiment.</div>
+                <div>• <strong>Warehouse Readiness (10 pts):</strong> Real-time in-stock availability for 24h dispatch.</div>
+                <div>• <strong>Topic Intent Analysis (10 pts):</strong> Semantic keyword alignment with your reading goal.</div>
+              </div>
+              <p className='text-xs font-editorial-mono text-[var(--text-faint)]'>
+                💡 <em>Zero sponsored placements: Ranking is strictly computed by compatibility score.</em>
+              </p>
+            </div>
+
+            <div className='mt-6 pt-3 border-t-2 border-[var(--border-main)] flex justify-end'>
+              <button
+                onClick={() => setShowMatchInfoModal(false)}
+                className='py-2 px-5 font-editorial-mono text-xs font-bold uppercase bg-[var(--text-main)] text-[var(--bg-page)] border-2 border-[var(--border-main)] hover:bg-[var(--bg-accent-yellow)] hover:text-black transition-colors'
+              >
+                Close Info
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
-      {/* Preferences Form */}
-      <div className='bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 sm:p-8 shadow-xs space-y-6'>
-        <div className='flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800'>
-          <div className='flex items-center gap-2'>
-            <div className='w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-sm'>
-              1
-            </div>
-            <h2 className='text-lg font-bold text-slate-900 dark:text-white'>
-              Customize Your Reading Preferences
-            </h2>
-          </div>
-          <button
-            onClick={() => {
-              setSelectedCategory('all');
-              setBudget(1000);
-              setMinRating(4.0);
-              setInStockOnly(true);
-              setReadingGoal('any');
-            }}
-            className='text-xs text-indigo-600 dark:text-indigo-400 font-semibold hover:underline'
-          >
-            Reset Preferences
-          </button>
-        </div>
-
-        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-          {/* 1. Category / Genre */}
-          <div className='space-y-2'>
-            <label htmlFor='match-category' className='block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400'>
-              Preferred Genre / Category
-            </label>
-            <select
-              id='match-category'
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className='w-full px-3.5 py-2.5 text-xs font-semibold rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500'
-            >
-              <option value='all'>All Genres &amp; Categories</option>
-              {categories.map((cat) => (
-                <option key={'cat-' + cat.id} value={cat.slug || cat.id}>
-                  {cat.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* 2. Budget Slider */}
-          <div className='space-y-2'>
-            <div className='flex justify-between items-center'>
-              <label htmlFor='budget-slider' className='text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400'>
-                Max Budget:
-              </label>
-              <span className='text-sm font-black text-indigo-600 dark:text-indigo-400'>
-                {budget >= 1000 ? 'Any Budget' : `${rupee}${budget}`}
+      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8'>
+        {/* Preference Controls Card */}
+        <div className='neo-card-flat border-2 border-[var(--border-main)] bg-[var(--bg-surface)] p-6 sm:p-8 shadow-[6px_6px_0px_var(--border-main)] space-y-6'>
+          <div className='flex items-center justify-between pb-4 border-b-2 border-[var(--border-subtle)]'>
+            <div className='flex items-center gap-2.5'>
+              <span className='w-7 h-7 rounded-full bg-[var(--bg-accent-yellow)] border-2 border-[var(--border-main)] flex items-center justify-center font-editorial-mono text-xs font-bold text-black'>
+                01
               </span>
+              <h2 className='font-editorial-serif text-xl font-bold text-[var(--text-main)]'>
+                Set Your Reading Parameters
+              </h2>
             </div>
-            <input
-              id='budget-slider'
-              type='range'
-              min='200'
-              max='1000'
-              step='50'
-              value={budget}
-              onChange={(e) => setBudget(Number(e.target.value))}
-              className='w-full accent-indigo-600 cursor-pointer'
-            />
-            <div className='flex justify-between text-[10px] text-slate-400 font-semibold'>
-              <span>{rupee}200</span>
-              <span>{rupee}500</span>
-              <span>{rupee}750</span>
-              <span>{rupee}1000+</span>
-            </div>
-          </div>
-
-          {/* 3. Minimum Rating */}
-          <div className='space-y-2'>
-            <label htmlFor='match-rating' className='block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400'>
-              Minimum Rating
-            </label>
-            <select
-              id='match-rating'
-              value={minRating}
-              onChange={(e) => setMinRating(Number(e.target.value))}
-              className='w-full px-3.5 py-2.5 text-xs font-semibold rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500'
-            >
-              <option value='0'>Any Rating</option>
-              <option value='4.0'>4.0+ Stars (Recommended)</option>
-              <option value='4.5'>4.5+ Stars (Highly Rated)</option>
-              <option value='4.8'>4.8+ Stars (Top Masterpieces)</option>
-            </select>
-          </div>
-
-          {/* 4. Reading Goal / Style */}
-          <div className='space-y-2'>
-            <label htmlFor='match-reading-goal' className='block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400'>
-              Reading Focus / Style
-            </label>
-            <select
-              id='match-reading-goal'
-              value={readingGoal}
-              onChange={(e) => setReadingGoal(e.target.value as ReadingPreference)}
-              className='w-full px-3.5 py-2.5 text-xs font-semibold rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500'
-            >
-              <option value='any'>Any Reading Style</option>
-              <option value='habits'>Practical Habits &amp; Productivity</option>
-              <option value='engineering'>Software Engineering &amp; Clean Code</option>
-              <option value='inspiration'>Inspirational Journey &amp; Fiction</option>
-            </select>
-          </div>
-
-          {/* 5. Stock Filter */}
-          <div className='space-y-2 flex flex-col justify-end'>
-            <label className='flex items-center gap-3 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 cursor-pointer'>
-              <input
-                type='checkbox'
-                checked={inStockOnly}
-                onChange={(e) => setInStockOnly(e.target.checked)}
-                className='w-4 h-4 accent-indigo-600 rounded'
-              />
-              <span className='text-xs font-semibold text-slate-800 dark:text-slate-200'>
-                Show only In-Stock books for immediate shipping
-              </span>
-            </label>
-          </div>
-        </div>
-      </div>
-
-      {/* Results Section */}
-      <section className='space-y-6'>
-        <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2'>
-          <div>
-            <span className='text-xs font-bold uppercase tracking-widest text-indigo-600 dark:text-indigo-400'>
-              Match Results
-            </span>
-            <h2 className='text-2xl font-black text-slate-900 dark:text-white mt-0.5'>
-              Recommended Books For You ({matchedBooks.length})
-            </h2>
-          </div>
-          <span className='text-xs text-slate-400'>
-            Sorted by highest match compatibility score
-          </span>
-        </div>
-
-        {isLoading ? (
-          <div className='py-20 text-center space-y-4'>
-            <div className='w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto' />
-            <p className='text-xs font-semibold text-slate-500'>Calculating match scores across catalog...</p>
-          </div>
-        ) : matchedBooks.length === 0 ? (
-          <div className='py-16 px-4 text-center bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 max-w-lg mx-auto space-y-4'>
-            <div className='w-14 h-14 mx-auto rounded-full bg-amber-50 dark:bg-amber-950/60 text-amber-500 flex items-center justify-center text-xl font-bold'>
-              !
-            </div>
-            <h3 className='text-lg font-bold text-slate-900 dark:text-white'>No Direct Matches Found</h3>
-            <p className='text-xs text-slate-500 dark:text-slate-400'>
-              Try broadening your budget or changing the genre filter to discover matching titles.
-            </p>
             <button
               onClick={() => {
                 setSelectedCategory('all');
                 setBudget(1000);
                 setMinRating(4.0);
+                setInStockOnly(true);
+                setReadingGoal('any');
               }}
-              className='px-5 py-2.5 rounded-xl bg-indigo-600 text-white font-bold text-xs'
+              className='font-editorial-mono text-[10px] font-bold uppercase tracking-wider text-[var(--text-faint)] hover:text-[var(--bg-accent-pink)] transition-colors'
             >
-              Broaden Filters
+              Reset Filters
             </button>
           </div>
-        ) : (
-          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-            {matchedBooks.map(({ book, discountedPrice, matchPercentage, reasons }, index) => {
-              const isFavorite = isInWishlist(book.id);
-              const inCompare = isInCompare(book.id);
-              const isOutOfStock = book.stock <= 0;
 
-              return (
-                <div
-                  key={'match-' + book.id}
-                  className='relative flex flex-col bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-xs hover:shadow-xl hover:border-indigo-300 dark:hover:border-indigo-800 transition-all duration-300'
-                >
-                  {/* Rank & Match Score Bar */}
-                  <div className='flex items-center justify-between pb-3 mb-4 border-b border-slate-100 dark:border-slate-800'>
-                    <span className='text-[11px] font-bold text-slate-400 uppercase tracking-wider'>
-                      Rank #{index + 1}
-                    </span>
+          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 font-editorial-mono text-xs'>
+            {/* 1. Category */}
+            <div className='space-y-1.5'>
+              <label htmlFor='match-category' className='block text-[10px] font-bold uppercase tracking-wider text-[var(--text-faint)]'>
+                Preferred Genre / Focus
+              </label>
+              <select
+                id='match-category'
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className='w-full p-3 font-editorial-mono text-xs bg-[var(--bg-surface-elevated)] border-2 border-[var(--border-main)] text-[var(--text-main)] focus:outline-none'
+              >
+                <option value='all'>All Genres &amp; Categories</option>
+                {categories.map((cat) => (
+                  <option key={'cat-' + cat.id} value={cat.slug || cat.id}>
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-                    <div className='flex items-center gap-1.5'>
-                      <div className='px-2.5 py-0.5 rounded-full text-xs font-black bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-xs'>
-                        {matchPercentage}% MATCH
-                      </div>
-                    </div>
-                  </div>
+            {/* 2. Budget Slider */}
+            <div className='space-y-1.5'>
+              <div className='flex justify-between items-center'>
+                <label htmlFor='budget-slider' className='text-[10px] font-bold uppercase tracking-wider text-[var(--text-faint)]'>
+                  Budget Ceiling:
+                </label>
+                <span className='font-bold text-[var(--text-main)] font-editorial-serif text-base'>
+                  {budget >= 1000 ? 'No Limit' : `${rupee}${budget}`}
+                </span>
+              </div>
+              <input
+                id='budget-slider'
+                type='range'
+                min='200'
+                max='1000'
+                step='50'
+                value={budget}
+                onChange={(e) => setBudget(Number(e.target.value))}
+                className='w-full accent-black dark:accent-white cursor-pointer py-1'
+              />
+              <div className='flex justify-between text-[9px] text-[var(--text-faint)] font-bold'>
+                <span>{rupee}200</span>
+                <span>{rupee}500</span>
+                <span>{rupee}750</span>
+                <span>{rupee}1000+</span>
+              </div>
+            </div>
 
-                  {/* Book Presentation */}
-                  <div className='flex gap-4 items-start mb-4'>
-                    <div className='w-24 aspect-[3/4] rounded-2xl bg-slate-100 dark:bg-slate-800 overflow-hidden shrink-0 shadow-md relative'>
-                      {book.coverImage ? (
-                        <img src={book.coverImage} alt={book.title} className='w-full h-full object-cover' />
-                      ) : (
-                        <div className='w-full h-full bg-slate-950 p-2 flex flex-col items-center justify-center text-center text-[10px] text-white font-bold'>
-                          <span className='text-indigo-400 uppercase'>{book.author}</span>
-                          <span className='line-clamp-2 mt-1'>{book.title}</span>
-                        </div>
-                      )}
-                      {book.discount > 0 && (
-                        <div className='absolute top-1 left-1'>
-                          <Badge variant='discount'>-{book.discount}%</Badge>
-                        </div>
-                      )}
-                    </div>
+            {/* 3. Rating */}
+            <div className='space-y-1.5'>
+              <label htmlFor='match-rating' className='block text-[10px] font-bold uppercase tracking-wider text-[var(--text-faint)]'>
+                Quality Standard
+              </label>
+              <select
+                id='match-rating'
+                value={minRating}
+                onChange={(e) => setMinRating(Number(e.target.value))}
+                className='w-full p-3 font-editorial-mono text-xs bg-[var(--bg-surface-elevated)] border-2 border-[var(--border-main)] text-[var(--text-main)] focus:outline-none'
+              >
+                <option value='0'>Any Rating</option>
+                <option value='4.0'>4.0+ Stars (Recommended)</option>
+                <option value='4.5'>4.5+ Stars (Critically Acclaimed)</option>
+                <option value='4.8'>4.8+ Stars (Top Masterpieces)</option>
+              </select>
+            </div>
 
-                    <div className='flex-1 overflow-hidden space-y-1.5'>
-                      <span className='inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 truncate max-w-full'>
-                        {book.category?.name || 'Curated'}
+            {/* 4. Reading Goal */}
+            <div className='space-y-1.5'>
+              <label htmlFor='match-reading-goal' className='block text-[10px] font-bold uppercase tracking-wider text-[var(--text-faint)]'>
+                Thematic Aim
+              </label>
+              <select
+                id='match-reading-goal'
+                value={readingGoal}
+                onChange={(e) => setReadingGoal(e.target.value as ReadingPreference)}
+                className='w-full p-3 font-editorial-mono text-xs bg-[var(--bg-surface-elevated)] border-2 border-[var(--border-main)] text-[var(--text-main)] focus:outline-none'
+              >
+                <option value='any'>Any Reading Style</option>
+                <option value='habits'>Practical Systems &amp; Habits</option>
+                <option value='engineering'>Software Engineering &amp; Architecture</option>
+                <option value='inspiration'>Philosophical Literature &amp; Fiction</option>
+              </select>
+            </div>
+
+            {/* 5. In-Stock Checkbox */}
+            <div className='space-y-1.5 flex flex-col justify-end'>
+              <label className='flex items-center gap-3 p-3 bg-[var(--bg-surface-elevated)] border-2 border-[var(--border-main)] cursor-pointer'>
+                <input
+                  type='checkbox'
+                  checked={inStockOnly}
+                  onChange={(e) => setInStockOnly(e.target.checked)}
+                  className='w-4 h-4 accent-black dark:accent-white'
+                />
+                <span className='text-[10px] font-bold uppercase tracking-wider text-[var(--text-main)]'>
+                  Show in-stock volumes only
+                </span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        {/* Results Stream */}
+        <section className='space-y-6'>
+          <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b-2 border-[var(--border-main)]'>
+            <div className='flex items-center gap-3'>
+              <span className='font-editorial-serif text-2xl text-[var(--text-main)]'>
+                Compatible Recommendations
+              </span>
+              <span className='px-2.5 py-0.5 border border-[var(--border-main)] bg-[var(--bg-accent-yellow)] text-black font-editorial-mono text-[10px] font-bold'>
+                {matchedBooks.length} TITLES
+              </span>
+            </div>
+            <span className='font-editorial-mono text-[9px] uppercase tracking-wider text-[var(--text-faint)]'>
+              Ranked by deterministic compatibility score
+            </span>
+          </div>
+
+          {isLoading ? (
+            <div className='py-20 text-center space-y-4'>
+              <div className='font-editorial-serif text-5xl text-[var(--text-faint)] animate-pulse'>···</div>
+              <p className='font-editorial-mono text-xs text-[var(--text-muted)] uppercase tracking-wider'>
+                Scoring catalog against preferences...
+              </p>
+            </div>
+          ) : matchedBooks.length === 0 ? (
+            <div className='py-16 px-4 text-center neo-card bg-[var(--bg-surface)] border-2 border-[var(--border-main)] max-w-lg mx-auto space-y-4 shadow-[4px_4px_0px_var(--border-main)]'>
+              <div className='w-14 h-14 mx-auto bg-[var(--bg-accent-yellow)] border-2 border-[var(--border-main)] flex items-center justify-center text-xl font-bold'>
+                !
+              </div>
+              <h3 className='font-editorial-serif text-2xl text-[var(--text-main)]'>No Direct Matches</h3>
+              <p className='font-editorial-sans text-xs text-[var(--text-muted)]'>
+                Try increasing your budget ceiling or switching genres to uncover matching editions.
+              </p>
+              <button
+                onClick={() => {
+                  setSelectedCategory('all');
+                  setBudget(1000);
+                  setMinRating(4.0);
+                }}
+                className='neo-btn-accent px-6 py-3 text-xs font-bold uppercase tracking-wider'
+              >
+                Reset Parameters
+              </button>
+            </div>
+          ) : (
+            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+              {matchedBooks.map(({ book, discountedPrice, matchPercentage, reasons }, index) => {
+                const isFavorite = isInWishlist(book.id);
+                const inCompare = isInCompare(book.id);
+                const isOutOfStock = book.stock <= 0;
+
+                return (
+                  <div
+                    key={'match-' + book.id}
+                    className='neo-card flex flex-col bg-[var(--bg-surface)] border-2 border-[var(--border-main)] p-5 shadow-[4px_4px_0px_var(--border-main)] hover:shadow-[6px_6px_0px_var(--border-main)] transition-all'
+                  >
+                    {/* Rank & Score Bar */}
+                    <div className='flex items-center justify-between pb-3 mb-4 border-b border-[var(--border-subtle)] font-editorial-mono'>
+                      <span className='text-[10px] font-bold text-[var(--text-faint)] uppercase tracking-wider'>
+                        RANK #{index + 1}
                       </span>
+                      <span className='badge-pill-mint px-2.5 py-0.5 rounded-full text-[10px] font-black'>
+                        {matchPercentage}% MATCH
+                      </span>
+                    </div>
 
-                      <Link href={`/books/${book.id}`}>
-                        <h3 className='font-bold text-sm text-slate-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 line-clamp-2'>
-                          {book.title}
-                        </h3>
-                      </Link>
-
-                      <p className='text-xs text-slate-500 dark:text-slate-400 truncate'>
-                        by {book.author}
-                      </p>
-
-                      <div className='flex items-center gap-1.5 pt-0.5'>
-                        <span className='text-xs font-black text-amber-500'>★ {book.rating}</span>
-                        <span className='text-[10px] text-slate-400'>({book.numReviews})</span>
-                      </div>
-
-                      <div className='flex items-baseline gap-1.5 pt-1'>
-                        <span className='text-base font-black text-slate-900 dark:text-white'>
-                          {rupee}{discountedPrice}
-                        </span>
+                    {/* Book Presentation */}
+                    <div className='flex gap-4 items-start mb-4'>
+                      <div className='w-20 aspect-[3/4] border-2 border-[var(--border-main)] bg-[var(--bg-surface-elevated)] overflow-hidden shrink-0 shadow-[2px_2px_0px_var(--border-main)] relative'>
+                        {book.coverImage ? (
+                          <img src={book.coverImage} alt={book.title} className='w-full h-full object-cover' />
+                        ) : (
+                          <div className='w-full h-full p-2 flex flex-col justify-end text-[8px] font-editorial-mono text-[var(--text-faint)]'>
+                            <span>{book.title}</span>
+                          </div>
+                        )}
                         {book.discount > 0 && (
-                          <span className='text-xs text-slate-400 line-through'>
-                            {rupee}{book.price}
+                          <span className='badge-pill-pink absolute top-0 left-0 px-1.5 py-0.2 text-[8px] font-bold'>
+                            −{book.discount}%
                           </span>
                         )}
                       </div>
+
+                      <div className='flex-1 overflow-hidden space-y-1'>
+                        <span className='font-editorial-mono text-[9px] uppercase tracking-widest text-[var(--text-faint)] block truncate'>
+                          {book.category?.name || 'CURATED'}
+                        </span>
+
+                        <Link href={`/books/${book.id}`}>
+                          <h3 className='font-editorial-serif font-bold text-base text-[var(--text-main)] hover:text-[var(--bg-accent-blue)] line-clamp-2 leading-tight'>
+                            {book.title}
+                          </h3>
+                        </Link>
+
+                        <p className='font-editorial-mono text-[10px] text-[var(--text-muted)] truncate'>
+                          {book.author}
+                        </p>
+
+                        <div className='pt-0.5'>
+                          <RatingStars rating={book.rating} numReviews={book.numReviews} size='sm' />
+                        </div>
+
+                        <div className='flex items-baseline gap-2 pt-1 font-editorial-mono'>
+                          <span className='font-editorial-serif text-lg font-bold text-[var(--text-main)]'>
+                            {rupee}{discountedPrice}
+                          </span>
+                          {book.discount > 0 && (
+                            <span className='text-[10px] text-[var(--text-faint)] line-through'>
+                              {rupee}{book.price}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Why It Matched Section */}
+                    <div className='flex-1 p-3 bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)] text-xs mb-4 space-y-1.5 font-editorial-mono'>
+                      <p className='font-bold text-[10px] uppercase tracking-wider text-[var(--text-main)]'>
+                        Algorithm Match Notes:
+                      </p>
+                      <ul className='space-y-1 text-[10px] text-[var(--text-muted)] pl-3 list-disc'>
+                        {reasons.slice(0, 3).map((r, i) => (
+                          <li key={'reason-' + i}>{r}</li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* Actions */}
+                    <div className='space-y-2 pt-2 border-t border-[var(--border-subtle)]'>
+                      <div className='grid grid-cols-2 gap-2'>
+                        <Link
+                          href={`/books/${book.id}`}
+                          className='neo-btn-secondary py-2 text-center text-[10px] font-bold uppercase tracking-wider'
+                        >
+                          Details
+                        </Link>
+
+                        <button
+                          onClick={() => addToCart(book, 1)}
+                          disabled={isOutOfStock}
+                          className={
+                            'py-2 text-center text-[10px] font-bold uppercase tracking-wider border-2 transition ' +
+                            (isOutOfStock
+                              ? 'border-[var(--border-subtle)] text-[var(--text-faint)] cursor-not-allowed'
+                              : 'neo-btn-primary cursor-pointer')
+                          }
+                        >
+                          {isOutOfStock ? 'Sold Out' : '+ Bag'}
+                        </button>
+                      </div>
+
+                      <div className='grid grid-cols-2 gap-2 font-editorial-mono'>
+                        <button
+                          onClick={() => toggleWishlist(book)}
+                          className={
+                            'py-1.5 text-[9px] font-bold uppercase tracking-wider border transition text-center ' +
+                            (isFavorite
+                              ? 'bg-[var(--bg-accent-pink)] text-white border-[var(--border-main)]'
+                              : 'border-[var(--border-subtle)] text-[var(--text-muted)] hover:border-[var(--border-main)]')
+                          }
+                        >
+                          {isFavorite ? '♥ Saved' : '♡ Wishlist'}
+                        </button>
+
+                        <button
+                          onClick={() => handleAddToCompareWithNotice(book)}
+                          className={
+                            'py-1.5 text-[9px] font-bold uppercase tracking-wider border transition text-center ' +
+                            (inCompare
+                              ? 'bg-[var(--bg-accent-blue)] text-white border-[var(--border-main)]'
+                              : 'border-[var(--border-subtle)] text-[var(--text-muted)] hover:border-[var(--border-main)]')
+                          }
+                        >
+                          {inCompare ? '✓ Compared' : '+ Compare'}
+                        </button>
+                      </div>
                     </div>
                   </div>
-
-                  {/* Why It Matched Section */}
-                  <div className='flex-1 p-3 rounded-2xl bg-indigo-50/50 dark:bg-indigo-950/20 border border-indigo-100 dark:border-indigo-900/40 text-xs mb-4 space-y-1.5'>
-                    <div className='flex items-center gap-1 text-[11px] font-bold text-indigo-900 dark:text-indigo-200'>
-                      <svg className='w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400' fill='currentColor' viewBox='0 0 20 20'>
-                        <path fillRule='evenodd' d='M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z' clipRule='evenodd' />
-                      </svg>
-                      <span>Why This Book Matched:</span>
-                    </div>
-                    <ul className='space-y-1 text-slate-600 dark:text-slate-300 text-[11px] pl-3 list-disc'>
-                      {reasons.map((r, i) => (
-                        <li key={'reason-' + i}>{r}</li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  {/* Actions: Add to Cart, Details, Wishlist, Compare */}
-                  <div className='space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800'>
-                    <div className='grid grid-cols-2 gap-2'>
-                      <Link
-                        href={`/books/${book.id}`}
-                        className='py-2 px-3 rounded-xl text-center text-xs font-semibold border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition'
-                      >
-                        Book Details
-                      </Link>
-
-                      <button
-                        onClick={() => handleAddToCartWithNotice(book)}
-                        disabled={isOutOfStock}
-                        className={
-                          'py-2 px-3 rounded-xl text-center text-xs font-bold transition flex items-center justify-center gap-1 ' +
-                          (isOutOfStock
-                            ? 'bg-slate-200 dark:bg-slate-800 text-slate-400 cursor-not-allowed'
-                            : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs')
-                        }
-                      >
-                        <svg className='w-3.5 h-3.5' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
-                          <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z' />
-                        </svg>
-                        {isOutOfStock ? 'Sold Out' : 'Add to Cart'}
-                      </button>
-                    </div>
-
-                    <div className='flex items-center gap-2'>
-                      <button
-                        onClick={() => toggleWishlist(book)}
-                        className={
-                          'flex-1 py-1.5 px-2 rounded-xl text-xs font-semibold border flex items-center justify-center gap-1 transition ' +
-                          (isFavorite
-                            ? 'bg-rose-50 border-rose-200 text-rose-600 dark:bg-rose-950/60 dark:border-rose-900 dark:text-rose-400'
-                            : 'border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800')
-                        }
-                      >
-                        <svg className='w-3.5 h-3.5' fill={isFavorite ? 'currentColor' : 'none'} viewBox='0 0 24 24' stroke='currentColor'>
-                          <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z' />
-                        </svg>
-                        <span>{isFavorite ? 'Saved' : 'Wishlist'}</span>
-                      </button>
-
-                      <button
-                        onClick={() => handleAddToCompareWithNotice(book)}
-                        className={
-                          'flex-1 py-1.5 px-2 rounded-xl text-xs font-semibold border flex items-center justify-center gap-1 transition ' +
-                          (inCompare
-                            ? 'bg-indigo-50 border-indigo-200 text-indigo-600 dark:bg-indigo-950/60 dark:border-indigo-900 dark:text-indigo-400'
-                            : 'border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800')
-                        }
-                      >
-                        <span>{inCompare ? 'In Compare' : '+ Compare'}</span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </section>
-    </main>
+                );
+              })}
+            </div>
+          )}
+        </section>
+      </div>
+    </div>
   );
 }

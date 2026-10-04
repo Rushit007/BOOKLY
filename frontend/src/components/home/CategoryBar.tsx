@@ -10,34 +10,31 @@ interface CategoryBarProps {
 }
 
 export function CategoryBar({ categories, selectedCategory, onSelectCategory }: CategoryBarProps) {
+  const all = [{ id: '__all', name: 'ALL GENRES', slug: '' }, ...categories.map((c) => ({ ...c, name: c.name.toUpperCase() }))];
+
   return (
-    <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6'>
-      <div className='flex items-center gap-2 overflow-x-auto pb-2'>
-        <button
-          onClick={() => onSelectCategory('')}
-          className={
-            'px-5 py-2.5 rounded-full text-xs font-bold whitespace-nowrap transition-all duration-200 cursor-pointer ' +
-            (selectedCategory === ''
-              ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20 scale-105'
-              : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-indigo-400 dark:hover:border-indigo-700')
-          }
-        >
-          All Genres
-        </button>
-        {categories.map((cat) => (
-          <button
-            key={cat.id}
-            onClick={() => onSelectCategory(cat.slug)}
-            className={
-              'px-5 py-2.5 rounded-full text-xs font-bold whitespace-nowrap transition-all duration-200 cursor-pointer ' +
-              (selectedCategory === cat.slug
-                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20 scale-105'
-                : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-indigo-400 dark:hover:border-indigo-700')
-            }
-          >
-            {cat.name}
-          </button>
-        ))}
+    <div className='border-y-2 border-[var(--border-main)] bg-[var(--bg-surface)]'>
+      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+        <div className='flex items-center gap-0 overflow-x-auto scrollbar-hide'>
+          {all.map((cat, i) => {
+            const isActive = selectedCategory === cat.slug;
+            return (
+              <button
+                key={cat.id}
+                onClick={() => onSelectCategory(cat.slug)}
+                className={
+                  'px-5 py-3.5 font-editorial-mono text-[10px] font-bold tracking-[0.18em] whitespace-nowrap transition-all border-r-2 border-[var(--border-main)] shrink-0 ' +
+                  (isActive
+                    ? 'bg-[var(--text-main)] text-[var(--bg-page)]'
+                    : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-surface-elevated)]') +
+                  (i === 0 ? ' border-l-0' : '')
+                }
+              >
+                {cat.name}
+              </button>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

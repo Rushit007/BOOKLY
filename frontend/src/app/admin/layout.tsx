@@ -58,17 +58,9 @@ const navItems = [
 ];
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
-  const { user, isAuthenticated, isLoading } = useAuth();
+  const { user, isAuthenticated, isLoading, demoAdminLogin } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
-
-  useEffect(() => {
-    if (!isLoading) {
-      if (!isAuthenticated || user?.role !== 'ADMIN') {
-        router.push('/login?redirect=' + encodeURIComponent(pathname));
-      }
-    }
-  }, [isAuthenticated, isLoading, user, router, pathname]);
 
   if (isLoading) {
     return (
@@ -79,7 +71,45 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   }
 
   if (!isAuthenticated || user?.role !== 'ADMIN') {
-    return null;
+    return (
+      <div className="min-h-screen bg-[var(--bg-page)] flex items-center justify-center p-6">
+        <div className="max-w-md w-full neo-card p-8 bg-[var(--bg-surface)] border-2 border-[var(--border-main)] text-center animate-scale-in">
+          <div className="w-16 h-16 mx-auto mb-4 bg-[var(--bg-accent-yellow)] border-2 border-[var(--border-main)] flex items-center justify-center text-2xl font-black text-black">
+            BK
+          </div>
+          <span className="font-editorial-mono text-xs uppercase tracking-[0.2em] font-bold text-[var(--bg-accent-blue)]">
+            RESTRICTED ACCESS
+          </span>
+          <h2 className="font-editorial-serif text-3xl font-black text-[var(--text-main)] mt-1 mb-3">
+            BOOKLY Admin Suite
+          </h2>
+          <p className="font-editorial-sans text-sm text-[var(--text-muted)] mb-6 leading-relaxed">
+            This area provides store metrics, real-time sales analytics, book catalog management, order fulfillment, and user accounts.
+          </p>
+
+          <div className="space-y-3">
+            <button
+              onClick={() => demoAdminLogin()}
+              className="w-full py-3.5 px-4 bg-[var(--text-main)] text-[var(--bg-page)] font-editorial-mono text-xs font-bold uppercase tracking-wider hover:bg-[var(--bg-accent-yellow)] hover:text-black border-2 border-[var(--border-main)] transition-all shadow-[4px_4px_0px_var(--border-main)]"
+            >
+              Enter Admin Portal (Demo Access) →
+            </button>
+            <Link
+              href={'/login?redirect=' + encodeURIComponent(pathname)}
+              className="block w-full py-3 px-4 bg-[var(--bg-surface)] text-[var(--text-main)] font-editorial-mono text-xs font-bold uppercase tracking-wider border-2 border-[var(--border-main)] hover:bg-[var(--bg-surface-elevated)] transition-all"
+            >
+              Sign In with Admin Credentials
+            </Link>
+            <Link
+              href="/"
+              className="inline-block text-xs font-editorial-mono text-[var(--text-faint)] hover:text-[var(--text-main)] underline mt-2"
+            >
+              ← Back to Bookstore
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (

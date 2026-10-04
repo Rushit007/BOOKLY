@@ -31,112 +31,143 @@ export function BookFilters({
   onResetFilters,
 }: BookFiltersProps) {
   return (
-    <div className='bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-5 space-y-6'>
-      {/* Header */}
-      <div className='flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800'>
-        <div className='flex items-center gap-2'>
-          <svg className='w-4 h-4 text-indigo-600 dark:text-indigo-400' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
-            <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z' />
-          </svg>
-          <h3 className='font-bold text-sm text-slate-900 dark:text-white'>Filter Books</h3>
-        </div>
-        <button onClick={onResetFilters} className='text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline'>
-          Reset All
+    <div className='neo-card-flat' style={{ borderRadius: 0 }}>
+      {/* Panel Header */}
+      <div className='flex items-center justify-between px-4 py-3 border-b-2 border-[var(--border-main)] bg-[var(--bg-surface-elevated)]'>
+        <span className='font-editorial-mono text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--text-main)]'>
+          REFINE
+        </span>
+        <button
+          onClick={onResetFilters}
+          className='font-editorial-mono text-[9px] font-bold uppercase tracking-wider text-[var(--text-faint)] hover:text-[var(--bg-accent-pink)] transition-colors'
+        >
+          RESET
         </button>
       </div>
 
       {/* Categories */}
-      <div>
-        <h4 className='text-xs font-bold uppercase tracking-wider text-slate-400 mb-3'>Categories</h4>
-        <div className='space-y-1'>
+      <div className='border-b-2 border-[var(--border-subtle)]'>
+        <div className='px-4 py-2 border-b border-[var(--border-subtle)]'>
+          <span className='font-editorial-mono text-[9px] uppercase tracking-[0.18em] text-[var(--text-faint)]'>
+            Genre
+          </span>
+        </div>
+        <div className='divide-y divide-[var(--border-subtle)]'>
           <button
             onClick={() => onSelectCategory('')}
             className={
-              'w-full text-left px-3 py-2 rounded-xl text-xs font-semibold transition flex items-center justify-between ' +
+              'w-full text-left px-4 py-2.5 font-editorial-mono text-[10px] font-bold transition flex items-center justify-between ' +
               (selectedCategory === ''
-                ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-950/60 dark:text-indigo-300'
-                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800')
+                ? 'bg-[var(--text-main)] text-[var(--bg-page)]'
+                : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-surface-elevated)]')
             }
           >
             <span>All Categories</span>
+            {selectedCategory === '' && <span>✓</span>}
           </button>
           {categories.map((cat) => (
             <button
               key={cat.id}
               onClick={() => onSelectCategory(cat.slug)}
               className={
-                'w-full text-left px-3 py-2 rounded-xl text-xs font-semibold transition flex items-center justify-between ' +
+                'w-full text-left px-4 py-2.5 font-editorial-mono text-[10px] font-bold uppercase tracking-wider transition flex items-center justify-between ' +
                 (selectedCategory === cat.slug
-                  ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-950/60 dark:text-indigo-300'
-                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800')
+                  ? 'bg-[var(--text-main)] text-[var(--bg-page)]'
+                  : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-surface-elevated)]')
               }
             >
               <span>{cat.name}</span>
+              {selectedCategory === cat.slug && <span>✓</span>}
             </button>
           ))}
         </div>
       </div>
 
       {/* Price Range */}
-      <div>
-        <h4 className='text-xs font-bold uppercase tracking-wider text-slate-400 mb-3'>Price Range</h4>
-        <div className='grid grid-cols-2 gap-2'>
+      <div className='border-b-2 border-[var(--border-subtle)]'>
+        <div className='px-4 py-2 border-b border-[var(--border-subtle)]'>
+          <span className='font-editorial-mono text-[9px] uppercase tracking-[0.18em] text-[var(--text-faint)]'>
+            Price Range (₹)
+          </span>
+        </div>
+        <div className='px-4 py-3 grid grid-cols-2 gap-2'>
           <div>
-            <label className='text-[10px] text-slate-400'>Min Price</label>
+            <label className='font-editorial-mono text-[8px] text-[var(--text-faint)] uppercase tracking-wider block mb-1'>
+              Min
+            </label>
             <input
               type='number'
               min='0'
               placeholder='0'
               value={minPrice ?? ''}
               onChange={(e) => onPriceChange(e.target.value ? Number(e.target.value) : undefined, maxPrice)}
-              className='w-full px-3 py-1.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-indigo-500'
+              className='w-full px-2 py-1.5 text-xs font-editorial-mono bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)] text-[var(--text-main)] focus:outline-none focus:border-[var(--border-main)]'
             />
           </div>
           <div>
-            <label className='text-[10px] text-slate-400'>Max Price</label>
+            <label className='font-editorial-mono text-[8px] text-[var(--text-faint)] uppercase tracking-wider block mb-1'>
+              Max
+            </label>
             <input
               type='number'
               min='0'
               placeholder='1500'
               value={maxPrice ?? ''}
               onChange={(e) => onPriceChange(minPrice, e.target.value ? Number(e.target.value) : undefined)}
-              className='w-full px-3 py-1.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-indigo-500'
+              className='w-full px-2 py-1.5 text-xs font-editorial-mono bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)] text-[var(--text-main)] focus:outline-none focus:border-[var(--border-main)]'
             />
           </div>
         </div>
       </div>
 
-      {/* Minimum Rating */}
-      <div>
-        <h4 className='text-xs font-bold uppercase tracking-wider text-slate-400 mb-2'>Minimum Rating</h4>
-        <div className='space-y-1'>
+      {/* Rating */}
+      <div className='border-b-2 border-[var(--border-subtle)]'>
+        <div className='px-4 py-2 border-b border-[var(--border-subtle)]'>
+          <span className='font-editorial-mono text-[9px] uppercase tracking-[0.18em] text-[var(--text-faint)]'>
+            Min. Rating
+          </span>
+        </div>
+        <div className='divide-y divide-[var(--border-subtle)]'>
           {[4, 3, 2].map((r) => (
             <button
               key={r}
               onClick={() => onRatingChange(minRating === r ? undefined : r)}
               className={
-                'w-full text-left px-3 py-1.5 rounded-xl text-xs flex items-center gap-2 transition ' +
+                'w-full text-left px-4 py-2.5 font-editorial-mono text-[10px] font-bold transition flex items-center justify-between ' +
                 (minRating === r
-                  ? 'bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 font-bold'
-                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800')
+                  ? 'bg-[var(--bg-accent-yellow)] text-[var(--text-main)]'
+                  : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-surface-elevated)]')
               }
             >
-              <span className='text-amber-400 font-bold'>{r} stars &amp; above</span>
+              <span>★ {r}+ Stars</span>
+              {minRating === r && <span>✓</span>}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Stock Toggle */}
-      <div className='pt-2 border-t border-slate-100 dark:border-slate-800'>
-        <label className='flex items-center gap-2.5 cursor-pointer'>
-          <input
-            type='checkbox'
-            checked={inStockOnly}
-            onChange={(e) => onInStockChange(e.target.checked)}
-            className='w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 focus:ring-offset-0 border-slate-300 dark:border-slate-700 dark:bg-slate-800'
-          />
-          <span className='text-xs font-semibold text-slate-700 dark:text-slate-300'>In-Stock Only</span>
+      {/* In Stock Toggle */}
+      <div className='px-4 py-3'>
+        <label className='flex items-center gap-3 cursor-pointer group'>
+          <div
+            onClick={() => onInStockChange(!inStockOnly)}
+            className={
+              'w-8 h-4 border-2 border-[var(--border-main)] relative transition-colors cursor-pointer ' +
+              (inStockOnly ? 'bg-[var(--text-main)]' : 'bg-[var(--bg-surface-elevated)]')
+            }
+          >
+            <span
+              className={
+                'absolute top-0 w-3 h-3 border border-[var(--border-main)] transition-all ' +
+                (inStockOnly
+                  ? 'left-3.5 bg-[var(--bg-page)]'
+                  : 'left-0 bg-[var(--text-muted)]')
+              }
+            />
+          </div>
+          <span className='font-editorial-mono text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)] group-hover:text-[var(--text-main)] transition-colors'>
+            In-Stock Only
+          </span>
         </label>
       </div>
     </div>

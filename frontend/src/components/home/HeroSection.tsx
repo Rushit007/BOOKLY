@@ -5,101 +5,144 @@ import Link from 'next/link';
 
 export function HeroSection() {
   return (
-    <section className='relative overflow-hidden pt-8 pb-16 md:pt-16 md:pb-24'>
-      {/* Background Glow Blobs */}
-      <div className='absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-500/15 dark:bg-indigo-500/10 rounded-full blur-3xl pointer-events-none' />
-      <div className='absolute top-1/3 right-10 w-72 h-72 bg-cyan-500/15 dark:bg-cyan-500/10 rounded-full blur-3xl pointer-events-none' />
-
+    <section className='relative overflow-hidden pt-8 pb-16 md:pt-14 md:pb-24 border-b-2 border-[var(--border-main)] animate-fade-in'>
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10'>
-        <div className='grid grid-cols-1 lg:grid-cols-12 gap-12 items-center'>
-          {/* Hero Left Content */}
-          <div className='lg:col-span-7 space-y-6 text-center lg:text-left'>
-            <div className='inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800/80 text-indigo-700 dark:text-indigo-300 text-xs font-bold'>
-              <span className='w-2 h-2 rounded-full bg-indigo-500 animate-pulse' />
-              <span>Modern Online Bookstore & E-Commerce Platform</span>
-            </div>
+        {/* Floating Asymmetric Micro-Badges Bar */}
+        <div className='flex flex-wrap items-center gap-3 pb-8'>
+          <div className='badge-pill-yellow px-3.5 py-1 rounded-full text-xs uppercase tracking-wider -rotate-1 shadow-[2px_2px_0px_var(--border-main)]'>
+            ★ CURATED EDITIONS
+          </div>
+          <div className='badge-pill-blue px-3.5 py-1 rounded-full text-xs uppercase tracking-wider rotate-1 shadow-[2px_2px_0px_var(--border-main)]'>
+            WORLDWIDE DISPATCH
+          </div>
+          <div className='badge-pill-mint px-3.5 py-1 rounded-full text-xs uppercase tracking-wider -rotate-2 shadow-[2px_2px_0px_var(--border-main)] hidden sm:block'>
+            INDEPENDENT SINCE 2021
+          </div>
+          <div className='ml-auto badge-pill-pink px-4 py-1 rounded-full text-xs uppercase tracking-wider rotate-2 shadow-[2px_2px_0px_var(--border-main)] hidden md:block'>
+            NEW ISSUE / VOL. 12
+          </div>
+        </div>
 
-            <h1 className='text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 dark:text-white leading-[1.15]'>
-              Unlock Endless Knowledge With{' '}
-              <span className='bg-gradient-to-r from-indigo-600 via-indigo-500 to-cyan-400 bg-clip-text text-transparent'>
-                BOOKLY
-              </span>
+        <div className='grid grid-cols-1 lg:grid-cols-12 gap-12 items-center'>
+          {/* Hero Left Content: Statement Typography */}
+          <div className='lg:col-span-7 space-y-8 animate-fade-in-up'>
+            <h1 className='font-editorial-serif text-5xl sm:text-6xl lg:text-7xl xl:text-8xl tracking-tight text-[var(--text-main)] leading-[1.05]'>
+              Books that <br />
+              <span className='italic font-normal editorial-highlighter'>mean</span>{' '}
+              something.
             </h1>
 
-            <p className='text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-xl mx-auto lg:mx-0 leading-relaxed font-normal'>
-              Discover curated bestsellers, software engineering masterpieces, timeless fiction, and mind-expanding non-fiction with seamless delivery.
-            </p>
+            {/* Mission Brief / Editorial Paragraph */}
+            <div className='space-y-2 max-w-xl'>
+              <p className='font-editorial-mono text-[11px] uppercase tracking-[0.25em] text-[var(--text-faint)] font-bold'>
+                MISSION BRIEF / CATALOGUE NOTE
+              </p>
+              <p className='text-base sm:text-lg text-[var(--text-muted)] leading-relaxed font-editorial-sans'>
+                Bookly is an independent online bookstore for engineers, critical thinkers, and deliberate readers. We curate timeless volumes with architectural weight, zero algorithm fluff, and worldwide delivery.
+              </p>
+            </div>
 
-            {/* CTA Buttons */}
-            <div className='flex flex-wrap items-center justify-center lg:justify-start gap-3 pt-2'>
+            {/* Editorial Action Buttons */}
+            <div className='flex flex-wrap items-center gap-4 pt-2'>
               <Link
-                href='#catalog'
-                className='px-7 py-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/40 hover:-translate-y-0.5 transition-all duration-200'
+                href='/books'
+                data-cursor='interactive'
+                className='neo-btn-primary px-8 py-4 text-xs font-bold uppercase tracking-wider shadow-[4px_4px_0px_var(--border-main)] flex items-center gap-2 hover:scale-[1.02] transition-transform'
               >
-                Browse Books Catalog
+                <span>EXPLORE CATALOG</span>
+                <span className='text-sm'>↗</span>
               </Link>
               <Link
                 href='/book-match'
-                className='px-7 py-3.5 rounded-2xl bg-gradient-to-r from-amber-500/10 via-indigo-500/10 to-cyan-500/10 border border-indigo-200 dark:border-indigo-800 hover:border-indigo-400 text-indigo-700 dark:text-indigo-300 font-bold text-sm hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-1.5'
+                data-cursor='interactive'
+                className='neo-btn-secondary px-8 py-4 text-xs font-bold uppercase tracking-wider shadow-[4px_4px_0px_var(--border-main)] flex items-center gap-2 hover:scale-[1.02] transition-transform'
               >
-                <span>⚡ BOOK MATCH</span>
+                <span>⚡ TRY BOOK MATCH</span>
+                <span className='text-sm'>↗</span>
               </Link>
               <Link
                 href='/compare'
-                className='px-6 py-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/80 text-slate-800 dark:text-slate-200 font-bold text-sm transition-all duration-200'
+                data-cursor='compare'
+                className='font-editorial-mono text-xs font-bold text-[var(--text-muted)] hover:text-[var(--text-main)] underline underline-offset-4 px-2'
               >
-                Compare Books
+                Compare Editions
               </Link>
             </div>
 
-            {/* Metric Counters */}
-            <div className='grid grid-cols-3 gap-4 pt-6 border-t border-slate-200/80 dark:border-slate-800/80 max-w-lg mx-auto lg:mx-0'>
+            {/* Editorial Index Numbers */}
+            <div className='grid grid-cols-3 gap-6 pt-6 border-t-2 border-[var(--border-subtle)] max-w-lg'>
               <div>
-                <p className='text-2xl sm:text-3xl font-black text-slate-900 dark:text-white'>10,000+</p>
-                <p className='text-xs font-medium text-slate-400'>Books Available</p>
+                <span className='font-editorial-serif text-3xl font-black text-[var(--text-main)] block'>10,000+</span>
+                <span className='font-editorial-mono text-[10px] uppercase tracking-wider text-[var(--text-faint)]'>PRINTED VOLUMES</span>
               </div>
               <div>
-                <p className='text-2xl sm:text-3xl font-black text-indigo-600 dark:text-indigo-400'>99.8%</p>
-                <p className='text-xs font-medium text-slate-400'>Satisfied Readers</p>
+                <span className='font-editorial-serif text-3xl font-black text-[var(--bg-accent-blue)] block'>4.9★</span>
+                <span className='font-editorial-mono text-[10px] uppercase tracking-wider text-[var(--text-faint)]'>READER SATISFACTION</span>
               </div>
               <div>
-                <p className='text-2xl sm:text-3xl font-black text-cyan-500'>24/7</p>
-                <p className='text-xs font-medium text-slate-400'>Instant Access</p>
+                <span className='font-editorial-serif text-3xl font-black text-[var(--bg-accent-pink)] block'>24H</span>
+                <span className='font-editorial-mono text-[10px] uppercase tracking-wider text-[var(--text-faint)]'>DISPATCH WINDOW</span>
               </div>
             </div>
           </div>
 
-          {/* Hero Right Visual: Book Showcase */}
-          <div className='lg:col-span-5 relative flex justify-center'>
-            <div className='relative w-72 sm:w-80 aspect-[3/4] rounded-3xl bg-gradient-to-tr from-indigo-600 to-cyan-500 p-1 shadow-2xl shadow-indigo-500/20 transform rotate-2 hover:rotate-0 transition-transform duration-500'>
-              <div className='w-full h-full rounded-[22px] bg-slate-900 p-6 flex flex-col justify-between text-white overflow-hidden relative'>
-                {/* Visual Cover Elements */}
-                <div className='absolute -right-10 -bottom-10 w-48 h-48 bg-cyan-500/20 rounded-full blur-2xl pointer-events-none' />
-                <div>
-                  <span className='px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-[10px] uppercase font-bold tracking-widest text-cyan-300'>
+          {/* Hero Right Visual: Book of the Month Showcase Card */}
+          <div className='lg:col-span-5 relative flex justify-center animate-fade-in-up delay-200'>
+            <div className='w-full max-w-sm neo-card rounded-2xl p-6 relative bg-[var(--bg-surface)] border-2 border-[var(--border-main)] shadow-[var(--shadow-neo-lg)]'>
+              {/* Header inside card */}
+              <div className='flex items-center justify-between pb-4 border-b-2 border-[var(--border-subtle)]'>
+                <div className='flex items-center gap-2'>
+                  <span className='w-7 h-7 rounded-full bg-[var(--bg-accent-yellow)] border border-[var(--border-main)] flex items-center justify-center font-editorial-mono text-xs font-bold text-black'>
+                    01
+                  </span>
+                  <span className='font-editorial-mono text-[10px] uppercase font-bold tracking-widest text-[var(--text-muted)]'>
                     BOOK OF THE MONTH
                   </span>
-                  <h3 className='text-2xl font-black mt-4 leading-snug'>Clean Code</h3>
-                  <p className='text-xs text-slate-400 mt-1'>by Robert C. Martin</p>
                 </div>
-                <div className='space-y-3 pt-6'>
-                  <div className='flex items-center gap-1.5 text-amber-400 text-sm'>
-                    <span>★★★★★</span>
-                    <span className='text-xs text-slate-300 font-bold'>4.9 / 5.0</span>
-                  </div>
-                  <p className='text-xs text-slate-300 line-clamp-3 leading-relaxed'>
-                    A handbook of agile software craftsmanship. The essential guide for producing readable, maintainable, and robust software.
+                <span className='badge-pill-pink px-2.5 py-0.5 rounded-full text-[10px] font-bold'>
+                  -15% OFF
+                </span>
+              </div>
+
+              {/* Book Cover and Presentation */}
+              <div className='py-6 flex gap-5 items-center'>
+                <div className='w-32 aspect-[3/4] rounded-lg bg-[var(--bg-surface-elevated)] border-2 border-[var(--border-main)] shadow-[3px_3px_0px_var(--border-main)] overflow-hidden shrink-0 relative'>
+                  <img
+                    src='https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=600&h=800&fit=crop'
+                    alt='Clean Code'
+                    className='w-full h-full object-cover hover:scale-105 transition-transform duration-300'
+                  />
+                </div>
+                <div className='space-y-2'>
+                  <span className='font-editorial-mono text-[10px] text-[var(--text-faint)] uppercase tracking-widest block'>
+                    BY ROBERT C. MARTIN
+                  </span>
+                  <h3 className='font-editorial-serif font-bold text-xl text-[var(--text-main)] leading-tight'>
+                    Clean Code
+                  </h3>
+                  <p className='font-editorial-sans text-xs text-[var(--text-muted)] line-clamp-3'>
+                    A handbook of agile software craftsmanship. The essential guide for producing readable, maintainable software.
                   </p>
-                  <div className='pt-2 flex items-center justify-between border-t border-slate-800'>
-                    <span className='text-xl font-black text-white'>₹699</span>
-                    <Link
-                      href='/books/a3050526-24ed-471e-b4bc-d7f813e195c6'
-                      className='px-4 py-2 bg-white text-slate-950 text-xs font-bold rounded-xl hover:bg-slate-100 transition'
-                    >
-                      Read Details →
-                    </Link>
+                  <div className='pt-1 flex items-baseline gap-2'>
+                    <span className='font-editorial-mono font-bold text-lg text-[var(--text-main)]'>₹699</span>
+                    <span className='font-editorial-mono text-xs text-[var(--text-faint)] line-through'>₹799</span>
                   </div>
                 </div>
+              </div>
+
+              {/* Card Footer Actions */}
+              <div className='pt-4 border-t-2 border-[var(--border-subtle)] flex items-center justify-between'>
+                <span className='font-editorial-mono text-[11px] text-[var(--text-faint)] font-bold'>
+                  4.8 ★ (340+ REVIEWS)
+                </span>
+                <Link
+                  href='/books/a3050526-24ed-471e-b4bc-d7f813e195c6'
+                  data-cursor='book'
+                  className='neo-btn-accent px-4 py-2 text-xs font-bold uppercase tracking-wider shadow-[2px_2px_0px_var(--border-main)] flex items-center gap-1 hover:translate-x-0.5 transition-transform'
+                >
+                  <span>SPECIFICATION</span>
+                  <span>↗</span>
+                </Link>
               </div>
             </div>
           </div>

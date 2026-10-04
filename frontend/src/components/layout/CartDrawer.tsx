@@ -23,49 +23,48 @@ export function CartDrawer() {
 
   return (
     <div className='fixed inset-0 z-50 overflow-hidden'>
+      {/* Backdrop */}
       <div
         onClick={closeCartDrawer}
-        className='absolute inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity duration-300'
+        className='absolute inset-0 bg-black/60 backdrop-blur-xs transition-opacity duration-300 animate-fade-in'
       />
+
+      {/* Drawer Panel */}
       <div className='fixed inset-y-0 right-0 max-w-full flex pl-10'>
-        <div className='w-screen max-w-md bg-white dark:bg-slate-900 shadow-2xl border-l border-slate-200 dark:border-slate-800 flex flex-col'>
+        <div className='w-screen max-w-md bg-[var(--bg-surface)] border-l-2 border-[var(--border-main)] flex flex-col shadow-2xl animate-slide-in-right'>
+
           {/* Header */}
-          <div className='flex items-center justify-between px-6 py-5 border-b border-slate-100 dark:border-slate-800'>
-            <div className='flex items-center gap-2'>
-              <svg className='w-6 h-6 text-indigo-600 dark:text-indigo-400' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
-                <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z' />
-              </svg>
-              <h2 className='text-lg font-bold text-slate-900 dark:text-white'>
-                Your Cart <span className='text-sm font-normal text-slate-500'>({itemCount} items)</span>
-              </h2>
+          <div className='flex items-center justify-between px-5 py-4 border-b-2 border-[var(--border-main)] bg-[var(--bg-surface-elevated)]'>
+            <div className='flex items-baseline gap-3'>
+              <span className='font-editorial-serif text-xl text-[var(--text-main)]'>Cart</span>
+              <span className='font-editorial-mono text-[9px] uppercase tracking-[0.2em] text-[var(--text-faint)]'>
+                {itemCount} ITEM{itemCount !== 1 ? 'S' : ''}
+              </span>
             </div>
             <button
               onClick={closeCartDrawer}
               aria-label='Close cart drawer'
-              className='p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition'
+              className='w-8 h-8 border-2 border-[var(--border-main)] flex items-center justify-center text-[var(--text-main)] hover:bg-[var(--bg-accent-yellow)] transition-colors font-bold'
             >
-              <svg className='w-5 h-5' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
-                <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M6 18L18 6M6 6l12 12' />
-              </svg>
+              ×
             </button>
           </div>
 
-          {/* Cart Items */}
-          <div className='flex-1 overflow-y-auto px-6 py-4 divide-y divide-slate-100 dark:divide-slate-800'>
+          {/* Items */}
+          <div className='flex-1 overflow-y-auto divide-y-2 divide-[var(--border-subtle)]'>
             {items.length === 0 ? (
-              <div className='h-full flex flex-col items-center justify-center text-center p-6'>
-                <div className='w-20 h-20 bg-indigo-50 dark:bg-indigo-950/40 rounded-full flex items-center justify-center text-indigo-500 mb-4'>
-                  <svg className='w-10 h-10' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
-                    <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={1.5} d='M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z' />
-                  </svg>
-                </div>
-                <h3 className='text-base font-semibold text-slate-900 dark:text-white mb-1'>Your cart is empty</h3>
-                <p className='text-sm text-slate-500 max-w-xs mb-6'>Discover bestsellers and top-rated books across all genres.</p>
+              <div className='h-full flex flex-col items-center justify-center text-center p-8'>
+                <p className='font-editorial-serif text-4xl text-[var(--text-faint)] mb-3'>
+                  Empty Shelf
+                </p>
+                <p className='font-editorial-mono text-[10px] uppercase tracking-[0.2em] text-[var(--text-muted)] mb-8'>
+                  No titles in your cart
+                </p>
                 <button
                   onClick={closeCartDrawer}
-                  className='px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl transition shadow-sm'
+                  className='neo-btn-accent px-6 py-3 text-[10px] font-bold uppercase tracking-wider inline-block'
                 >
-                  Explore Books
+                  Explore Books ↗
                 </button>
               </div>
             ) : (
@@ -75,54 +74,78 @@ export function CartDrawer() {
                   : item.book.price;
 
                 return (
-                  <div key={item.bookId} className='py-4 flex gap-4 items-center'>
-                    <div className='relative w-16 h-22 rounded-lg bg-slate-100 dark:bg-slate-800 overflow-hidden shrink-0 border border-slate-200 dark:border-slate-700'>
+                  <div key={item.bookId} className='py-4 px-5 flex gap-4 items-start'>
+                    {/* Cover */}
+                    <div className='w-12 h-16 border-2 border-[var(--border-main)] bg-[var(--bg-surface-elevated)] overflow-hidden shrink-0'>
                       {item.book.coverImage ? (
-                        <img src={item.book.coverImage} alt={item.book.title} className='w-full h-full object-cover' />
+                        <img
+                          src={item.book.coverImage}
+                          alt={item.book.title}
+                          className='w-full h-full object-cover'
+                        />
                       ) : (
-                        <div className='w-full h-full flex items-center justify-center text-slate-400 text-xs'>Cover</div>
+                        <div className='w-full h-full flex items-end p-1'>
+                          <span className='font-editorial-mono text-[7px] text-[var(--text-faint)] leading-tight line-clamp-3'>
+                            {item.book.title}
+                          </span>
+                        </div>
                       )}
                     </div>
+
+                    {/* Info */}
                     <div className='flex-1 min-w-0'>
-                      <h4 className='text-sm font-semibold text-slate-900 dark:text-white truncate'>
+                      <h4 className='font-editorial-serif text-sm text-[var(--text-main)] truncate'>
                         {item.book.title}
                       </h4>
-                      <p className='text-xs text-slate-500 truncate mb-1'>{item.book.author}</p>
-                      <div className='flex items-center gap-2 mb-2'>
-                        <span className='text-sm font-bold text-indigo-600 dark:text-indigo-400'>
+                      <p className='font-editorial-mono text-[9px] uppercase tracking-widest text-[var(--text-faint)] truncate mt-0.5'>
+                        {item.book.author}
+                      </p>
+
+                      {/* Price */}
+                      <div className='flex items-baseline gap-1.5 mt-1.5'>
+                        <span className='font-editorial-serif text-base font-bold text-[var(--text-main)]'>
                           {rupee}{dp}
                         </span>
                         {item.book.discount > 0 && (
-                          <span className='text-xs text-slate-400 line-through'>
+                          <span className='font-editorial-mono text-[9px] text-[var(--text-faint)] line-through'>
                             {rupee}{item.book.price}
                           </span>
                         )}
                       </div>
-                      <div className='flex items-center gap-2'>
-                        <div className='flex items-center border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden bg-slate-50 dark:bg-slate-800'>
+
+                      {/* Qty + Remove */}
+                      <div className='flex items-center gap-2 mt-2'>
+                        <div className='flex items-center border border-[var(--border-main)]'>
                           <button
                             onClick={() => updateQuantity(item.bookId, item.quantity - 1)}
-                            className='px-2.5 py-0.5 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 text-sm font-bold'
+                            className='px-2 py-0.5 font-editorial-mono font-bold text-sm text-[var(--text-main)] hover:bg-[var(--bg-accent-yellow)] transition-colors border-r border-[var(--border-subtle)]'
                           >
-                            -
+                            −
                           </button>
-                          <span className='px-3 py-0.5 text-xs font-semibold text-slate-800 dark:text-slate-200'>
+                          <span className='px-2.5 py-0.5 font-editorial-mono text-[10px] font-bold text-[var(--text-main)] min-w-[1.5rem] text-center'>
                             {item.quantity}
                           </span>
                           <button
                             onClick={() => updateQuantity(item.bookId, item.quantity + 1)}
-                            className='px-2.5 py-0.5 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 text-sm font-bold'
+                            className='px-2 py-0.5 font-editorial-mono font-bold text-sm text-[var(--text-main)] hover:bg-[var(--bg-accent-yellow)] transition-colors border-l border-[var(--border-subtle)]'
                           >
                             +
                           </button>
                         </div>
                         <button
                           onClick={() => removeFromCart(item.bookId)}
-                          className='text-xs text-rose-500 hover:text-rose-700 p-1'
+                          className='font-editorial-mono text-[9px] uppercase tracking-wider text-[var(--bg-accent-pink)] hover:underline'
                         >
                           Remove
                         </button>
                       </div>
+                    </div>
+
+                    {/* Line total */}
+                    <div className='text-right shrink-0'>
+                      <span className='font-editorial-serif text-base font-bold text-[var(--text-main)]'>
+                        {rupee}{dp * item.quantity}
+                      </span>
                     </div>
                   </div>
                 );
@@ -130,40 +153,44 @@ export function CartDrawer() {
             )}
           </div>
 
-          {/* Footer */}
+          {/* Footer Summary + CTA */}
           {items.length > 0 && (
-            <div className='border-t border-slate-100 dark:border-slate-800 p-6 bg-slate-50 dark:bg-slate-900/60'>
-              <div className='space-y-2 mb-4 text-sm'>
-                <div className='flex justify-between text-slate-500 dark:text-slate-400'>
-                  <span>Subtotal</span>
-                  <span>{rupee}{subtotal}</span>
+            <div className='border-t-2 border-[var(--border-main)] bg-[var(--bg-surface-elevated)] px-5 py-5'>
+              <div className='space-y-2 mb-4'>
+                <div className='flex justify-between'>
+                  <span className='font-editorial-mono text-[9px] uppercase tracking-wider text-[var(--text-faint)]'>Subtotal</span>
+                  <span className='font-editorial-mono text-[10px] font-bold text-[var(--text-main)]'>{rupee}{subtotal}</span>
                 </div>
                 {totalDiscount > 0 && (
-                  <div className='flex justify-between text-emerald-600 dark:text-emerald-400'>
-                    <span>Savings</span>
-                    <span>-{rupee}{Math.round(totalDiscount)}</span>
+                  <div className='flex justify-between'>
+                    <span className='font-editorial-mono text-[9px] uppercase tracking-wider text-[var(--bg-accent-mint)]'>Savings</span>
+                    <span className='font-editorial-mono text-[10px] font-bold text-[var(--bg-accent-mint)]'>
+                      −{rupee}{Math.round(totalDiscount)}
+                    </span>
                   </div>
                 )}
-                <div className='flex justify-between text-base font-bold text-slate-900 dark:text-white pt-2 border-t border-slate-200 dark:border-slate-800'>
-                  <span>Total</span>
-                  <span>{rupee}{Math.round(totalAmount)}</span>
+                <div className='flex justify-between pt-2 border-t border-[var(--border-subtle)]'>
+                  <span className='font-editorial-mono text-[9px] uppercase tracking-widest font-bold text-[var(--text-main)]'>Total</span>
+                  <span className='font-editorial-serif text-xl font-bold text-[var(--text-main)]'>
+                    {rupee}{Math.round(totalAmount)}
+                  </span>
                 </div>
               </div>
 
-              <div className='grid grid-cols-2 gap-3'>
+              <div className='grid grid-cols-2 gap-2'>
                 <Link
                   href='/cart'
                   onClick={closeCartDrawer}
-                  className='w-full py-3 px-4 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-center text-sm font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 transition'
+                  className='neo-btn-secondary py-3 text-center text-[9px] font-bold uppercase tracking-widest'
                 >
-                  View Full Cart
+                  View Cart
                 </Link>
                 <Link
                   href='/cart'
                   onClick={closeCartDrawer}
-                  className='w-full py-3 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-center text-sm font-semibold shadow-md shadow-indigo-500/20 transition'
+                  className='neo-btn-accent py-3 text-center text-[9px] font-bold uppercase tracking-widest'
                 >
-                  Checkout
+                  Checkout →
                 </Link>
               </div>
             </div>

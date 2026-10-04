@@ -5,6 +5,7 @@ import { Book } from '../types/book';
 import { Cart, CartItem } from '../types/cart';
 import { api } from '../services/api';
 import { useAuth } from './AuthContext';
+import { useToast } from '../components/common/Toast';
 
 interface CartContextType {
   items: CartItem[];
@@ -26,6 +27,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();
+  const { showSuccess, showInfo } = useToast();
 
   const [items, setItems] = useState<CartItem[]>([]);
   const [subtotal, setSubtotal] = useState(0);
@@ -110,6 +112,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const closeCartDrawer = () => setIsCartDrawerOpen(false);
 
   const addToCart = async (book: Book, quantity: number = 1) => {
+    showSuccess('Added to Cart', `${book.title} (x${quantity}) added to bag`);
     if (isAuthenticated) {
       try {
         const updatedCart = await api.addToCart(book.id, quantity);
@@ -181,6 +184,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   };
 
   const removeFromCart = async (bookId: string) => {
+    showInfo('Item Removed', 'Book was removed from your cart');
     if (isAuthenticated) {
       try {
         const updatedCart = await api.removeCartItem(bookId);
@@ -200,6 +204,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   };
 
   const clearCart = async () => {
+    showInfo('Cart Cleared', 'All items removed from cart');
     if (isAuthenticated) {
       try {
         const updatedCart = await api.clearCart();

@@ -3,119 +3,171 @@
 import React from 'react';
 import Link from 'next/link';
 
+const GENRES = [
+  { label: 'Computer Science', slug: 'computer-science' },
+  { label: 'Fiction & Literature', slug: 'fiction' },
+  { label: 'Self-Help & Mindset', slug: 'self-help' },
+  { label: 'Business & Finance', slug: 'business-finance' },
+  { label: 'Science & Nature', slug: 'science-nature' },
+];
+
+const NAV_LINKS = [
+  { label: 'Explore Catalog', href: '/#catalog' },
+  { label: 'Book Match', href: '/book-match' },
+  { label: 'Saved Editions', href: '/wishlist' },
+  { label: 'Shopping Cart', href: '/cart' },
+  { label: 'FAQ', href: '/faq' },
+  { label: 'Contact', href: '/contact' },
+  { label: 'Sign In', href: '/login' },
+];
+
+const LEGAL_LINKS = [
+  { label: 'Privacy Policy', href: '/privacy' },
+  { label: 'Terms of Service', href: '/terms' },
+  { label: 'FAQ', href: '/faq' },
+  { label: 'Contact', href: '/contact' },
+];
+
+const SOCIALS = [
+  { label: 'TW', href: '#' },
+  { label: 'IG', href: '#' },
+  { label: 'GH', href: '#' },
+  { label: 'LI', href: '#' },
+];
+
 export function Footer() {
   return (
-    <footer className='bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800/80 transition-colors duration-200 pt-16 pb-12'>
-      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-slate-100 dark:border-slate-900'>
-          {/* Brand Info */}
-          <div className='lg:col-span-2 space-y-4'>
-            <div className='flex items-center gap-2.5'>
-              <div className='w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-cyan-400 flex items-center justify-center text-white shadow-md shadow-indigo-500/20'>
-                <svg className='w-5 h-5' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
-                  <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253' />
-                </svg>
-              </div>
-              <span className='text-2xl font-black tracking-tight bg-gradient-to-r from-indigo-600 to-cyan-500 dark:from-indigo-400 dark:to-cyan-300 bg-clip-text text-transparent'>
-                BOOKLY
-              </span>
+    <footer className='border-t-2 border-black' style={{ backgroundColor: '#171e19' }}>
+      <div className='max-w-7xl mx-auto'>
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4' style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+
+          {/* Brand column */}
+          <div className='p-8' style={{ borderRight: '1px solid rgba(255,255,255,0.08)' }}>
+            <div className='mb-6'>
+              <Link href='/' className='group flex items-center gap-3'>
+                <div
+                  className='w-10 h-10 flex items-center justify-center border-2 transition-colors'
+                  style={{ backgroundColor: '#272727', borderColor: 'rgba(255,255,255,0.15)' }}
+                >
+                  <span style={{ color: '#ffe17c', fontSize: '16px', fontWeight: 900 }}>⚡</span>
+                </div>
+                <span className='font-cabinet font-800 text-xl text-white'>BOOKLY</span>
+              </Link>
             </div>
-            <p className='text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed'>
-              A state-of-the-art online bookstore and e-commerce platform curated for passionate readers, developers, thinkers, and lifelong learners.
+            <p className='font-cabinet text-sm leading-relaxed mb-6' style={{ color: '#b7c6c2', opacity: 0.6 }}>
+              Curated editions for curious minds. A premium bookstore built on craft, care, and character.
             </p>
-            <div className='flex items-center gap-2 text-xs font-semibold text-slate-600 dark:text-slate-400'>
-              <span className='w-2 h-2 rounded-full bg-emerald-500 animate-ping' />
-              <span>Full-Stack Architecture: Next.js + NestJS + PostgreSQL + Prisma</span>
+            {/* Social icon squares */}
+            <div className='flex items-center gap-2'>
+              {SOCIALS.map(s => (
+                <a
+                  key={s.label}
+                  href={s.href}
+                  className='w-10 h-10 flex items-center justify-center border font-cabinet font-700 text-xs transition-all duration-150'
+                  style={{ backgroundColor: '#272727', borderColor: 'rgba(255,255,255,0.12)', color: '#b7c6c2' }}
+                  onMouseEnter={e => {
+                    const el = e.currentTarget as HTMLAnchorElement;
+                    el.style.backgroundColor = '#ffe17c';
+                    el.style.color = '#000';
+                    el.style.borderColor = '#ffe17c';
+                  }}
+                  onMouseLeave={e => {
+                    const el = e.currentTarget as HTMLAnchorElement;
+                    el.style.backgroundColor = '#272727';
+                    el.style.color = '#b7c6c2';
+                    el.style.borderColor = 'rgba(255,255,255,0.12)';
+                  }}
+                >
+                  {s.label}
+                </a>
+              ))}
             </div>
           </div>
 
-          {/* Catalog Categories */}
-          <div>
-            <h4 className='text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white mb-4'>
+          {/* Genres */}
+          <div className='p-8' style={{ borderRight: '1px solid rgba(255,255,255,0.08)' }}>
+            <p className='font-cabinet font-700 text-[9px] uppercase tracking-[0.22em] mb-5' style={{ color: 'rgba(255,255,255,0.3)' }}>
               Top Genres
-            </h4>
-            <ul className='space-y-2.5 text-sm text-slate-500 dark:text-slate-400'>
-              <li>
-                <Link href='/?category=computer-science#catalog' className='hover:text-indigo-600 dark:hover:text-indigo-400 transition'>
-                  Computer Science
-                </Link>
-              </li>
-              <li>
-                <Link href='/?category=fiction#catalog' className='hover:text-indigo-600 dark:hover:text-indigo-400 transition'>
-                  Fiction & Literature
-                </Link>
-              </li>
-              <li>
-                <Link href='/?category=self-help#catalog' className='hover:text-indigo-600 dark:hover:text-indigo-400 transition'>
-                  Self-Help & Mindset
-                </Link>
-              </li>
-              <li>
-                <Link href='/?category=business-finance#catalog' className='hover:text-indigo-600 dark:hover:text-indigo-400 transition'>
-                  Business & Finance
-                </Link>
-              </li>
-              <li>
-                <Link href='/?category=science-nature#catalog' className='hover:text-indigo-600 dark:hover:text-indigo-400 transition'>
-                  Science & Nature
-                </Link>
-              </li>
+            </p>
+            <ul className='space-y-3'>
+              {GENRES.map(g => (
+                <li key={g.slug}>
+                  <Link
+                    href={`/?category=${g.slug}#catalog`}
+                    className='font-cabinet text-sm transition-colors hover:text-[#ffe17c]'
+                    style={{ color: 'rgba(255,255,255,0.55)' }}
+                  >
+                    {g.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Quick Links */}
-          <div>
-            <h4 className='text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white mb-4'>
-              Navigation
-            </h4>
-            <ul className='space-y-2.5 text-sm text-slate-500 dark:text-slate-400'>
-              <li>
-                <Link href='/#catalog' className='hover:text-indigo-600 dark:hover:text-indigo-400 transition'>
-                  Explore Books
-                </Link>
-              </li>
-              <li>
-                <Link href='/wishlist' className='hover:text-indigo-600 dark:hover:text-indigo-400 transition'>
-                  My Wishlist
-                </Link>
-              </li>
-              <li>
-                <Link href='/cart' className='hover:text-indigo-600 dark:hover:text-indigo-400 transition'>
-                  Shopping Cart
-                </Link>
-              </li>
-              <li>
-                <Link href='/login' className='hover:text-indigo-600 dark:hover:text-indigo-400 transition'>
-                  Account Sign In
-                </Link>
-              </li>
+          {/* Navigation */}
+          <div className='p-8' style={{ borderRight: '1px solid rgba(255,255,255,0.08)' }}>
+            <p className='font-cabinet font-700 text-[9px] uppercase tracking-[0.22em] mb-5' style={{ color: 'rgba(255,255,255,0.3)' }}>
+              Navigate
+            </p>
+            <ul className='space-y-3'>
+              {NAV_LINKS.map(l => (
+                <li key={l.href}>
+                  <Link
+                    href={l.href}
+                    className='font-cabinet text-sm transition-colors hover:text-[#ffe17c]'
+                    style={{ color: 'rgba(255,255,255,0.55)' }}
+                  >
+                    {l.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Academic Info & Security */}
-          <div>
-            <h4 className='text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white mb-4'>
+          {/* Project info */}
+          <div className='p-8'>
+            <p className='font-cabinet font-700 text-[9px] uppercase tracking-[0.22em] mb-5' style={{ color: 'rgba(255,255,255,0.3)' }}>
               Academic Project
-            </h4>
-            <div className='p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-xs space-y-1.5 text-slate-600 dark:text-slate-400'>
-              <p className='font-bold text-slate-900 dark:text-slate-200'>Gondaliya Rushit R.</p>
-              <p>Enrollment: <span className='font-mono font-semibold text-indigo-600 dark:text-indigo-400'>240841102020</span></p>
-              <p>Final Year Capstone Project</p>
+            </p>
+            <div className='space-y-2'>
+              <p className='font-cabinet font-700 text-base text-white'>Gondaliya Rushit R.</p>
+              <p className='font-cabinet text-[10px]' style={{ color: 'rgba(255,255,255,0.4)' }}>
+                Enrollment: <span style={{ color: '#ffe17c' }}>240841102020</span>
+              </p>
+              <p className='font-cabinet text-[10px]' style={{ color: 'rgba(255,255,255,0.4)' }}>
+                Final Year Capstone Project
+              </p>
+            </div>
+            <div className='mt-6 pt-6' style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+              <p className='font-cabinet font-700 text-[9px] uppercase tracking-[0.22em] mb-3' style={{ color: 'rgba(255,255,255,0.3)' }}>
+                Legal
+              </p>
+              <div className='flex flex-wrap gap-x-3 gap-y-1.5'>
+                {LEGAL_LINKS.map(l => (
+                  <Link
+                    key={l.href}
+                    href={l.href}
+                    className='font-cabinet text-[9px] uppercase tracking-wider transition-colors hover:text-[#ffe17c]'
+                    style={{ color: 'rgba(255,255,255,0.35)' }}
+                  >
+                    {l.label}
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className='pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400'>
-          <p>© 2026 BOOKLY Bookstore. Designed & Built by Gondaliya Rushit R.</p>
-          <div className='flex items-center gap-4'>
-            <span>Next.js 16</span>
-            <span>•</span>
-            <span>NestJS 11</span>
-            <span>•</span>
-            <span>PostgreSQL</span>
-            <span>•</span>
-            <span>Prisma ORM</span>
+        {/* Bottom bar */}
+        <div className='px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3'>
+          <p className='font-cabinet text-[9px] uppercase tracking-[0.18em]' style={{ color: 'rgba(255,255,255,0.3)' }}>
+            © 2026 BOOKLY Bookstore · Designed & Built by Gondaliya Rushit R.
+          </p>
+          <div className='flex items-center gap-1.5'>
+            <span className='w-1.5 h-1.5 rounded-full animate-pulse' style={{ backgroundColor: '#b7c6c2' }} />
+            <span className='font-cabinet text-[9px] uppercase tracking-wider' style={{ color: 'rgba(255,255,255,0.3)' }}>
+              All Systems Operational
+            </span>
           </div>
         </div>
       </div>

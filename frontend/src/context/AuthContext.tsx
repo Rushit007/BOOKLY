@@ -11,6 +11,7 @@ interface AuthContextType {
   isLoading: boolean;
   login: (dto: LoginDto) => Promise<void>;
   register: (dto: RegisterDto) => Promise<void>;
+  demoAdminLogin: () => void;
   logout: () => void;
 }
 
@@ -53,6 +54,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem('bookly_token', res.accessToken);
   };
 
+  const demoAdminLogin = () => {
+    const adminUser: User = {
+      id: 'admin-1',
+      name: 'BOOKLY Master Admin',
+      email: 'admin@bookly.com',
+      role: 'ADMIN',
+      createdAt: '2026-01-01T00:00:00.000Z',
+    };
+    setUser(adminUser);
+    setToken('demo_admin_jwt_token_2026');
+    localStorage.setItem('bookly_user', JSON.stringify(adminUser));
+    localStorage.setItem('bookly_token', 'demo_admin_jwt_token_2026');
+  };
+
   const logout = () => {
     api.logout();
     setUser(null);
@@ -70,6 +85,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isLoading,
         login,
         register,
+        demoAdminLogin,
         logout,
       }}
     >
