@@ -57,17 +57,35 @@ export function FlyingPostersGallery({ books }: FlyingPostersGalleryProps) {
     canvasInstanceRef.current = instance;
   }, []);
 
-  // Synchronize Page Scroll with 3D Poster Flying Motion in BOTH scroll-down and scroll-up directions
+  // Synchronize Page Scroll with 3D Poster Flying Motion only when visible
   useEffect(() => {
     if (!mounted) return;
 
+    let isVisible = false;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          isVisible = entry.isIntersecting;
+          if (entry.isIntersecting) {
+            canvasInstanceRef.current?.resume();
+          } else {
+            canvasInstanceRef.current?.pause();
+          }
+        });
+      },
+      { rootMargin: '100px' }
+    );
+
+    if (trackRef.current) {
+      observer.observe(trackRef.current);
+    }
+
     const handleScroll = () => {
-      if (!trackRef.current || !canvasInstanceRef.current) return;
+      if (!isVisible || !trackRef.current || !canvasInstanceRef.current) return;
       const rect = trackRef.current.getBoundingClientRect();
       const trackHeight = trackRef.current.offsetHeight;
       const viewportHeight = window.innerHeight;
 
-      // Distance scrolled through this section (works both down and up!)
       const scrolled = -rect.top;
       const totalScrollable = trackHeight - viewportHeight;
 
@@ -75,7 +93,6 @@ export function FlyingPostersGallery({ books }: FlyingPostersGalleryProps) {
 
       const progress = Math.max(0, Math.min(1, scrolled / totalScrollable));
 
-      // Direct DOM update avoids React re-renders that would interrupt WebGL rendering
       if (progressBarRef.current) {
         progressBarRef.current.style.width = `${Math.round(progress * 100)}%`;
       }
@@ -83,15 +100,18 @@ export function FlyingPostersGallery({ books }: FlyingPostersGalleryProps) {
         scrollIndicatorRef.current.style.height = `${Math.max(15, progress * 100)}%`;
       }
 
-      // Total travel distance in 3D WebGL units
       const singlePosterHeight = canvasInstanceRef.current.medias?.[0]?.height || 10;
       const totalTravel = singlePosterHeight * posterItems.length;
       canvasInstanceRef.current.setScrollTarget(progress * totalTravel * 1.6);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll(); // Establish initial position immediately
-    return () => window.removeEventListener('scroll', handleScroll);
+    handleScroll();
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, [mounted, posterItems.length]);
 
   // Step controls
@@ -108,7 +128,7 @@ export function FlyingPostersGallery({ books }: FlyingPostersGalleryProps) {
       id="flying-posters-showcase"
       className="relative w-full border-b-2 border-black"
       style={{
-        height: '280vh',
+        height: '140vh',
         backgroundColor: '#121516',
       }}
     >

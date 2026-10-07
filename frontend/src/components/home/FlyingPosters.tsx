@@ -503,7 +503,27 @@ export class Canvas {
     this.scroll.target += e.deltaY * 0.005;
   }
 
+  isPaused: boolean = false;
+
+  pause() {
+    this.isPaused = true;
+    if (this.rafId) {
+      cancelAnimationFrame(this.rafId);
+      this.rafId = 0;
+    }
+  }
+
+  resume() {
+    if (!this.isPaused) return;
+    this.isPaused = false;
+    if (!this.rafId) {
+      this.rafId = requestAnimationFrame(this.update);
+    }
+  }
+
   update() {
+    if (this.isPaused) return;
+
     this.scroll.current = lerp(this.scroll.current, this.scroll.target, this.scroll.ease);
     if (this.medias) {
       this.medias.forEach(media => media.update(this.scroll));
