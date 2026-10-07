@@ -9,9 +9,7 @@ import { HeroSection } from '../components/home/HeroSection';
 import { LuminaHero } from '../components/home/LuminaHero';
 import { SocialProofBar } from '../components/home/SocialProofBar';
 import { ProblemVsSolution } from '../components/home/ProblemVsSolution';
-import { FlyingPostersGallery } from '../components/home/FlyingPostersGallery';
 import { HowItWorks } from '../components/home/HowItWorks';
-import { CircularBookGallery } from '../components/home/CircularBookGallery';
 import { TestimonialsSection } from '../components/home/TestimonialsSection';
 import { FinalCTA } from '../components/home/FinalCTA';
 import { CategoryBar } from '../components/home/CategoryBar';
@@ -352,14 +350,8 @@ function HomeContent() {
       {/* ── Problem vs Solution ── */}
       <ProblemVsSolution />
 
-      {/* ── Flying Posters 3D WebGL Distortion Gallery (Pinned Scroll-Lock Stage) ── */}
-      <FlyingPostersGallery books={wheelBooks} />
-
       {/* ── How It Works (Dark Mode Flow) ── */}
       <HowItWorks />
-
-      {/* ── Circular Book Gallery (3D WebGL Bending Showcase) ── */}
-      <CircularBookGallery books={wheelBooks} />
 
       {/* ── Testimonials (Asymmetric Cards) ── */}
       <TestimonialsSection />

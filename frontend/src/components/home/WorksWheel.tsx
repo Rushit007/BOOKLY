@@ -61,16 +61,29 @@ export function WorksWheel({ books, label = 'Discover Your Next Read', action = 
     rafRef.current = requestAnimationFrame(animateToTarget);
   }, [sliceDeg, total]);
 
-  // Scroll handler: rotate wheel smoothly in both directions (down AND up)
+  // Scroll handler: rotate wheel smoothly only when visible
   useEffect(() => {
     if (!mounted || total === 0) return;
 
+    let isVisible = false;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          isVisible = entry.isIntersecting;
+        });
+      },
+      { rootMargin: '100px' }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
     const onScroll = () => {
-      if (!sectionRef.current) return;
+      if (!isVisible || !sectionRef.current) return;
       const rect = sectionRef.current.getBoundingClientRect();
       const maxScroll = sectionRef.current.offsetHeight - window.innerHeight;
       if (maxScroll > 0) {
-        // Clamp progress between 0 and 1, works equally going down AND up
         const progress = Math.max(0, Math.min(1, -rect.top / maxScroll));
         targetRotRef.current = progress * 360 * 1.5;
         if (!rafRef.current) {
@@ -80,9 +93,10 @@ export function WorksWheel({ books, label = 'Discover Your Next Read', action = 
     };
 
     window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll(); // Sync initial scroll position immediately
+    onScroll();
 
     return () => {
+      observer.disconnect();
       window.removeEventListener('scroll', onScroll);
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
@@ -91,7 +105,6 @@ export function WorksWheel({ books, label = 'Discover Your Next Read', action = 
   // Manual navigation
   const goTo = (idx: number) => {
     const normalized = ((idx % total) + total) % total;
-    // Rotate wheel so that `normalized` is at the bottom
     targetRotRef.current = -normalized * sliceDeg;
     if (!rafRef.current) {
       rafRef.current = requestAnimationFrame(animateToTarget);
@@ -122,7 +135,7 @@ export function WorksWheel({ books, label = 'Discover Your Next Read', action = 
       ref={sectionRef as any}
       id="works-wheel"
       className="relative w-full border-b-2 border-[var(--border-main)] bg-[var(--bg-page)]"
-      style={{ height: '220vh' }}
+      style={{ height: '130vh' }}
     >
       <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-between select-none">
         {/* ── Header bar ── */}

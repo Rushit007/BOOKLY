@@ -62,6 +62,11 @@
   --shadow-neo-sm: 2px 2px 0px rgba(167, 139, 250, 0.15);
 }
 
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px;
+}
+
 body {
   background-color: var(--bg-page);
   color: var(--text-main);

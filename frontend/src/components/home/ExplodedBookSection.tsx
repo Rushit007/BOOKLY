@@ -277,14 +277,28 @@ export function ExplodedBookSection({ book = DEFAULT_ATOMIC_HABITS }: ExplodedBo
     }
   }, []);
 
-  // Synchronize Scroll Event with Exploded Engine
+  // Synchronize Scroll Event with Exploded Engine only when visible
   useEffect(() => {
     if (!mounted) return;
 
     let rafId: number;
+    let isVisible = false;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          isVisible = entry.isIntersecting;
+        });
+      },
+      { rootMargin: '100px' }
+    );
+
+    if (trackRef.current) {
+      observer.observe(trackRef.current);
+    }
 
     const handleScroll = () => {
-      if (!trackRef.current) return;
+      if (!isVisible || !trackRef.current) return;
       const rect = trackRef.current.getBoundingClientRect();
       const trackHeight = trackRef.current.offsetHeight;
       const viewportHeight = window.innerHeight;
@@ -306,6 +320,7 @@ export function ExplodedBookSection({ book = DEFAULT_ATOMIC_HABITS }: ExplodedBo
     handleScroll();
 
     return () => {
+      observer.disconnect();
       cancelAnimationFrame(rafId);
       window.removeEventListener('scroll', handleScroll);
     };
@@ -320,8 +335,8 @@ export function ExplodedBookSection({ book = DEFAULT_ATOMIC_HABITS }: ExplodedBo
       suppressHydrationWarning
       className="relative w-full border-b-2 border-black bg-[#0d0f12] text-white"
       style={{
-        // 420vh gives a rich, measured, cinema-grade scroll runway
-        height: '420vh',
+        // 140vh provides responsive, smooth, non-trapping scroll runway
+        height: '140vh',
       }}
     >
       {/* ── Sticky Viewport (Locks Screen During Unbox, Explode & Assemble) ── */}
