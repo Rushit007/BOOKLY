@@ -521,14 +521,14 @@ export default function CartPage() {
   return (
     <div className='min-h-screen bg-[var(--bg-page)] animate-fade-in'>
       {/* Page Header */}
-      <div className='border-b-2 border-[var(--border-main)] bg-[var(--bg-surface)]'>
+      <div className='border-b border-[var(--border-main)] bg-[var(--bg-surface)]'>
         <div className='max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-baseline justify-between'>
           <div className='flex items-baseline gap-4'>
-            <h1 className='font-editorial-serif text-3xl sm:text-4xl text-[var(--text-main)]'>
-              Shopping Bag
+            <h1 className='font-editorial-serif text-3xl sm:text-4xl text-[var(--text-main)] font-black'>
+              Your Reading <span className='font-marker text-[var(--bg-accent-orange)] inline-block -rotate-1'>Bag</span>
             </h1>
-            <span className='font-editorial-mono text-[9px] uppercase tracking-[0.22em] text-[var(--text-faint)] font-bold'>
-              {items.length} ITEM{items.length !== 1 ? 'S' : ''}
+            <span className='tactile-pixel-badge bg-[var(--bg-accent-yellow)] text-black'>
+              {items.length} {items.length !== 1 ? 'VOLUMES' : 'VOLUME'}
             </span>
           </div>
 
@@ -768,8 +768,8 @@ export default function CartPage() {
                               className={
                                 'p-2 border-2 text-center text-xs font-editorial-mono font-bold flex flex-col items-center justify-center gap-1 transition-all cursor-pointer ' +
                                 (selectedUpiApp === app.id
-                                  ? 'border-black bg-[#ffe17c] text-black shadow-[2px_2px_0px_#000] scale-[1.02]'
-                                  : 'border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 hover:border-black')
+                                  ? 'border-[var(--border-main)] bg-[var(--bg-accent-yellow)] text-black shadow-xs scale-[1.02]'
+                                  : 'border-[var(--border-subtle)] bg-[var(--bg-surface)] text-[var(--text-main)] hover:border-[var(--border-main)]')
                               }
                             >
                               <span className='text-sm'>{app.icon}</span>
@@ -778,9 +778,9 @@ export default function CartPage() {
                           ))}
                         </div>
 
-                        <div className='p-2 bg-[#ffe17c]/20 border border-black/20 text-[10px] font-editorial-mono text-neutral-700 dark:text-neutral-300 flex items-center justify-between'>
+                        <div className='p-2 bg-[var(--bg-accent-yellow)]/15 border border-[var(--border-subtle)] text-[10px] font-editorial-mono text-[var(--text-muted)] flex items-center justify-between'>
                           <span>Instant UPI Handshake</span>
-                          <span className='font-bold text-emerald-700 dark:text-emerald-400'>Verified Safe 🔒</span>
+                          <span className='font-bold text-emerald-600 dark:text-emerald-400'>Verified Safe 🔒</span>
                         </div>
                       </div>
                     )}

@@ -86,39 +86,39 @@ export default function ComparePage() {
   return (
     <div className='min-h-screen bg-[var(--bg-page)] animate-fade-in pb-16'>
       {/* Header */}
-      <div className='border-b-2 border-[var(--border-main)] bg-[var(--bg-surface)]'>
+      <div className='border-b border-[var(--border-main)] bg-[var(--bg-surface)]'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row sm:items-baseline justify-between gap-4'>
           <div>
-            <div className='flex items-center gap-2 mb-1.5 font-editorial-mono text-xs uppercase tracking-widest text-[var(--text-faint)]'>
-              <Link href='/' className='hover:text-[var(--text-main)] font-semibold'>Home</Link>
-              <span>/</span>
-              <span className='text-[var(--text-main)] font-bold'>Compare</span>
+            <div className='flex items-center gap-2 mb-2'>
+              <span className='tactile-pixel-badge bg-[var(--bg-accent-yellow)] text-black shadow-xs'>
+                [ MATRIX COMPARISON ]
+              </span>
             </div>
             <h1 className='font-editorial-serif text-3xl sm:text-4xl lg:text-5xl font-black text-[var(--text-main)]'>
-              Edition Specification Matrix
+              Compare <span className='font-marker text-[var(--bg-accent-orange)] inline-block -rotate-1'>Editions</span>
             </h1>
             <p className='font-editorial-mono text-xs uppercase tracking-wider text-[var(--text-muted)] mt-1.5 font-bold'>
-              Side-by-side technical and literary analysis ({compareBooks.length}/3 slots queued)
+              Side-by-side volume specifications ({compareBooks.length}/3 slots queued)
             </p>
           </div>
 
           <div className='flex items-center gap-3'>
             <button
               onClick={() => setShowInfoModal(true)}
-              className='px-3.5 py-2 border-2 border-[var(--border-main)] bg-[var(--bg-accent-yellow)] text-black font-editorial-mono text-xs font-black uppercase tracking-wider hover:bg-black hover:text-white transition-colors flex items-center gap-1.5 shadow-sm'
+              className='px-3.5 py-2 border border-[var(--border-main)] bg-[var(--bg-surface-elevated)] text-[var(--text-main)] font-editorial-mono text-xs font-bold uppercase tracking-wider hover:bg-[var(--bg-accent-yellow)] hover:text-black transition-colors flex items-center gap-1.5 shadow-xs'
             >
               <span>ℹ</span>
               <span>About Feature</span>
             </button>
             <button
               onClick={clearCompare}
-              className='px-3.5 py-2 border-2 border-[var(--border-main)] bg-[var(--bg-surface)] font-editorial-mono text-xs font-bold text-[var(--bg-accent-pink)] hover:bg-[var(--bg-accent-pink)]/10 transition-colors uppercase tracking-wider'
+              className='px-3.5 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] font-editorial-mono text-xs font-bold text-[var(--bg-accent-pink)] hover:bg-[var(--bg-accent-pink)]/10 transition-colors uppercase tracking-wider shadow-xs'
             >
               Clear All
             </button>
             <Link
               href='/books'
-              className='neo-btn-secondary px-4 py-2 font-editorial-mono text-xs font-bold uppercase tracking-wider shadow-[2px_2px_0px_var(--border-main)]'
+              className='px-3.5 py-2 border border-[var(--border-main)] bg-[var(--text-main)] text-[var(--bg-page)] hover:bg-[var(--bg-accent-yellow)] hover:text-black font-editorial-mono text-xs font-bold uppercase tracking-wider transition-colors shadow-xs'
             >
               + Add Editions
             </Link>

@@ -373,22 +373,21 @@ function HomeContent() {
       </div>
 
       {/* ── Editorial Stats Strip ── */}
-      <section className='border-b-2 border-[var(--border-main)] bg-[var(--bg-surface)]'>
+      <section className='border-b border-[var(--border-main)] bg-[var(--bg-surface)]'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
           <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4'>
             {EDITORIAL_STATS.map((stat, i) => (
               <div
                 key={i}
-                className='border-2 border-[var(--border-main)] p-4 text-center bg-[var(--bg-surface)] hover:-translate-y-1 transition-transform'
-                style={{ boxShadow: '3px 3px 0px var(--border-main)' }}
+                className='border border-[var(--border-main)] p-4 text-center bg-[var(--bg-surface)] hover:-translate-y-1 transition-transform shadow-xs'
               >
                 <p
                   className='font-editorial-serif text-3xl sm:text-4xl font-black mb-1'
-                  style={{ color: stat.color === 'var(--bg-accent-yellow)' ? '#eab308' : stat.color }}
+                  style={{ color: stat.color === 'var(--bg-accent-yellow)' ? '#d97706' : stat.color }}
                 >
                   {stat.value}
                 </p>
-                <p className='font-editorial-mono text-xs uppercase tracking-wider font-bold text-[var(--text-muted)]'>
+                <p className='font-pixel text-[8px] uppercase tracking-wider text-[var(--text-muted)] mt-1'>
                   {stat.label}
                 </p>
               </div>
@@ -421,19 +420,19 @@ function HomeContent() {
 
 
       {/* ── 1-Click Interactive Reading Mood Selector ── */}
-      <section className='border-b-2 border-[var(--border-main)] bg-[var(--bg-surface)] py-12 px-4 sm:px-6 lg:px-8'>
+      <section className='border-b border-[var(--border-main)] bg-[var(--bg-surface)] py-12 px-4 sm:px-6 lg:px-8'>
         <div className='max-w-7xl mx-auto'>
-          <div className='flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 pb-4 border-b-2 border-[var(--border-main)]'>
+          <div className='flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 pb-4 border-b border-[var(--border-subtle)]'>
             <div>
-              <span className='font-editorial-mono text-xs font-bold uppercase tracking-[0.2em] text-[var(--bg-accent-blue)]'>
-                INSTANT DISCOVERY WIDGET
+              <span className='tactile-pixel-badge bg-[var(--bg-accent-yellow)] text-black shadow-xs'>
+                [ DISCOVERY RADAR ]
               </span>
-              <h2 className='font-editorial-serif text-3xl sm:text-4xl font-black text-[var(--text-main)] mt-1'>
-                What is your reading appetite today?
+              <h2 className='font-editorial-serif text-3xl sm:text-4xl font-black text-[var(--text-main)] mt-2'>
+                What is your reading <span className='font-marker text-[var(--bg-accent-orange)] inline-block -rotate-1'>appetite</span> today?
               </h2>
             </div>
             <p className='font-editorial-mono text-xs text-[var(--text-faint)] uppercase tracking-wider'>
-              Click a mood to instantly curate the catalog
+              Select a genre impulse to curate the shelf
             </p>
           </div>
 
@@ -466,16 +465,18 @@ function HomeContent() {
       </section>
 
       {/* ── Curated Reading Bundles (Save Up To 22%) ── */}
-      <section className='border-b-2 border-[var(--border-main)] bg-[var(--bg-page)] py-16 px-4 sm:px-6 lg:px-8'>
+      <section className='border-b border-[var(--border-main)] bg-[var(--bg-page)] py-16 px-4 sm:px-6 lg:px-8'>
         <div className='max-w-7xl mx-auto'>
-          <div className='flex items-center gap-4 mb-10 pb-6 border-b-2 border-[var(--border-main)]'>
-            <span className='inline-block w-4 h-4 bg-[var(--bg-accent-pink)] border-2 border-[var(--border-main)]' />
+          <div className='flex items-center gap-3.5 mb-10 pb-6 border-b border-[var(--border-subtle)]'>
+            <span className='tactile-pixel-badge bg-[var(--bg-accent-pink)] text-white shadow-xs'>
+              [ SUITE ]
+            </span>
             <div>
               <p className='font-editorial-mono text-xs uppercase tracking-[0.25em] text-[var(--text-faint)] font-bold'>
                 CURATED BUNDLES · SAVINGS SUITE
               </p>
               <h2 className='font-editorial-serif text-3xl sm:text-4xl font-black text-[var(--text-main)] mt-1'>
-                Essential Reading Trilogies
+                Essential Reading <span className='font-marker text-[var(--bg-accent-orange)] inline-block -rotate-1'>Trilogies</span>
               </h2>
             </div>
           </div>
@@ -786,23 +787,25 @@ function HomeContent() {
       </section>
 
       {/* ── Catalog Section Header ── */}
-      <div id='catalog' className='border-y-2 border-[var(--border-main)] bg-[var(--bg-surface)]'>
+      <div id='catalog' className='border-y border-[var(--border-main)] bg-[var(--bg-surface)]'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4'>
-          <div className='flex items-center gap-4'>
-            <span className='inline-block w-4 h-4 bg-[var(--bg-accent-blue)] border-2 border-[var(--border-main)]' />
+          <div className='flex items-center gap-3'>
+            <span className='tactile-pixel-badge bg-[var(--bg-accent-yellow)] text-black shadow-xs'>
+              [ ARCHIVE CATALOG ]
+            </span>
             <div>
               <p className='font-editorial-mono text-xs uppercase tracking-[0.22em] font-bold text-[var(--text-faint)]'>
-                BOOKLY CATALOG · FULL COLLECTION
+                CURATED PHYSICAL EDITIONS
               </p>
               <h2 className='font-editorial-serif text-3xl sm:text-4xl font-black text-[var(--text-main)] mt-0.5'>
-                Browse All Titles ({totalItems})
+                Browse All <span className='font-marker text-[var(--bg-accent-orange)] inline-block -rotate-1'>Titles</span> ({totalItems})
               </h2>
             </div>
           </div>
           {search && (
-            <div className='flex items-center gap-2 border-2 border-[var(--border-main)] px-3 py-1.5 bg-[var(--bg-accent-yellow)] self-start'>
-              <span className='font-editorial-mono text-xs font-bold uppercase tracking-wider text-black'>QUERY: {search}</span>
-              <button onClick={() => setSearch('')} className='font-bold text-black hover:text-rose-600 transition-colors text-base'>✕</button>
+            <div className='flex items-center gap-2 border border-[var(--border-main)] px-3 py-1.5 bg-[var(--bg-accent-yellow)] self-start shadow-xs'>
+              <span className='font-pixel text-[8px] uppercase tracking-wider text-black'>QUERY: {search}</span>
+              <button onClick={() => setSearch('')} className='font-bold text-black hover:opacity-60 transition-opacity text-sm'>✕</button>
             </div>
           )}
         </div>

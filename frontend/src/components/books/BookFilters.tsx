@@ -31,11 +31,11 @@ export function BookFilters({
   onResetFilters,
 }: BookFiltersProps) {
   return (
-    <div className='neo-card-flat' style={{ borderRadius: 0 }}>
+    <div className='border border-[var(--border-main)] bg-[var(--bg-surface)] shadow-xs' style={{ borderRadius: 0 }}>
       {/* Panel Header */}
-      <div className='flex items-center justify-between px-4 py-3 border-b-2 border-[var(--border-main)] bg-[var(--bg-surface-elevated)]'>
-        <span className='font-editorial-mono text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--text-main)]'>
-          REFINE
+      <div className='flex items-center justify-between px-4 py-3 border-b border-[var(--border-main)] bg-[var(--bg-surface-elevated)]'>
+        <span className='font-pixel text-[8px] uppercase tracking-wider text-[var(--text-main)]'>
+          [ REFINE ]
         </span>
         <button
           onClick={onResetFilters}
@@ -46,7 +46,7 @@ export function BookFilters({
       </div>
 
       {/* Categories */}
-      <div className='border-b-2 border-[var(--border-subtle)]'>
+      <div className='border-b border-[var(--border-subtle)]'>
         <div className='px-4 py-2 border-b border-[var(--border-subtle)]'>
           <span className='font-editorial-mono text-[9px] uppercase tracking-[0.18em] text-[var(--text-faint)]'>
             Genre

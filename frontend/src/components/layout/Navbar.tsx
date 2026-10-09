@@ -67,21 +67,21 @@ export function Navbar() {
   );
 
   return (
-    <header className='sticky top-0 z-40 w-full border-b-2 border-black' style={{ backgroundColor: '#ffe17c', height: '80px' }}>
+    <header className='sticky top-0 z-40 w-full border-b border-[var(--border-main)] bg-[var(--bg-surface)]/95 backdrop-blur-md transition-colors' style={{ height: '76px' }}>
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-        <div className='flex items-center justify-between h-20 gap-4'>
+        <div className='flex items-center justify-between h-[76px] gap-4'>
 
           {/* ── Logo ── */}
-          <Link href='/' className='flex items-center gap-3 shrink-0 group' data-cursor='interactive'>
-            <div className='w-10 h-10 bg-black flex items-center justify-center border-2 border-black group-hover:bg-[#ffe17c] transition-colors' style={{ boxShadow: '2px 2px 0 rgba(0,0,0,0.3)' }}>
-              <span style={{ color: '#ffe17c', fontSize: '18px', fontWeight: 900 }} className='group-hover:opacity-0 transition-opacity'>⚡</span>
+          <Link href='/' className='flex items-center gap-2.5 shrink-0 group' data-cursor='interactive'>
+            <div className='w-9 h-9 bg-[var(--text-main)] text-[var(--bg-page)] flex items-center justify-center border border-[var(--border-main)] group-hover:bg-[var(--bg-accent-yellow)] group-hover:text-black transition-colors shadow-xs'>
+              <span className='font-marker text-lg leading-none'>B</span>
             </div>
             <div>
-              <span className='font-cabinet font-800 text-xl tracking-tight text-black leading-none block'>
+              <span className='font-marker text-2xl tracking-tight text-[var(--text-main)] leading-none block'>
                 BOOKLY
               </span>
-              <span className='font-cabinet text-[9px] uppercase font-700 tracking-[0.22em] text-black/50 block mt-0.5'>
-                CURATED EDITIONS
+              <span className='font-pixel text-[7px] uppercase tracking-[0.2em] text-[var(--text-faint)] block mt-1'>
+                PRESS · 2026
               </span>
             </div>
           </Link>
@@ -92,10 +92,10 @@ export function Navbar() {
               logo={BooklyLogoIcon}
               items={pillNavItems}
               activeHref={activePillHref}
-              baseColor='#1A1A1B'
-              pillColor='#ffe17c'
-              pillTextColor='#1A1A1B'
-              hoveredPillTextColor='#ffe17c'
+              baseColor='#18181b'
+              pillColor='#fcd34d'
+              pillTextColor='#18181b'
+              hoveredPillTextColor='#fcd34d'
               initialLoadAnimation={true}
             />
           </div>
@@ -109,12 +109,12 @@ export function Navbar() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder='Search editions...'
-                className='w-44 focus:w-56 px-3.5 py-1.5 text-xs font-cabinet border-2 border-black bg-white text-black placeholder:text-black/40 focus:outline-none transition-all'
+                className='w-44 focus:w-56 px-3.5 py-1.5 text-xs font-editorial-mono border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-main)] placeholder:text-[var(--text-faint)] focus:outline-none transition-all shadow-xs'
               />
               <button
                 type='submit'
                 aria-label='Search'
-                className='absolute right-2.5 text-black/60 hover:text-black transition-colors'
+                className='absolute right-2.5 text-[var(--text-faint)] hover:text-[var(--text-main)] transition-colors'
               >
                 <svg className='w-3.5 h-3.5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
                   <path strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z' />
@@ -129,14 +129,14 @@ export function Navbar() {
               href='/wishlist'
               data-cursor='interactive'
               aria-label='Wishlist'
-              className='relative w-9 h-9 border-2 border-black bg-white flex items-center justify-center text-black hover:bg-black hover:text-[#ffe17c] transition-colors'
+              className='relative w-9 h-9 border border-[var(--border-main)] bg-[var(--bg-surface)] flex items-center justify-center text-[var(--text-main)] hover:bg-[var(--bg-accent-yellow)] hover:text-black transition-colors shadow-xs'
               title='Saved Wishlist'
             >
               <svg className='w-4 h-4' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
                 <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z' />
               </svg>
               {wishlistCount > 0 && (
-                <span className='absolute -top-1 -right-1 w-4 h-4 bg-black text-[#ffe17c] rounded-full text-[9px] font-bold flex items-center justify-center'>
+                <span className='absolute -top-1.5 -right-1.5 min-w-4 h-4 px-1 bg-[var(--bg-accent-pink)] text-white text-[8px] font-pixel flex items-center justify-center border border-[var(--border-main)]'>
                   {wishlistCount}
                 </span>
               )}
@@ -147,14 +147,14 @@ export function Navbar() {
               onClick={openCartDrawer}
               data-cursor='add'
               aria-label='Open Cart'
-              className='relative w-9 h-9 border-2 border-black bg-white flex items-center justify-center text-black hover:bg-black hover:text-[#ffe17c] transition-colors'
+              className='relative w-9 h-9 border border-[var(--border-main)] bg-[var(--bg-surface)] flex items-center justify-center text-[var(--text-main)] hover:bg-[var(--bg-accent-yellow)] hover:text-black transition-colors shadow-xs'
               title='Shopping Cart'
             >
               <svg className='w-4 h-4' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
                 <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z' />
               </svg>
               {itemCount > 0 && (
-                <span className='absolute -top-1 -right-1 w-4 h-4 bg-black text-[#ffe17c] rounded-full text-[9px] font-bold flex items-center justify-center'>
+                <span className='absolute -top-1.5 -right-1.5 min-w-4 h-4 px-1 bg-[var(--bg-accent-yellow)] text-black text-[8px] font-pixel flex items-center justify-center border border-[var(--border-main)]'>
                   {itemCount}
                 </span>
               )}

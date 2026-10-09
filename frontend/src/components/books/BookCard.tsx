@@ -71,11 +71,14 @@ export function BookCard({ book }: BookCardProps) {
 
   return (
     <div
-      className='neo-card group relative flex flex-col overflow-hidden transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[6px_6px_0px_var(--border-main)] animate-fade-in'
+      className='tactile-book-card group relative flex flex-col bg-[var(--bg-surface)] border-2 border-[var(--border-main)] animate-fade-in'
       style={{ borderRadius: 0 }}
     >
       {/* Cover Image Container */}
       <div className='relative aspect-[3/4] w-full overflow-hidden bg-[var(--bg-surface-elevated)]'>
+        {/* Real Book Spine Overlay & Hinge Lighting */}
+        <div className='tactile-spine' />
+
         {imgErrorCount < 2 ? (
           <img
             src={imgSrc}
@@ -103,7 +106,7 @@ export function BookCard({ book }: BookCardProps) {
             </div>
             <div>
               <p
-                className='font-editorial-serif text-xl font-bold leading-tight line-clamp-3 mb-3'
+                className='font-marker text-lg sm:text-xl font-bold leading-tight line-clamp-3 mb-3'
                 style={{ color: '#ffffff' }}
               >
                 {book.title}
@@ -119,16 +122,16 @@ export function BookCard({ book }: BookCardProps) {
           </div>
         )}
 
-        {/* Badge strip — top-left */}
+        {/* Badge strip — top-left with pixel font */}
         <div className='absolute top-2 left-2 flex flex-col gap-1.5 z-10'>
           {book.discount > 0 && (
-            <span className='badge-pill-pink px-2.5 py-1 text-xs font-black font-editorial-mono uppercase tracking-wider inline-block shadow-sm'>
-              −{book.discount}% OFF
+            <span className='tactile-pixel-badge bg-[var(--bg-accent-pink)] text-white shadow-xs'>
+              -{book.discount}%
             </span>
           )}
           {book.rating >= 4.8 && (
-            <span className='badge-pill-yellow px-2.5 py-1 text-xs font-black font-editorial-mono uppercase tracking-wider inline-block shadow-sm'>
-              ★ BESTSELLER
+            <span className='tactile-pixel-badge bg-[var(--bg-accent-yellow)] text-black shadow-xs'>
+              ★ TOP
             </span>
           )}
         </div>

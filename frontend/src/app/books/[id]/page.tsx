@@ -115,10 +115,16 @@ export default function BookDetailPage() {
 
       {/* Main Content */}
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10'>
-        <div className='grid grid-cols-1 lg:grid-cols-12 gap-10 items-start border-2 border-[var(--border-main)]'>
-          {/* Left: Cover */}
-          <div className='lg:col-span-5 border-r-2 border-[var(--border-main)] bg-[var(--bg-surface-elevated)]'>
+        <div className='grid grid-cols-1 lg:grid-cols-12 gap-10 items-start border border-[var(--border-main)] bg-[var(--bg-surface)] shadow-xs'>
+          {/* Left: Real-Book Cover Presentation */}
+          <div className='lg:col-span-5 border-r border-[var(--border-main)] bg-[var(--bg-surface-elevated)] relative overflow-hidden'>
+            {/* Real Silk Ribbon Bookmark */}
+            <div className='tactile-ribbon' title='Archival Bookmark' />
+
             <div className='relative aspect-[3/4] w-full'>
+              {/* Real Book Spine Overlay & Hinge Lighting */}
+              <div className='tactile-spine' />
+
               {book.coverImage ? (
                 <img
                   src={book.coverImage}
@@ -127,11 +133,11 @@ export default function BookDetailPage() {
                 />
               ) : (
                 <div className='w-full h-full flex flex-col justify-between p-8 bg-[var(--bg-surface-elevated)]'>
-                  <span className='font-editorial-mono text-[9px] uppercase tracking-[0.22em] text-[var(--text-faint)]'>
-                    {book.category?.name || 'FICTION'}
+                  <span className='font-pixel text-[8px] uppercase tracking-wider text-[var(--bg-accent-orange)]'>
+                    [ {book.category?.name || 'EDITION'} ]
                   </span>
                   <div>
-                    <h2 className='font-editorial-serif text-4xl leading-tight text-[var(--text-main)] mb-4'>
+                    <h2 className='font-editorial-serif text-4xl leading-tight text-[var(--text-main)] mb-4 font-black'>
                       {book.title}
                     </h2>
                     {book.subtitle && (
@@ -140,7 +146,7 @@ export default function BookDetailPage() {
                       </p>
                     )}
                     <p className='font-editorial-mono text-[10px] uppercase tracking-widest text-[var(--text-muted)]'>
-                      {book.author}
+                      BY {book.author}
                     </p>
                   </div>
                 </div>
@@ -148,9 +154,9 @@ export default function BookDetailPage() {
 
               {/* Discount badge */}
               {book.discount > 0 && (
-                <div className='absolute top-0 left-0'>
-                  <span className='badge-pill-pink inline-block px-3 py-1 text-[10px] font-bold font-editorial-mono uppercase tracking-wider'>
-                    −{book.discount}% OFF
+                <div className='absolute bottom-3 left-3 z-10'>
+                  <span className='tactile-pixel-badge bg-[var(--bg-accent-pink)] text-white shadow-xs'>
+                    -{book.discount}% OFF
                   </span>
                 </div>
               )}
@@ -160,20 +166,23 @@ export default function BookDetailPage() {
           {/* Right: Metadata + Actions */}
           <div className='lg:col-span-7 px-6 py-8 space-y-6 bg-[var(--bg-surface)]'>
             {/* Category */}
-            <div className='flex items-center gap-3'>
-              <span className='badge-pill-yellow px-2.5 py-1 text-[9px] font-bold font-editorial-mono uppercase tracking-widest inline-block'>
-                {book.category?.name || 'BOOK'}
+            <div className='flex items-center gap-2.5'>
+              <span className='tactile-pixel-badge bg-[var(--bg-accent-yellow)] text-black shadow-xs'>
+                {book.category?.name || 'CURATED'}
               </span>
               {book.rating >= 4.8 && (
-                <span className='badge-pill-mint px-2.5 py-1 text-[9px] font-bold font-editorial-mono uppercase tracking-widest inline-block'>
-                  BESTSELLER
+                <span className='tactile-pixel-badge bg-[var(--bg-accent-mint)] text-white shadow-xs'>
+                  ★ BESTSELLER
                 </span>
               )}
+              <span className='font-pixel text-[7px] text-[var(--text-faint)] uppercase'>
+                [ ARCHIVE ED. ]
+              </span>
             </div>
 
             {/* Title */}
             <div>
-              <h1 className='font-editorial-serif text-3xl sm:text-4xl text-[var(--text-main)] leading-tight'>
+              <h1 className='font-editorial-serif text-3xl sm:text-4xl text-[var(--text-main)] leading-tight font-black'>
                 {book.title}
               </h1>
               {book.subtitle && (
@@ -181,9 +190,9 @@ export default function BookDetailPage() {
                   {book.subtitle}
                 </p>
               )}
-              <p className='font-editorial-mono text-[10px] uppercase tracking-widest text-[var(--text-faint)] mt-3'>
-                by{' '}
-                <span className='font-bold text-[var(--text-muted)]'>{book.author}</span>
+              <p className='font-editorial-mono text-xs uppercase tracking-widest text-[var(--text-faint)] mt-2'>
+                AUTHORED BY{' '}
+                <span className='font-bold text-[var(--text-main)]'>{book.author}</span>
               </p>
             </div>
 
@@ -193,19 +202,19 @@ export default function BookDetailPage() {
               <span className='text-[var(--border-subtle)]'>|</span>
               <span
                 className={
-                  'font-editorial-mono text-[9px] font-bold uppercase tracking-wider ' +
+                  'font-pixel text-[8px] uppercase tracking-wider ' +
                   (book.stock > 0
-                    ? 'text-[var(--bg-accent-mint)]'
-                    : 'text-[var(--bg-accent-pink)]')
+                    ? 'text-emerald-600 dark:text-emerald-400'
+                    : 'text-rose-600 dark:text-rose-400')
                 }
               >
-                {book.stock > 0 ? `IN STOCK (${book.stock})` : 'OUT OF STOCK'}
+                {book.stock > 0 ? `IN STOCK (${book.stock})` : 'SOLD OUT'}
               </span>
             </div>
 
             {/* Price */}
             <div className='flex items-baseline gap-3'>
-              <span className='font-editorial-serif text-4xl font-bold text-[var(--text-main)]'>
+              <span className='font-editorial-serif text-4xl font-black text-[var(--text-main)]'>
                 {rupee}{discountedPrice}
               </span>
               {book.discount > 0 && (
@@ -213,7 +222,7 @@ export default function BookDetailPage() {
                   <span className='font-editorial-mono text-base text-[var(--text-faint)] line-through'>
                     {rupee}{book.price}
                   </span>
-                  <span className='badge-pill-mint px-2 py-0.5 text-[9px] font-bold font-editorial-mono uppercase tracking-wider inline-block'>
+                  <span className='tactile-pixel-badge bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'>
                     SAVE {rupee}{book.price - discountedPrice}
                   </span>
                 </>
@@ -222,27 +231,27 @@ export default function BookDetailPage() {
 
             {/* Member Content or Auth Gate */}
             {!isAuthenticated ? (
-              <div className='p-6 sm:p-8 border-2 border-black dark:border-white/20 bg-gradient-to-br from-[#ffe17c]/20 via-white to-neutral-50 dark:from-[#ffe17c]/10 dark:via-[#141414] dark:to-[#0c0c0c] shadow-[6px_6px_0px_#000] dark:shadow-[6px_6px_0px_rgba(255,255,255,0.1)] space-y-4'>
+              <div className='p-6 sm:p-7 border border-[var(--border-main)] bg-[var(--bg-surface-elevated)] shadow-xs space-y-4'>
                 <div className='flex items-center gap-2'>
-                  <span className='px-2.5 py-1 bg-black text-[#ffe17c] font-editorial-mono text-[9px] font-black uppercase tracking-[0.2em]'>
-                    🔒 MEMBER ACCESS REQUIRED
+                  <span className='tactile-pixel-badge bg-[var(--text-main)] text-[var(--bg-page)]'>
+                    🔒 MEMBER ACCESS
                   </span>
-                  <span className='font-editorial-mono text-[10px] text-neutral-500'>
-                    Free Reader Pass
+                  <span className='font-editorial-mono text-[10px] text-[var(--text-faint)] uppercase tracking-wider'>
+                    Free Reader Account
                   </span>
                 </div>
 
-                <h3 className='font-cabinet font-800 text-xl sm:text-2xl text-neutral-900 dark:text-white leading-tight'>
-                  Register to Read Synopsis & Order This Edition
+                <h3 className='font-editorial-serif font-black text-xl sm:text-2xl text-[var(--text-main)] leading-tight'>
+                  Sign In to Read Full Synopsis & Order
                 </h3>
 
-                <p className='font-cabinet text-xs sm:text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed'>
-                  First time on BOOKLY? Full volume specifications, curator notes, reader discussions, and express dispatch are reserved for verified readers. Registration is 100% free and takes 30 seconds.
+                <p className='font-editorial-sans text-xs sm:text-sm text-[var(--text-muted)] leading-relaxed'>
+                  Full volume specifications, curator notes, reader discussions, and express dispatch are reserved for verified readers. Registration is 100% free and takes 30 seconds.
                 </p>
 
                 {/* Blurred preview of synopsis */}
-                <div className='relative overflow-hidden max-h-16 opacity-60 filter blur-[1.5px] select-none'>
-                  <p className='font-editorial-sans text-xs text-neutral-500'>
+                <div className='relative overflow-hidden max-h-14 opacity-50 filter blur-[1.5px] select-none'>
+                  <p className='font-editorial-sans text-xs text-[var(--text-faint)]'>
                     {book.description}
                   </p>
                 </div>
@@ -250,13 +259,13 @@ export default function BookDetailPage() {
                 <div className='pt-2 flex flex-wrap items-center gap-3'>
                   <Link
                     href={`/register?redirect=${encodeURIComponent(`/books/${book.id}`)}`}
-                    className='py-3 px-6 font-cabinet font-800 text-xs uppercase tracking-widest text-black bg-[#ffe17c] hover:bg-[#fed053] border-2 border-black shadow-[3px_3px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition-all'
+                    className='py-2.5 px-5 font-editorial-mono font-bold text-xs uppercase tracking-wider text-black bg-[var(--bg-accent-yellow)] hover:bg-[#fbbf24] border border-[var(--border-main)] shadow-xs transition-all'
                   >
                     Create Free Account →
                   </Link>
                   <Link
                     href={`/login?redirect=${encodeURIComponent(`/books/${book.id}`)}`}
-                    className='py-3 px-5 font-cabinet font-800 text-xs uppercase tracking-widest text-neutral-900 dark:text-white border-2 border-black dark:border-white/30 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors'
+                    className='py-2.5 px-5 font-editorial-mono font-bold text-xs uppercase tracking-wider text-[var(--text-main)] border border-[var(--border-main)] bg-[var(--bg-surface)] hover:bg-[var(--bg-surface-elevated)] transition-colors'
                   >
                     Sign In
                   </Link>

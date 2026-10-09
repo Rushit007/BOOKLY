@@ -123,10 +123,13 @@ export function BookCover({
         </div>
       )}
 
-      {/* Optional Badge */}
+      {/* Real Book Spine Overlay & Hinge Lighting (Skeuomorphic real-object book depth) */}
+      <div className="tactile-spine" />
+
+      {/* Optional Skeuomorphic Badge */}
       {showBadge && (
-        <div className="absolute top-0 right-0 z-20">
-          <span className="badge-pill-yellow px-2 py-0.5 text-[9px] font-bold font-editorial-mono uppercase tracking-wider border-b-2 border-l-2 border-[var(--border-main)]">
+        <div className="absolute top-2 right-2 z-20">
+          <span className="tactile-pixel-badge bg-[var(--bg-accent-yellow)] text-black border border-[var(--border-main)] shadow-[1px_1px_0px_#000]">
             {showBadge}
           </span>
         </div>

@@ -69,24 +69,24 @@ function CatalogPageContent() {
   return (
     <main className="min-h-screen">
       {/* Page Header */}
-      <div className="border-b-2 border-[var(--border-main)] bg-[var(--bg-surface)]">
+      <div className="border-b border-[var(--border-main)] bg-[var(--bg-surface)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
             <div>
-              <p className="font-editorial-mono text-[9px] uppercase tracking-[0.3em] text-[var(--bg-accent-blue)] font-bold mb-2">
-                BOOKLY CATALOG
+              <p className="font-pixel text-[8px] uppercase tracking-widest text-[var(--bg-accent-orange)] mb-2">
+                [ CATALOG ARCHIVE ]
               </p>
-              <h1 className="font-editorial-serif text-4xl sm:text-5xl lg:text-6xl text-[var(--text-main)] leading-tight">
-                Full <span className="italic editorial-highlighter">Collection</span>
+              <h1 className="font-editorial-serif text-4xl sm:text-5xl lg:text-6xl text-[var(--text-main)] leading-tight font-black">
+                The Permanent <span className="font-marker text-[var(--bg-accent-orange)] inline-block -rotate-1">Collection</span>
               </h1>
-              <p className="font-editorial-sans text-sm text-[var(--text-muted)] mt-3 max-w-lg leading-relaxed">
-                Browse our complete catalog of curated books across engineering, literature, business, and beyond.
+              <p className="font-editorial-sans text-sm sm:text-base text-[var(--text-muted)] mt-2 max-w-lg leading-relaxed">
+                Hand-inspected editions across systems engineering, human psychology, architecture, and world literature.
               </p>
             </div>
             <div className="flex items-center gap-3">
-              <div className="px-4 py-2 border-2 border-[var(--border-main)] bg-[var(--bg-accent-yellow)]">
-                <span className="font-editorial-mono text-[10px] font-bold uppercase tracking-wider text-[var(--text-main)]">
-                  {totalItems} TITLES
+              <div className="px-3.5 py-1.5 border border-[var(--border-main)] bg-[var(--bg-accent-yellow)] shadow-xs">
+                <span className="font-pixel text-[8px] font-bold uppercase text-black">
+                  {totalItems} EDITIONS READY
                 </span>
               </div>
             </div>
@@ -95,23 +95,23 @@ function CatalogPageContent() {
       </div>
 
       {/* Search + Active Filter Bar */}
-      <div className="border-b-2 border-[var(--border-main)] bg-[var(--bg-surface-elevated)]">
+      <div className="border-b border-[var(--border-main)] bg-[var(--bg-surface-elevated)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap items-center gap-3">
           {/* Live search */}
           <form
             onSubmit={(e) => { e.preventDefault(); setPage(1); }}
-            className="flex items-center border-2 border-[var(--border-main)] bg-[var(--bg-surface)] overflow-hidden flex-1 min-w-[200px] max-w-sm"
+            className="flex items-center border border-[var(--border-main)] bg-[var(--bg-surface)] overflow-hidden flex-1 min-w-[200px] max-w-sm shadow-xs"
           >
             <input
               type="text"
               value={search}
               onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-              placeholder="Search titles, authors..."
+              placeholder="Search titles, authors, ISBN..."
               className="flex-1 px-3 py-2 font-editorial-mono text-[11px] bg-transparent text-[var(--text-main)] placeholder:text-[var(--text-faint)] focus:outline-none"
             />
             <button
               type="submit"
-              className="px-3 py-2 border-l-2 border-[var(--border-main)] text-[var(--text-main)] hover:bg-[var(--bg-accent-yellow)] transition-colors"
+              className="px-3 py-2 border-l border-[var(--border-main)] text-[var(--text-main)] hover:bg-[var(--bg-accent-yellow)] transition-colors"
             >
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -121,19 +121,19 @@ function CatalogPageContent() {
 
           {/* Active filters */}
           {search && (
-            <div className="flex items-center gap-2 border-2 border-[var(--border-main)] px-3 py-1.5 bg-[var(--bg-accent-yellow)] animate-in fade-in">
-              <span className="font-editorial-mono text-[10px] font-bold uppercase tracking-wider text-[var(--text-main)]">
-                SEARCH: {search}
+            <div className="flex items-center gap-2 border border-[var(--border-main)] px-2.5 py-1 bg-[var(--bg-accent-yellow)] animate-in fade-in shadow-xs">
+              <span className="font-pixel text-[8px] uppercase tracking-wider text-black">
+                QUERY: {search}
               </span>
-              <button onClick={() => { setSearch(''); setPage(1); }} className="font-bold text-[var(--text-main)] hover:text-[var(--bg-accent-pink)] transition-colors text-xs">×</button>
+              <button onClick={() => { setSearch(''); setPage(1); }} className="font-bold text-black hover:opacity-60 transition-opacity text-xs">×</button>
             </div>
           )}
           {selectedCategory && (
-            <div className="flex items-center gap-2 border-2 border-[var(--border-main)] px-3 py-1.5 bg-[var(--bg-accent-blue)]">
-              <span className="font-editorial-mono text-[10px] font-bold uppercase tracking-wider text-white">
-                {selectedCategory.toUpperCase()}
+            <div className="flex items-center gap-2 border border-[var(--border-main)] px-2.5 py-1 bg-[var(--text-main)] text-[var(--bg-page)] shadow-xs">
+              <span className="font-pixel text-[8px] uppercase tracking-wider">
+                GENRE: {selectedCategory.toUpperCase()}
               </span>
-              <button onClick={() => { setSelectedCategory(''); setPage(1); }} className="font-bold text-white hover:opacity-70 transition-opacity text-xs">×</button>
+              <button onClick={() => { setSelectedCategory(''); setPage(1); }} className="font-bold text-[var(--bg-page)] hover:opacity-60 transition-opacity text-xs">×</button>
             </div>
           )}
         </div>

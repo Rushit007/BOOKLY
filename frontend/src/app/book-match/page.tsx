@@ -186,30 +186,30 @@ export default function BookMatchPage() {
   return (
     <div className='min-h-screen bg-[var(--bg-page)] animate-fade-in pb-16'>
       {/* Editorial Header */}
-      <div className='border-b-2 border-[var(--border-main)] bg-[var(--bg-surface)]'>
+      <div className='border-b border-[var(--border-main)] bg-[var(--bg-surface)]'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14'>
           <div className='flex flex-wrap items-center justify-between gap-3 mb-4'>
-            <div className='flex flex-wrap items-center gap-3'>
-              <span className='badge-pill-yellow px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-[2px_2px_0px_var(--border-main)]'>
-                ⚡ DETERMINISTIC ALGORITHM
+            <div className='flex flex-wrap items-center gap-2'>
+              <span className='tactile-pixel-badge bg-[var(--bg-accent-yellow)] text-black shadow-xs'>
+                [ MATCH ENGINE 2.0 ]
               </span>
-              <span className='badge-pill-mint px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-[2px_2px_0px_var(--border-main)]'>
-                PERSONALIZED MATCHING
+              <span className='tactile-pixel-badge bg-[var(--text-main)] text-[var(--bg-page)] shadow-xs'>
+                ZERO BIAS
               </span>
             </div>
             <button
               onClick={() => setShowMatchInfoModal(true)}
-              className='px-3.5 py-1.5 border-2 border-[var(--border-main)] bg-[var(--bg-accent-yellow)] text-black font-editorial-mono text-xs font-black uppercase tracking-wider hover:bg-black hover:text-white transition-colors flex items-center gap-1.5 shadow-sm'
+              className='px-3.5 py-1.5 border border-[var(--border-main)] bg-[var(--bg-surface-elevated)] text-[var(--text-main)] font-editorial-mono text-xs font-bold uppercase tracking-wider hover:bg-[var(--bg-accent-yellow)] hover:text-black transition-colors flex items-center gap-1.5 shadow-xs'
             >
               <span>ℹ</span>
-              <span>How Match Works</span>
+              <span>How Scoring Works</span>
             </button>
           </div>
 
-          <h1 className='font-editorial-serif text-4xl sm:text-6xl text-[var(--text-main)] leading-[1.05]'>
-            Book <span className='italic font-normal editorial-highlighter'>Match</span> Engine
+          <h1 className='font-editorial-serif text-4xl sm:text-6xl text-[var(--text-main)] leading-[1.05] font-black'>
+            Find Your True <span className='font-marker text-[var(--bg-accent-orange)] inline-block -rotate-1'>Match</span>
           </h1>
-          <p className='font-editorial-sans text-base text-[var(--text-muted)] mt-4 max-w-2xl leading-relaxed'>
+          <p className='font-editorial-sans text-base text-[var(--text-muted)] mt-3 max-w-2xl leading-relaxed'>
             Tune your genre taste, budget ceiling, and quality standard. Our catalog scoring algorithm ranks every volume by compatibility with zero corporate advertising bias.
           </p>
         </div>

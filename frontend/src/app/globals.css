@@ -1,65 +1,80 @@
-@import url('https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800,700,500,400&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Permanent+Marker&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Press+Start+2P&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
 @import 'tailwindcss';
 
+@font-face {
+  font-family: 'Permanent Marker';
+  src: url('/fonts/Permanent_Marker/PermanentMarker-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
 
+@font-face {
+  font-family: 'Press Start 2P';
+  src: url('/fonts/Press_Start_2P/PressStart2P-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
 
 :root {
-  /* Vibrant warm editorial palette — light mode */
-  --bg-page: #faf8f3;
+  /* Minimalist warm gallery palette — light mode */
+  --bg-page: #fbfbf9;
   --bg-surface: #ffffff;
-  --bg-surface-elevated: #f0ede4;
-  --bg-accent-yellow: #f59e0b;      /* warm amber */
-  --bg-accent-blue: #2563eb;        /* vivid royal blue */
-  --bg-accent-pink: #db2777;        /* hot pink */
-  --bg-accent-mint: #059669;        /* deep emerald */
-  --bg-accent-violet: #7c3aed;      /* deep violet */
-  --bg-accent-orange: #ea580c;      /* rich orange */
-  --bg-accent-teal: #0891b2;        /* ocean teal */
-  --bg-accent-red: #dc2626;         /* vivid red */
+  --bg-surface-elevated: #f4f3ee;
+  --bg-accent-yellow: #fcd34d;      /* soft warm amber marker */
+  --bg-accent-blue: #2563eb;        /* refined cobalt */
+  --bg-accent-pink: #ec4899;        /* editorial rose */
+  --bg-accent-mint: #059669;        /* sage emerald */
+  --bg-accent-violet: #6366f1;      /* quiet indigo */
+  --bg-accent-orange: #f97316;      /* vermilion punch */
+  --bg-accent-teal: #0d9488;        /* subtle teal */
+  --bg-accent-red: #ef4444;         /* editorial red */
   
-  --border-main: #1c1917;
-  --border-subtle: #d6d0c4;
-  --border-strong: #1c1917;
+  --border-main: #18181b;           /* sharp zinc black */
+  --border-subtle: #e4e4e7;         /* hairline divider */
+  --border-strong: #09090b;
   
-  --text-main: #0f0e0d;
-  --text-muted: #44403c;
-  --text-faint: #6b7280;
+  --text-main: #111113;             /* sumi ink black */
+  --text-muted: #52525b;            /* clear secondary text */
+  --text-faint: #9ca3af;            /* subtle metadata */
   
-  --shadow-neo: 4px 4px 0px #1c1917;
-  --shadow-neo-lg: 6px 6px 0px #1c1917;
-  --shadow-neo-sm: 2px 2px 0px #1c1917;
+  --shadow-neo: 3px 3px 0px #18181b;
+  --shadow-neo-lg: 5px 5px 0px #18181b;
+  --shadow-neo-sm: 1.5px 1.5px 0px #18181b;
   
   --font-serif: 'DM Serif Display', Georgia, serif;
   --font-mono: 'Space Mono', monospace;
   --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-marker: 'Permanent Marker', cursive, sans-serif;
+  --font-pixel: 'Press Start 2P', monospace;
 }
 
 .dark {
-  /* Deep jewel-tone dark mode — rich, vivid, premium */
+  /* Minimalist museum obsidian — dark mode */
   --bg-page: #09090b;
-  --bg-surface: #111115;
-  --bg-surface-elevated: #1c1c22;
-  --bg-accent-yellow: #fbbf24;      /* golden yellow */
-  --bg-accent-blue: #3b82f6;        /* electric blue */
-  --bg-accent-pink: #ec4899;        /* neon pink */
-  --bg-accent-mint: #10b981;        /* bright emerald */
-  --bg-accent-violet: #a78bfa;      /* soft violet */
-  --bg-accent-orange: #f97316;      /* bright orange */
-  --bg-accent-teal: #22d3ee;        /* cyan/teal */
-  --bg-accent-red: #ef4444;         /* bright red */
+  --bg-surface: #121215;
+  --bg-surface-elevated: #1a1a20;
+  --bg-accent-yellow: #fbbf24;      /* golden marker glow */
+  --bg-accent-blue: #3b82f6;        /* quiet electric blue */
+  --bg-accent-pink: #f472b6;
+  --bg-accent-mint: #34d399;
+  --bg-accent-violet: #818cf8;
+  --bg-accent-orange: #fb923c;
+  --bg-accent-teal: #2dd4bf;
+  --bg-accent-red: #f87171;
   
-  --border-main: #3f3f46;
-  --border-subtle: #27272a;
-  --border-strong: #e4e4e7;
+  --border-main: #27272a;
+  --border-subtle: #1f1f23;
+  --border-strong: #fafafa;
   
   --text-main: #fafafa;
   --text-muted: #a1a1aa;
   --text-faint: #71717a;
   
-  --shadow-neo: 4px 4px 0px rgba(167, 139, 250, 0.25);
-  --shadow-neo-lg: 6px 6px 0px rgba(167, 139, 250, 0.3);
-  --shadow-neo-sm: 2px 2px 0px rgba(167, 139, 250, 0.15);
+  --shadow-neo: 3px 3px 0px rgba(255, 255, 255, 0.12);
+  --shadow-neo-lg: 5px 5px 0px rgba(255, 255, 255, 0.18);
+  --shadow-neo-sm: 1.5px 1.5px 0px rgba(255, 255, 255, 0.08);
 }
 
 html {
@@ -147,6 +162,113 @@ input::placeholder, textarea::placeholder {
 
 .font-editorial-sans {
   font-family: var(--font-sans);
+}
+
+.font-marker {
+  font-family: var(--font-marker);
+  letter-spacing: 0.02em;
+}
+
+.font-pixel {
+  font-family: var(--font-pixel);
+  letter-spacing: -0.01em;
+}
+
+/* Minimalist Skeuomorphic Real-Object Book Elements */
+.tactile-book-card {
+  position: relative;
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transform-origin: left center;
+  perspective: 1200px;
+}
+
+.tactile-book-card:hover {
+  transform: perspective(1200px) rotateY(-7deg) translateY(-5px);
+  box-shadow: 
+    -4px 4px 12px rgba(0,0,0,0.08),
+    6px 8px 0px #e4e2d8,
+    10px 12px 0px var(--border-main);
+}
+
+.dark .tactile-book-card:hover {
+  box-shadow: 
+    -4px 4px 16px rgba(0,0,0,0.4),
+    6px 8px 0px #222227,
+    10px 12px 0px rgba(255,255,255,0.15);
+}
+
+/* Real-Book Spine & Hinge Highlight Shadow */
+.tactile-spine {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 14px;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.28) 0%,
+    rgba(255, 255, 255, 0.22) 20%,
+    rgba(0, 0, 0, 0.22) 40%,
+    rgba(0, 0, 0, 0.08) 70%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 10;
+  border-right: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+/* Stacked Pages Thickness (right/bottom deckle edge) */
+.tactile-pages {
+  box-shadow: 
+    2px 2px 0px #ebe8dc,
+    4px 4px 0px #dedad0,
+    6px 6px 0px var(--border-main);
+}
+
+.dark .tactile-pages {
+  box-shadow: 
+    2px 2px 0px #27272a,
+    4px 4px 0px #1f1f23,
+    6px 6px 0px #3f3f46;
+}
+
+/* Tactile Silk Ribbon Bookmark */
+.tactile-ribbon {
+  position: absolute;
+  top: 0;
+  right: 14px;
+  width: 16px;
+  height: 38px;
+  background: #dc2626;
+  z-index: 20;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 82%, 0 100%);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  transition: height 0.3s ease;
+}
+
+.tactile-ribbon:hover {
+  height: 48px;
+}
+
+/* Tactile Ink Stamp */
+.tactile-stamp {
+  font-family: var(--font-marker);
+  border: 2px dashed currentColor;
+  padding: 2px 8px;
+  display: inline-block;
+  transform: rotate(-2deg);
+  letter-spacing: 0.05em;
+  border-radius: 2px;
+}
+
+/* Tactile Pixel Badge */
+.tactile-pixel-badge {
+  font-family: var(--font-pixel);
+  font-size: 8px;
+  line-height: 1.2;
+  padding: 4px 6px;
+  letter-spacing: 0.04em;
+  border: 1px solid var(--border-main);
 }
 
 /* Yellow Highlighter Underline Accent (exact signature from reference) */

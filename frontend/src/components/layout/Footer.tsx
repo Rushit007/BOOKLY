@@ -37,7 +37,7 @@ const SOCIALS = [
 
 export function Footer() {
   return (
-    <footer className='border-t-2 border-black' style={{ backgroundColor: '#171e19' }}>
+    <footer className='border-t border-[var(--border-main)] bg-[#111113] text-neutral-300 transition-colors'>
       <div className='max-w-7xl mx-auto'>
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4' style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
 
@@ -46,16 +46,20 @@ export function Footer() {
             <div className='mb-6'>
               <Link href='/' className='group flex items-center gap-3'>
                 <div
-                  className='w-10 h-10 flex items-center justify-center border-2 transition-colors'
-                  style={{ backgroundColor: '#272727', borderColor: 'rgba(255,255,255,0.15)' }}
+                  className='w-9 h-9 flex items-center justify-center border transition-colors bg-neutral-900 border-neutral-700 group-hover:bg-[var(--bg-accent-yellow)] group-hover:text-black shadow-xs'
                 >
-                  <span style={{ color: '#ffe17c', fontSize: '16px', fontWeight: 900 }}>⚡</span>
+                  <span className='font-marker text-lg text-white group-hover:text-black leading-none'>B</span>
                 </div>
-                <span className='font-cabinet font-800 text-xl text-white'>BOOKLY</span>
+                <div>
+                  <span className='font-marker text-2xl text-white tracking-wide block leading-none'>BOOKLY</span>
+                  <span className='font-pixel text-[7px] text-[var(--bg-accent-yellow)] uppercase tracking-wider block mt-1'>
+                    [ ARCHIVE · 2026 ]
+                  </span>
+                </div>
               </Link>
             </div>
-            <p className='font-cabinet text-sm leading-relaxed mb-6' style={{ color: '#b7c6c2', opacity: 0.6 }}>
-              Curated editions for curious minds. A premium bookstore built on craft, care, and character.
+            <p className='font-editorial-sans text-xs leading-relaxed mb-6 text-neutral-400'>
+              Curated editions for inquisitive minds. An independent haven built on physical craft, care, and enduring literature.
             </p>
             {/* Social icon squares */}
             <div className='flex items-center gap-2'>

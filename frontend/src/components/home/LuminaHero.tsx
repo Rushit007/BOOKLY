@@ -7,8 +7,7 @@ import { TubesBackground } from './TubesBackground';
 export function LuminaHero() {
   return (
     <section
-      className="lumina-dot-bg border-b-2 border-black relative"
-      style={{ backgroundColor: '#ffe17c' }}
+      className="lumina-dot-bg border-b border-[var(--border-main)] relative bg-[var(--bg-surface-elevated)] transition-colors"
     >
       <TubesBackground enableClickInteraction={true}>
         <div className="max-w-7xl mx-auto px-6 lg:px-8 py-16 lg:py-24">
@@ -17,70 +16,65 @@ export function LuminaHero() {
           {/* ── Left Column ── */}
           <div className="space-y-8">
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 bg-white border-2 border-black rounded-full px-4 py-2 shadow-hard-4">
-              <span className="w-2 h-2 rounded-full bg-black inline-block" />
-              <span className="font-cabinet font-700 text-sm text-black uppercase tracking-wide">
-                NEW: AI Book Match 2.0
+            <div className="inline-flex items-center gap-2.5 bg-[var(--bg-surface)] border border-[var(--border-main)] rounded-full px-4 py-2 shadow-xs">
+              <span className="font-pixel text-[8px] text-[var(--bg-accent-orange)]">[ ARCHIVE 2026 ]</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--bg-accent-mint)] animate-pulse" />
+              <span className="font-editorial-mono font-bold text-xs text-[var(--text-main)] uppercase tracking-wider">
+                Curated Physical Editions & Book Match
               </span>
             </div>
 
             {/* Heading */}
             <h1
-              className="font-cabinet font-800 text-black leading-none"
-              style={{ fontSize: 'clamp(3rem, 7vw, 5.5rem)', lineHeight: 1.0 }}
+              className="font-editorial-serif font-black text-[var(--text-main)] leading-tight tracking-tight"
+              style={{ fontSize: 'clamp(2.75rem, 6.5vw, 5.2rem)', lineHeight: 1.05 }}
             >
-              STOP BROWSING.{' '}
-              <span
-                style={{
-                  WebkitTextStroke: '2.5px black',
-                  color: 'transparent',
-                  display: 'inline',
-                }}
-              >
-                START
+              Books that carry{' '}
+              <span className="font-marker text-[var(--bg-accent-orange)] inline-block -rotate-1">
+                weight
               </span>{' '}
-              READING.
+              and soul.
             </h1>
 
             {/* Sub-line */}
-            <p className="font-cabinet text-black/70 text-lg leading-relaxed max-w-lg" style={{ fontWeight: 500 }}>
-              Stop juggling 12 different bookstores. BOOKLY brings curated editions, smart recommendations, and genuine publisher copies into one bold experience.
+            <p className="font-editorial-sans text-[var(--text-muted)] text-base sm:text-lg leading-relaxed max-w-lg">
+              Curated for inquisitive minds. Foundational engineering craft, seminal non-fiction, and timeless literature printed to endure for generations.
             </p>
 
             {/* CTA group */}
-            <div className="flex flex-wrap items-center gap-5">
+            <div className="flex flex-wrap items-center gap-4">
               <Link href="/books">
                 <CreepyButton
-                  primary="#1A1A1B"
-                  primaryHover="#333"
-                  eyeColor="#ffe17c"
+                  primary="#18181b"
+                  primaryHover="#27272a"
+                  eyeColor="#fcd34d"
                   style={{ fontSize: '0.95rem', minWidth: '13em' }}
                 >
-                  Explore Catalog ↗
+                  Explore Collection ↗
                 </CreepyButton>
               </Link>
               <Link href="/book-match">
                 <CreepyButton
                   primary="#ffffff"
-                  primaryHover="#f5f0e0"
-                  eyeColor="#1A1A1B"
-                  style={{ fontSize: '0.95rem', minWidth: '13em', '--cb-black': '#1A1A1B' } as React.CSSProperties}
+                  primaryHover="#f4f4f5"
+                  eyeColor="#18181b"
+                  style={{ fontSize: '0.95rem', minWidth: '13em', '--cb-black': '#18181b' } as React.CSSProperties}
                 >
-                  ⚡ Try Book Match
+                  ✦ Personal Book Match
                 </CreepyButton>
               </Link>
             </div>
 
             {/* Trust strip */}
-            <div className="flex flex-wrap items-center gap-5 text-black/60">
-              <span className="font-cabinet text-xs font-500 flex items-center gap-1">
-                <span className="text-black">✓</span> 14-day free returns
+            <div className="flex flex-wrap items-center gap-5 text-[var(--text-muted)]">
+              <span className="font-editorial-mono text-xs font-semibold flex items-center gap-1.5">
+                <span className="text-[var(--bg-accent-mint)]">✓</span> 100% Genuine First Editions
               </span>
-              <span className="font-cabinet text-xs font-500 flex items-center gap-1">
-                <span className="text-black">✓</span> Genuine publisher editions
+              <span className="font-editorial-mono text-xs font-semibold flex items-center gap-1.5">
+                <span className="text-[var(--bg-accent-mint)]">✓</span> Archival Paper Craft
               </span>
-              <span className="font-cabinet text-xs font-500 flex items-center gap-1">
-                <span className="text-black">✓</span> No credit card required
+              <span className="font-editorial-mono text-xs font-semibold flex items-center gap-1.5">
+                <span className="text-[var(--bg-accent-mint)]">✓</span> Express Worldwide Dispatch
               </span>
             </div>
           </div>
@@ -111,17 +105,17 @@ export function LuminaHero() {
                 {/* Top stats row */}
                 <div className="grid grid-cols-3 gap-3">
                   {[
-                    { label: 'Books Curated', val: '16+', color: '#ffe17c' },
-                    { label: 'Avg Rating', val: '4.9★', color: '#b7c6c2' },
-                    { label: 'Dispatched', val: '24H', color: '#b7c6c2' },
+                    { label: 'Curated', val: '24+', color: 'var(--bg-accent-yellow)' },
+                    { label: 'Rating', val: '4.9★', color: 'var(--bg-surface-elevated)' },
+                    { label: 'Dispatch', val: '24H', color: 'var(--bg-surface-elevated)' },
                   ].map(s => (
                     <div
                       key={s.label}
-                      className="border-2 border-black p-3 text-center"
+                      className="border border-[var(--border-main)] p-2.5 text-center shadow-xs"
                       style={{ backgroundColor: s.color }}
                     >
-                      <p className="font-cabinet font-800 text-black text-lg">{s.val}</p>
-                      <p className="font-cabinet text-black/60 text-[10px] uppercase tracking-wide mt-0.5">{s.label}</p>
+                      <p className="font-editorial-serif font-black text-[var(--text-main)] text-base">{s.val}</p>
+                      <p className="font-editorial-mono text-[var(--text-muted)] text-[9px] uppercase tracking-wider mt-0.5">{s.label}</p>
                     </div>
                   ))}
                 </div>
@@ -130,28 +124,31 @@ export function LuminaHero() {
                 <div className="space-y-2">
                   {[
                     { title: 'Clean Code', author: 'Robert C. Martin', price: '₹699', badge: 'CS' },
-                    { title: 'Atomic Habits', author: 'James Clear', price: '₹374', badge: 'Self-Help' },
-                    { title: 'Zero to One', author: 'Peter Thiel', price: '₹360', badge: 'Business' },
+                    { title: 'Atomic Habits', author: 'James Clear', price: '₹374', badge: 'MIND' },
+                    { title: 'Zero to One', author: 'Peter Thiel', price: '₹360', badge: 'BIZ' },
                   ].map(b => (
-                    <div key={b.title} className="flex items-center justify-between border-2 border-black p-3 bg-[#f4f4f5]">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-10 bg-[#b7c6c2] border border-black flex items-center justify-center text-[8px] font-cabinet font-700 text-black text-center leading-tight px-0.5">
+                    <div key={b.title} className="flex items-center justify-between border border-[var(--border-main)] p-2.5 bg-[var(--bg-surface)] shadow-xs">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-7 h-9 bg-[var(--text-main)] text-[var(--bg-page)] border border-[var(--border-main)] flex items-center justify-center text-[7px] font-pixel text-center leading-tight">
                           {b.badge}
                         </div>
                         <div>
-                          <p className="font-cabinet font-700 text-black text-xs">{b.title}</p>
-                          <p className="font-cabinet text-black/50 text-[10px]">{b.author}</p>
+                          <p className="font-editorial-sans font-bold text-[var(--text-main)] text-xs">{b.title}</p>
+                          <p className="font-editorial-mono text-[var(--text-faint)] text-[9px]">{b.author}</p>
                         </div>
                       </div>
-                      <span className="font-cabinet font-800 text-black text-sm">{b.price}</span>
+                      <span className="font-editorial-mono font-bold text-[var(--text-main)] text-xs">{b.price}</span>
                     </div>
                   ))}
                 </div>
 
                 {/* Accent panel */}
-                <div className="border-2 border-black p-3" style={{ backgroundColor: '#b7c6c2' }}>
-                  <p className="font-cabinet font-700 text-black text-xs uppercase tracking-wide">📖 Book Match AI Active</p>
-                  <p className="font-cabinet text-black/70 text-[11px] mt-1">Analysing your reading profile…</p>
+                <div className="border border-[var(--border-main)] p-2.5 bg-[var(--bg-surface-elevated)] shadow-xs">
+                  <div className="flex items-center gap-1.5">
+                    <span className="font-pixel text-[8px] text-[var(--bg-accent-orange)]">✦</span>
+                    <p className="font-editorial-mono font-bold text-[var(--text-main)] text-[11px] uppercase tracking-wider">Book Match Algorithm</p>
+                  </div>
+                  <p className="font-editorial-sans text-[var(--text-muted)] text-[11px] mt-0.5">Matching reader pace, mood, and depth…</p>
                 </div>
               </div>
             </div>
