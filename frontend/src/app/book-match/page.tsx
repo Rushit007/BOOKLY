@@ -190,26 +190,26 @@ export default function BookMatchPage() {
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14'>
           <div className='flex flex-wrap items-center justify-between gap-3 mb-4'>
             <div className='flex flex-wrap items-center gap-2'>
-              <span className='tactile-pixel-badge bg-[var(--bg-accent-yellow)] text-black shadow-xs'>
-                [ MATCH ENGINE 2.0 ]
+              <span className='px-3 py-1 rounded-full text-xs font-sans font-semibold bg-[var(--bg-surface-elevated)] text-[var(--text-main)] border border-[var(--border-main)]'>
+                Match Engine
               </span>
-              <span className='tactile-pixel-badge bg-[var(--text-main)] text-[var(--bg-page)] shadow-xs'>
-                ZERO BIAS
+              <span className='px-3 py-1 rounded-full text-xs font-sans font-semibold bg-[var(--text-main)] text-[var(--bg-page)]'>
+                Zero Bias
               </span>
             </div>
             <button
               onClick={() => setShowMatchInfoModal(true)}
-              className='px-3.5 py-1.5 border border-[var(--border-main)] bg-[var(--bg-surface-elevated)] text-[var(--text-main)] font-editorial-mono text-xs font-bold uppercase tracking-wider hover:bg-[var(--bg-accent-yellow)] hover:text-black transition-colors flex items-center gap-1.5 shadow-xs'
+              className='px-3.5 py-1.5 rounded-full border border-[var(--border-main)] bg-[var(--bg-surface-elevated)] text-[var(--text-main)] font-sans text-xs font-semibold hover:bg-[var(--text-main)] hover:text-[var(--bg-page)] transition-colors flex items-center gap-1.5 shadow-xs cursor-pointer'
             >
               <span>ℹ</span>
               <span>How Scoring Works</span>
             </button>
           </div>
 
-          <h1 className='font-editorial-serif text-4xl sm:text-6xl text-[var(--text-main)] leading-[1.05] font-black'>
-            Find Your True <span className='font-marker text-[var(--bg-accent-orange)] inline-block -rotate-1'>Match</span>
+          <h1 className='font-editorial-serif text-4xl sm:text-6xl text-[var(--text-main)] leading-[1.05] font-bold'>
+            Find Your Next Ideal Read
           </h1>
-          <p className='font-editorial-sans text-base text-[var(--text-muted)] mt-3 max-w-2xl leading-relaxed'>
+          <p className='font-sans text-base text-[var(--text-muted)] mt-3 max-w-2xl leading-relaxed'>
             Tune your genre taste, budget ceiling, and quality standard. Our catalog scoring algorithm ranks every volume by compatibility with zero corporate advertising bias.
           </p>
         </div>
@@ -217,15 +217,15 @@ export default function BookMatchPage() {
 
       {/* Match Algorithm Info Modal */}
       {showMatchInfoModal && (
-        <div className='fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in'>
-          <div className='max-w-lg w-full neo-card bg-[var(--bg-surface)] border-2 border-[var(--border-main)] p-6 sm:p-8 shadow-[8px_8px_0px_var(--border-main)] animate-scale-in'>
-            <div className='flex items-center justify-between border-b-2 border-[var(--border-main)] pb-3 mb-4'>
+        <div className='fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in'>
+          <div className='max-w-lg w-full bg-[var(--bg-surface)] border border-[var(--border-main)] rounded-2xl p-6 sm:p-8 shadow-2xl animate-scale-in'>
+            <div className='flex items-center justify-between border-b border-[var(--border-subtle)] pb-3 mb-4'>
               <div className='flex items-center gap-2.5'>
-                <span className='w-8 h-8 bg-[var(--bg-accent-yellow)] text-black flex items-center justify-center text-base font-black border border-black'>
-                  ⚡
+                <span className='w-8 h-8 rounded-full bg-amber-500/10 text-amber-600 flex items-center justify-center text-base font-bold'>
+                  ✦
                 </span>
                 <h3 className='font-editorial-serif text-2xl font-bold text-[var(--text-main)]'>
-                  Book Match Engine Details
+                  Book Match Engine
                 </h3>
               </div>
               <button

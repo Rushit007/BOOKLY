@@ -31,32 +31,30 @@ export function BookFilters({
   onResetFilters,
 }: BookFiltersProps) {
   return (
-    <div className='border border-[var(--border-main)] bg-[var(--bg-surface)] shadow-xs' style={{ borderRadius: 0 }}>
+    <div className='border border-[var(--border-main)] bg-[var(--bg-surface)] rounded-2xl overflow-hidden shadow-xs'>
       {/* Panel Header */}
-      <div className='flex items-center justify-between px-4 py-3 border-b border-[var(--border-main)] bg-[var(--bg-surface-elevated)]'>
-        <span className='font-pixel text-[8px] uppercase tracking-wider text-[var(--text-main)]'>
-          [ REFINE ]
+      <div className='flex items-center justify-between px-5 py-3.5 border-b border-[var(--border-subtle)] bg-[var(--bg-surface-elevated)]/50'>
+        <span className='font-sans text-xs uppercase font-bold tracking-wider text-[var(--text-main)]'>
+          Filters
         </span>
         <button
           onClick={onResetFilters}
-          className='font-editorial-mono text-[9px] font-bold uppercase tracking-wider text-[var(--text-faint)] hover:text-[var(--bg-accent-pink)] transition-colors'
+          className='font-sans text-xs font-semibold text-[var(--text-faint)] hover:text-[var(--text-main)] transition-colors cursor-pointer'
         >
-          RESET
+          Reset All
         </button>
       </div>
 
       {/* Categories */}
-      <div className='border-b border-[var(--border-subtle)]'>
-        <div className='px-4 py-2 border-b border-[var(--border-subtle)]'>
-          <span className='font-editorial-mono text-[9px] uppercase tracking-[0.18em] text-[var(--text-faint)]'>
-            Genre
-          </span>
-        </div>
-        <div className='divide-y divide-[var(--border-subtle)]'>
+      <div className='p-4 border-b border-[var(--border-subtle)]'>
+        <p className='font-sans text-xs uppercase tracking-wider font-semibold text-[var(--text-faint)] mb-3'>
+          Categories
+        </p>
+        <div className='space-y-1'>
           <button
             onClick={() => onSelectCategory('')}
             className={
-              'w-full text-left px-4 py-2.5 font-editorial-mono text-[10px] font-bold transition flex items-center justify-between ' +
+              'w-full text-left px-3 py-2 rounded-lg font-sans text-xs font-medium transition flex items-center justify-between cursor-pointer ' +
               (selectedCategory === ''
                 ? 'bg-[var(--text-main)] text-[var(--bg-page)]'
                 : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-surface-elevated)]')
@@ -70,7 +68,7 @@ export function BookFilters({
               key={cat.id}
               onClick={() => onSelectCategory(cat.slug)}
               className={
-                'w-full text-left px-4 py-2.5 font-editorial-mono text-[10px] font-bold uppercase tracking-wider transition flex items-center justify-between ' +
+                'w-full text-left px-3 py-2 rounded-lg font-sans text-xs font-medium transition flex items-center justify-between cursor-pointer ' +
                 (selectedCategory === cat.slug
                   ? 'bg-[var(--text-main)] text-[var(--bg-page)]'
                   : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-surface-elevated)]')
@@ -84,15 +82,13 @@ export function BookFilters({
       </div>
 
       {/* Price Range */}
-      <div className='border-b-2 border-[var(--border-subtle)]'>
-        <div className='px-4 py-2 border-b border-[var(--border-subtle)]'>
-          <span className='font-editorial-mono text-[9px] uppercase tracking-[0.18em] text-[var(--text-faint)]'>
-            Price Range (₹)
-          </span>
-        </div>
-        <div className='px-4 py-3 grid grid-cols-2 gap-2'>
+      <div className='p-4 border-b border-[var(--border-subtle)]'>
+        <p className='font-sans text-xs uppercase tracking-wider font-semibold text-[var(--text-faint)] mb-3'>
+          Price Range (₹)
+        </p>
+        <div className='grid grid-cols-2 gap-2'>
           <div>
-            <label className='font-editorial-mono text-[8px] text-[var(--text-faint)] uppercase tracking-wider block mb-1'>
+            <label className='font-sans text-[10px] text-[var(--text-faint)] uppercase font-semibold block mb-1'>
               Min
             </label>
             <input
@@ -101,11 +97,11 @@ export function BookFilters({
               placeholder='0'
               value={minPrice ?? ''}
               onChange={(e) => onPriceChange(e.target.value ? Number(e.target.value) : undefined, maxPrice)}
-              className='w-full px-2 py-1.5 text-xs font-editorial-mono bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)] text-[var(--text-main)] focus:outline-none focus:border-[var(--border-main)]'
+              className='w-full px-3 py-1.5 text-xs font-sans bg-[var(--bg-surface-elevated)] border border-[var(--border-main)] rounded-lg text-[var(--text-main)] focus:outline-none focus:border-[var(--text-main)]'
             />
           </div>
           <div>
-            <label className='font-editorial-mono text-[8px] text-[var(--text-faint)] uppercase tracking-wider block mb-1'>
+            <label className='font-sans text-[10px] text-[var(--text-faint)] uppercase font-semibold block mb-1'>
               Max
             </label>
             <input
@@ -114,28 +110,26 @@ export function BookFilters({
               placeholder='1500'
               value={maxPrice ?? ''}
               onChange={(e) => onPriceChange(minPrice, e.target.value ? Number(e.target.value) : undefined)}
-              className='w-full px-2 py-1.5 text-xs font-editorial-mono bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)] text-[var(--text-main)] focus:outline-none focus:border-[var(--border-main)]'
+              className='w-full px-3 py-1.5 text-xs font-sans bg-[var(--bg-surface-elevated)] border border-[var(--border-main)] rounded-lg text-[var(--text-main)] focus:outline-none focus:border-[var(--text-main)]'
             />
           </div>
         </div>
       </div>
 
       {/* Rating */}
-      <div className='border-b-2 border-[var(--border-subtle)]'>
-        <div className='px-4 py-2 border-b border-[var(--border-subtle)]'>
-          <span className='font-editorial-mono text-[9px] uppercase tracking-[0.18em] text-[var(--text-faint)]'>
-            Min. Rating
-          </span>
-        </div>
-        <div className='divide-y divide-[var(--border-subtle)]'>
+      <div className='p-4 border-b border-[var(--border-subtle)]'>
+        <p className='font-sans text-xs uppercase tracking-wider font-semibold text-[var(--text-faint)] mb-3'>
+          Minimum Rating
+        </p>
+        <div className='space-y-1'>
           {[4, 3, 2].map((r) => (
             <button
               key={r}
               onClick={() => onRatingChange(minRating === r ? undefined : r)}
               className={
-                'w-full text-left px-4 py-2.5 font-editorial-mono text-[10px] font-bold transition flex items-center justify-between ' +
+                'w-full text-left px-3 py-2 rounded-lg font-sans text-xs font-medium transition flex items-center justify-between cursor-pointer ' +
                 (minRating === r
-                  ? 'bg-[var(--bg-accent-yellow)] text-[var(--text-main)]'
+                  ? 'bg-[var(--text-main)] text-[var(--bg-page)]'
                   : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-surface-elevated)]')
               }
             >
@@ -147,27 +141,17 @@ export function BookFilters({
       </div>
 
       {/* In Stock Toggle */}
-      <div className='px-4 py-3'>
-        <label className='flex items-center gap-3 cursor-pointer group'>
-          <div
-            onClick={() => onInStockChange(!inStockOnly)}
-            className={
-              'w-8 h-4 border-2 border-[var(--border-main)] relative transition-colors cursor-pointer ' +
-              (inStockOnly ? 'bg-[var(--text-main)]' : 'bg-[var(--bg-surface-elevated)]')
-            }
-          >
-            <span
-              className={
-                'absolute top-0 w-3 h-3 border border-[var(--border-main)] transition-all ' +
-                (inStockOnly
-                  ? 'left-3.5 bg-[var(--bg-page)]'
-                  : 'left-0 bg-[var(--text-muted)]')
-              }
-            />
-          </div>
-          <span className='font-editorial-mono text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)] group-hover:text-[var(--text-main)] transition-colors'>
-            In-Stock Only
+      <div className='p-4'>
+        <label className='flex items-center justify-between cursor-pointer group'>
+          <span className='font-sans text-xs font-medium text-[var(--text-muted)] group-hover:text-[var(--text-main)] transition-colors'>
+            In Stock Only
           </span>
+          <input
+            type='checkbox'
+            checked={inStockOnly}
+            onChange={(e) => onInStockChange(e.target.checked)}
+            className='w-4 h-4 rounded text-neutral-900 border-[var(--border-main)] focus:ring-0 cursor-pointer'
+          />
         </label>
       </div>
     </div>

@@ -522,19 +522,19 @@ export default function CartPage() {
     <div className='min-h-screen bg-[var(--bg-page)] animate-fade-in'>
       {/* Page Header */}
       <div className='border-b border-[var(--border-main)] bg-[var(--bg-surface)]'>
-        <div className='max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-baseline justify-between'>
+        <div className='max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex items-baseline justify-between'>
           <div className='flex items-baseline gap-4'>
-            <h1 className='font-editorial-serif text-3xl sm:text-4xl text-[var(--text-main)] font-black'>
-              Your Reading <span className='font-marker text-[var(--bg-accent-orange)] inline-block -rotate-1'>Bag</span>
+            <h1 className='font-editorial-serif text-3xl sm:text-4xl text-[var(--text-main)] font-bold'>
+              Your Reading Bag
             </h1>
-            <span className='tactile-pixel-badge bg-[var(--bg-accent-yellow)] text-black'>
-              {items.length} {items.length !== 1 ? 'VOLUMES' : 'VOLUME'}
+            <span className='px-3 py-1 rounded-full text-xs font-mono font-semibold bg-[var(--bg-surface-elevated)] text-[var(--text-main)] border border-[var(--border-main)]'>
+              {items.length} {items.length !== 1 ? 'Volumes' : 'Volume'}
             </span>
           </div>
 
           <Link
             href='/books'
-            className='font-editorial-mono text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)] hover:text-[var(--text-main)] underline'
+            className='font-sans text-xs font-semibold text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors'
           >
             ← Continue Browsing
           </Link>

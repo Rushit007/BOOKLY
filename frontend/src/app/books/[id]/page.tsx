@@ -91,23 +91,23 @@ export default function BookDetailPage() {
   return (
     <div className='min-h-screen bg-[var(--bg-page)]'>
       {/* Breadcrumb strip */}
-      <div className='border-b-2 border-[var(--border-main)] bg-[var(--bg-surface)]'>
-        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center gap-2'>
+      <div className='border-b border-[var(--border-main)] bg-[var(--bg-surface)]'>
+        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center gap-2'>
           <Link
             href='/'
-            className='font-editorial-mono text-[9px] uppercase tracking-widest text-[var(--text-faint)] hover:text-[var(--text-main)] transition-colors'
+            className='font-sans text-xs text-[var(--text-faint)] hover:text-[var(--text-main)] transition-colors'
           >
-            HOME
+            Home
           </Link>
-          <span className='font-editorial-mono text-[9px] text-[var(--text-faint)]'>/</span>
+          <span className='font-sans text-xs text-[var(--text-faint)]'>/</span>
           <Link
-            href='/#catalog'
-            className='font-editorial-mono text-[9px] uppercase tracking-widest text-[var(--text-faint)] hover:text-[var(--text-main)] transition-colors'
+            href='/books'
+            className='font-sans text-xs text-[var(--text-faint)] hover:text-[var(--text-main)] transition-colors'
           >
-            CATALOG
+            Catalog
           </Link>
-          <span className='font-editorial-mono text-[9px] text-[var(--text-faint)]'>/</span>
-          <span className='font-editorial-mono text-[9px] uppercase tracking-widest text-[var(--text-main)] truncate max-w-xs'>
+          <span className='font-sans text-xs text-[var(--text-faint)]'>/</span>
+          <span className='font-sans text-xs font-medium text-[var(--text-main)] truncate max-w-xs'>
             {book.title}
           </span>
         </div>
@@ -115,7 +115,7 @@ export default function BookDetailPage() {
 
       {/* Main Content */}
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10'>
-        <div className='grid grid-cols-1 lg:grid-cols-12 gap-10 items-start border border-[var(--border-main)] bg-[var(--bg-surface)] shadow-xs'>
+        <div className='grid grid-cols-1 lg:grid-cols-12 gap-10 items-start border border-[var(--border-main)] rounded-2xl bg-[var(--bg-surface)] overflow-hidden shadow-xs'>
           {/* Left: Real-Book Cover Presentation */}
           <div className='lg:col-span-5 border-r border-[var(--border-main)] bg-[var(--bg-surface-elevated)] relative overflow-hidden'>
             {/* Real Silk Ribbon Bookmark */}
@@ -133,20 +133,20 @@ export default function BookDetailPage() {
                 />
               ) : (
                 <div className='w-full h-full flex flex-col justify-between p-8 bg-[var(--bg-surface-elevated)]'>
-                  <span className='font-pixel text-[8px] uppercase tracking-wider text-[var(--bg-accent-orange)]'>
-                    [ {book.category?.name || 'EDITION'} ]
+                  <span className='font-sans text-xs uppercase tracking-wider text-[var(--text-muted)]'>
+                    {book.category?.name || 'Edition'}
                   </span>
                   <div>
-                    <h2 className='font-editorial-serif text-4xl leading-tight text-[var(--text-main)] mb-4 font-black'>
+                    <h2 className='font-editorial-serif text-3xl leading-tight text-[var(--text-main)] mb-3 font-bold'>
                       {book.title}
                     </h2>
                     {book.subtitle && (
-                      <p className='font-editorial-sans text-sm italic text-[var(--text-muted)] mb-4'>
+                      <p className='font-sans text-sm italic text-[var(--text-muted)] mb-3'>
                         {book.subtitle}
                       </p>
                     )}
-                    <p className='font-editorial-mono text-[10px] uppercase tracking-widest text-[var(--text-muted)]'>
-                      BY {book.author}
+                    <p className='font-sans text-xs uppercase tracking-wider text-[var(--text-muted)]'>
+                      by {book.author}
                     </p>
                   </div>
                 </div>
@@ -155,7 +155,7 @@ export default function BookDetailPage() {
               {/* Discount badge */}
               {book.discount > 0 && (
                 <div className='absolute bottom-3 left-3 z-10'>
-                  <span className='tactile-pixel-badge bg-[var(--bg-accent-pink)] text-white shadow-xs'>
+                  <span className='px-2.5 py-1 rounded-full text-xs font-sans font-bold bg-rose-500 text-white shadow-sm'>
                     -{book.discount}% OFF
                   </span>
                 </div>
@@ -167,17 +167,14 @@ export default function BookDetailPage() {
           <div className='lg:col-span-7 px-6 py-8 space-y-6 bg-[var(--bg-surface)]'>
             {/* Category */}
             <div className='flex items-center gap-2.5'>
-              <span className='tactile-pixel-badge bg-[var(--bg-accent-yellow)] text-black shadow-xs'>
-                {book.category?.name || 'CURATED'}
+              <span className='px-3 py-1 rounded-full text-xs font-sans font-semibold bg-[var(--bg-surface-elevated)] text-[var(--text-main)] border border-[var(--border-main)]'>
+                {book.category?.name || 'Curated'}
               </span>
               {book.rating >= 4.8 && (
-                <span className='tactile-pixel-badge bg-[var(--bg-accent-mint)] text-white shadow-xs'>
-                  ★ BESTSELLER
+                <span className='px-3 py-1 rounded-full text-xs font-sans font-semibold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20'>
+                  ★ Bestseller
                 </span>
               )}
-              <span className='font-pixel text-[7px] text-[var(--text-faint)] uppercase'>
-                [ ARCHIVE ED. ]
-              </span>
             </div>
 
             {/* Title */}

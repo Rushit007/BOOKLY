@@ -48,28 +48,28 @@ export default function ComparePage() {
   if (compareBooks.length === 0) {
     return (
       <div className='min-h-screen bg-[var(--bg-page)] py-16 px-4 animate-fade-in'>
-        <div className='max-w-xl mx-auto text-center border-2 border-[var(--border-main)] bg-[var(--bg-surface)] p-10 md:p-14 shadow-[6px_6px_0px_var(--border-main)]'>
-          <div className='w-16 h-16 mx-auto bg-[var(--bg-accent-yellow)] border-2 border-[var(--border-main)] flex items-center justify-center text-2xl font-bold mb-6 shadow-[3px_3px_0px_var(--border-main)]'>
+        <div className='max-w-xl mx-auto text-center border border-[var(--border-main)] rounded-2xl bg-[var(--bg-surface)] p-10 md:p-14 shadow-sm'>
+          <div className='w-16 h-16 mx-auto bg-[var(--bg-surface-elevated)] border border-[var(--border-main)] rounded-full flex items-center justify-center text-2xl font-bold mb-6'>
             ⚖
           </div>
-          <h1 className='font-editorial-serif text-3xl sm:text-4xl text-[var(--text-main)] mb-3'>
+          <h1 className='font-editorial-serif text-3xl sm:text-4xl font-bold text-[var(--text-main)] mb-3'>
             Compare Editions
           </h1>
-          <p className='font-editorial-sans text-sm text-[var(--text-muted)] leading-relaxed mb-8 max-w-md mx-auto'>
-            You haven't queued any books for comparison yet. Select up to 3 titles from the catalog to analyze specs, bindings, and prices side-by-side.
+          <p className='font-sans text-sm text-[var(--text-muted)] leading-relaxed mb-8 max-w-md mx-auto'>
+            You haven&apos;t queued any books for comparison yet. Select up to 3 titles from the catalog to analyze specs, bindings, and prices side-by-side.
           </p>
           <div className='flex flex-wrap items-center justify-center gap-3'>
             <Link
               href='/books'
-              className='neo-btn-primary px-6 py-3.5 text-xs font-bold uppercase tracking-wider shadow-[3px_3px_0px_var(--border-main)]'
+              className='px-6 py-3 rounded-full bg-[var(--text-main)] text-[var(--bg-page)] text-xs font-semibold uppercase tracking-wider hover:opacity-90 transition-opacity'
             >
               Browse Catalog ↗
             </Link>
             <Link
               href='/book-match'
-              className='neo-btn-secondary px-6 py-3.5 text-xs font-bold uppercase tracking-wider shadow-[3px_3px_0px_var(--border-main)]'
+              className='px-6 py-3 rounded-full border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-main)] text-xs font-semibold uppercase tracking-wider hover:bg-[var(--bg-surface-elevated)] transition-colors'
             >
-              Try Book Match ⚡
+              Try Book Match ✦
             </Link>
           </div>
         </div>
@@ -87,40 +87,40 @@ export default function ComparePage() {
     <div className='min-h-screen bg-[var(--bg-page)] animate-fade-in pb-16'>
       {/* Header */}
       <div className='border-b border-[var(--border-main)] bg-[var(--bg-surface)]'>
-        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row sm:items-baseline justify-between gap-4'>
+        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col sm:flex-row sm:items-baseline justify-between gap-4'>
           <div>
             <div className='flex items-center gap-2 mb-2'>
-              <span className='tactile-pixel-badge bg-[var(--bg-accent-yellow)] text-black shadow-xs'>
-                [ MATRIX COMPARISON ]
+              <span className='px-3 py-1 rounded-full text-xs font-sans font-semibold bg-[var(--bg-surface-elevated)] text-[var(--text-main)] border border-[var(--border-main)]'>
+                Matrix Comparison
               </span>
             </div>
-            <h1 className='font-editorial-serif text-3xl sm:text-4xl lg:text-5xl font-black text-[var(--text-main)]'>
-              Compare <span className='font-marker text-[var(--bg-accent-orange)] inline-block -rotate-1'>Editions</span>
+            <h1 className='font-editorial-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[var(--text-main)]'>
+              Compare Editions
             </h1>
-            <p className='font-editorial-mono text-xs uppercase tracking-wider text-[var(--text-muted)] mt-1.5 font-bold'>
-              Side-by-side volume specifications ({compareBooks.length}/3 slots queued)
+            <p className='font-sans text-xs uppercase tracking-wider text-[var(--text-muted)] mt-1.5 font-semibold'>
+              Side-by-side specifications ({compareBooks.length}/3 slots active)
             </p>
           </div>
 
-          <div className='flex items-center gap-3'>
+          <div className='flex items-center gap-2.5'>
             <button
               onClick={() => setShowInfoModal(true)}
-              className='px-3.5 py-2 border border-[var(--border-main)] bg-[var(--bg-surface-elevated)] text-[var(--text-main)] font-editorial-mono text-xs font-bold uppercase tracking-wider hover:bg-[var(--bg-accent-yellow)] hover:text-black transition-colors flex items-center gap-1.5 shadow-xs'
+              className='px-3.5 py-2 rounded-full border border-[var(--border-main)] bg-[var(--bg-surface-elevated)] text-[var(--text-main)] font-sans text-xs font-semibold hover:bg-[var(--bg-surface)] transition-colors flex items-center gap-1.5 cursor-pointer'
             >
               <span>ℹ</span>
-              <span>About Feature</span>
+              <span>Guide</span>
             </button>
             <button
               onClick={clearCompare}
-              className='px-3.5 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] font-editorial-mono text-xs font-bold text-[var(--bg-accent-pink)] hover:bg-[var(--bg-accent-pink)]/10 transition-colors uppercase tracking-wider shadow-xs'
+              className='px-3.5 py-2 rounded-full border border-[var(--border-main)] bg-[var(--bg-surface)] font-sans text-xs font-semibold text-rose-500 hover:bg-rose-500/10 transition-colors uppercase tracking-wider cursor-pointer'
             >
               Clear All
             </button>
             <Link
               href='/books'
-              className='px-3.5 py-2 border border-[var(--border-main)] bg-[var(--text-main)] text-[var(--bg-page)] hover:bg-[var(--bg-accent-yellow)] hover:text-black font-editorial-mono text-xs font-bold uppercase tracking-wider transition-colors shadow-xs'
+              className='px-4 py-2 rounded-full bg-[var(--text-main)] text-[var(--bg-page)] hover:opacity-90 font-sans text-xs font-semibold uppercase tracking-wider transition-opacity'
             >
-              + Add Editions
+              + Add Titles
             </Link>
           </div>
         </div>
@@ -128,7 +128,7 @@ export default function ComparePage() {
 
       {/* Feature Explainer Banner */}
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6'>
-        <div className='p-4 sm:p-5 border-2 border-[var(--border-main)] bg-[var(--bg-surface-elevated)] flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-[4px_4px_0px_var(--border-main)]'>
+        <div className='p-4 sm:p-5 border border-[var(--border-main)] rounded-2xl bg-[var(--bg-surface-elevated)] flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xs'>
           <div className='flex items-center gap-3'>
             <span className='w-8 h-8 rounded-full bg-[var(--bg-accent-blue)] text-white font-bold flex items-center justify-center text-sm shrink-0 border border-black/20'>
               ⇄

@@ -73,20 +73,20 @@ function CatalogPageContent() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
             <div>
-              <p className="font-pixel text-[8px] uppercase tracking-widest text-[var(--bg-accent-orange)] mb-2">
-                [ CATALOG ARCHIVE ]
+              <p className="font-sans text-xs uppercase tracking-wider font-semibold text-[var(--text-faint)] mb-2">
+                CATALOG ARCHIVE
               </p>
-              <h1 className="font-editorial-serif text-4xl sm:text-5xl lg:text-6xl text-[var(--text-main)] leading-tight font-black">
-                The Permanent <span className="font-marker text-[var(--bg-accent-orange)] inline-block -rotate-1">Collection</span>
+              <h1 className="font-editorial-serif text-4xl sm:text-5xl lg:text-6xl text-[var(--text-main)] leading-tight font-bold">
+                The Permanent Collection
               </h1>
-              <p className="font-editorial-sans text-sm sm:text-base text-[var(--text-muted)] mt-2 max-w-lg leading-relaxed">
+              <p className="font-sans text-sm sm:text-base text-[var(--text-muted)] mt-2 max-w-lg leading-relaxed">
                 Hand-inspected editions across systems engineering, human psychology, architecture, and world literature.
               </p>
             </div>
             <div className="flex items-center gap-3">
-              <div className="px-3.5 py-1.5 border border-[var(--border-main)] bg-[var(--bg-accent-yellow)] shadow-xs">
-                <span className="font-pixel text-[8px] font-bold uppercase text-black">
-                  {totalItems} EDITIONS READY
+              <div className="px-4 py-1.5 rounded-full border border-[var(--border-main)] bg-[var(--bg-surface-elevated)] shadow-xs">
+                <span className="font-mono text-xs font-semibold uppercase text-[var(--text-main)]">
+                  {totalItems} Editions Available
                 </span>
               </div>
             </div>

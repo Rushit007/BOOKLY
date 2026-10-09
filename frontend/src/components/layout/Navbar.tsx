@@ -31,7 +31,7 @@ export function Navbar() {
     }
   };
 
-  // Nav items for the PillNav component (no counts — those are handled by icon badges)
+  // Nav items for the PillNav component
   const pillNavItems = [
     { label: 'Index', href: '/' },
     { label: 'Catalog', href: '/books' },
@@ -42,15 +42,15 @@ export function Navbar() {
     { label: 'Contact', href: '/contact' },
   ];
 
-  // Mobile fallback nav links (used in the mobile drawer below the header)
+  // Mobile fallback nav links
   const navLinks = [
-    { label: 'INDEX', href: '/' },
-    { label: 'CATALOG', href: '/books' },
-    { label: 'BOOK MATCH', href: '/book-match' },
-    { label: 'COMPARE', href: '/compare', count: compareBooks.length },
-    { label: 'ABOUT', href: '/about' },
+    { label: 'Index', href: '/' },
+    { label: 'Catalog', href: '/books' },
+    { label: 'Book Match', href: '/book-match' },
+    { label: 'Compare', href: '/compare', count: compareBooks.length },
+    { label: 'About', href: '/about' },
     { label: 'FAQ', href: '/faq' },
-    { label: 'CONTACT', href: '/contact' },
+    { label: 'Contact', href: '/contact' },
   ];
 
   // Determine active pill href
@@ -61,27 +61,26 @@ export function Navbar() {
     return match?.href ?? (pathname === '/' ? '/' : undefined);
   })();
 
-  // Logo icon for PillNav
   const BooklyLogoIcon = (
-    <span style={{ color: '#ffe17c', fontSize: '16px', fontWeight: 900, lineHeight: 1 }}>⚡</span>
+    <span className="text-amber-500 font-black text-sm">✦</span>
   );
 
   return (
-    <header className='sticky top-0 z-40 w-full border-b border-[var(--border-main)] bg-[var(--bg-surface)]/95 backdrop-blur-md transition-colors' style={{ height: '76px' }}>
+    <header className='sticky top-0 z-40 w-full border-b border-[var(--border-main)] bg-[var(--bg-surface)]/90 backdrop-blur-md transition-colors' style={{ height: '72px' }}>
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-        <div className='flex items-center justify-between h-[76px] gap-4'>
+        <div className='flex items-center justify-between h-[72px] gap-4'>
 
-          {/* ── Logo ── */}
+          {/* ── Minimalist Logo ── */}
           <Link href='/' className='flex items-center gap-2.5 shrink-0 group' data-cursor='interactive'>
-            <div className='w-9 h-9 bg-[var(--text-main)] text-[var(--bg-page)] flex items-center justify-center border border-[var(--border-main)] group-hover:bg-[var(--bg-accent-yellow)] group-hover:text-black transition-colors shadow-xs'>
-              <span className='font-marker text-lg leading-none'>B</span>
+            <div className='w-8 h-8 rounded-lg bg-[var(--text-main)] text-[var(--bg-page)] flex items-center justify-center font-editorial-serif font-bold text-base transition-transform group-hover:scale-105 shadow-xs'>
+              B
             </div>
             <div>
-              <span className='font-marker text-2xl tracking-tight text-[var(--text-main)] leading-none block'>
+              <span className='font-editorial-serif text-xl tracking-tight text-[var(--text-main)] font-bold leading-none block'>
                 BOOKLY
               </span>
-              <span className='font-pixel text-[7px] uppercase tracking-[0.2em] text-[var(--text-faint)] block mt-1'>
-                PRESS · 2026
+              <span className='font-sans text-[9px] uppercase tracking-[0.2em] text-[var(--text-faint)] font-semibold block mt-0.5'>
+                Curated Library
               </span>
             </div>
           </Link>
@@ -92,16 +91,16 @@ export function Navbar() {
               logo={BooklyLogoIcon}
               items={pillNavItems}
               activeHref={activePillHref}
-              baseColor='#18181b'
-              pillColor='#fcd34d'
-              pillTextColor='#18181b'
-              hoveredPillTextColor='#fcd34d'
+              baseColor='var(--text-main)'
+              pillColor='var(--text-main)'
+              pillTextColor='var(--bg-page)'
+              hoveredPillTextColor='var(--text-main)'
               initialLoadAnimation={true}
             />
           </div>
 
           {/* ── Actions & Utilities ── */}
-          <div className='flex items-center gap-2 sm:gap-3'>
+          <div className='flex items-center gap-2 sm:gap-2.5'>
             {/* Quick Search */}
             <form onSubmit={handleSearchSubmit} className='hidden lg:flex items-center relative'>
               <input
@@ -109,7 +108,7 @@ export function Navbar() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder='Search editions...'
-                className='w-44 focus:w-56 px-3.5 py-1.5 text-xs font-editorial-mono border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-main)] placeholder:text-[var(--text-faint)] focus:outline-none transition-all shadow-xs'
+                className='w-40 focus:w-52 px-3.5 py-1.5 text-xs font-sans rounded-full border border-[var(--border-main)] bg-[var(--bg-surface-elevated)] text-[var(--text-main)] placeholder:text-[var(--text-faint)] focus:outline-none focus:border-[var(--text-main)] transition-all shadow-xs'
               />
               <button
                 type='submit'
@@ -129,14 +128,14 @@ export function Navbar() {
               href='/wishlist'
               data-cursor='interactive'
               aria-label='Wishlist'
-              className='relative w-9 h-9 border border-[var(--border-main)] bg-[var(--bg-surface)] flex items-center justify-center text-[var(--text-main)] hover:bg-[var(--bg-accent-yellow)] hover:text-black transition-colors shadow-xs'
+              className='relative w-9 h-9 rounded-full border border-[var(--border-main)] bg-[var(--bg-surface)] flex items-center justify-center text-[var(--text-main)] hover:bg-[var(--bg-surface-elevated)] transition-colors shadow-xs'
               title='Saved Wishlist'
             >
               <svg className='w-4 h-4' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
-                <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z' />
+                <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={1.8} d='M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z' />
               </svg>
               {wishlistCount > 0 && (
-                <span className='absolute -top-1.5 -right-1.5 min-w-4 h-4 px-1 bg-[var(--bg-accent-pink)] text-white text-[8px] font-pixel flex items-center justify-center border border-[var(--border-main)]'>
+                <span className='absolute -top-1 -right-1 min-w-4 h-4 px-1 rounded-full bg-rose-500 text-white text-[9px] font-sans font-bold flex items-center justify-center'>
                   {wishlistCount}
                 </span>
               )}
@@ -147,14 +146,14 @@ export function Navbar() {
               onClick={openCartDrawer}
               data-cursor='add'
               aria-label='Open Cart'
-              className='relative w-9 h-9 border border-[var(--border-main)] bg-[var(--bg-surface)] flex items-center justify-center text-[var(--text-main)] hover:bg-[var(--bg-accent-yellow)] hover:text-black transition-colors shadow-xs'
+              className='relative w-9 h-9 rounded-full border border-[var(--border-main)] bg-[var(--bg-surface)] flex items-center justify-center text-[var(--text-main)] hover:bg-[var(--bg-surface-elevated)] transition-colors shadow-xs'
               title='Shopping Cart'
             >
               <svg className='w-4 h-4' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
-                <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z' />
+                <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={1.8} d='M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z' />
               </svg>
               {itemCount > 0 && (
-                <span className='absolute -top-1.5 -right-1.5 min-w-4 h-4 px-1 bg-[var(--bg-accent-yellow)] text-black text-[8px] font-pixel flex items-center justify-center border border-[var(--border-main)]'>
+                <span className='absolute -top-1 -right-1 min-w-4 h-4 px-1 rounded-full bg-[var(--text-main)] text-[var(--bg-page)] text-[9px] font-sans font-bold flex items-center justify-center'>
                   {itemCount}
                 </span>
               )}
@@ -166,18 +165,18 @@ export function Navbar() {
                 <button
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                   data-cursor='interactive'
-                  className='flex items-center gap-1.5 px-3 py-1.5 rounded-full border-2 border-[var(--border-main)] bg-[var(--bg-surface)] font-editorial-mono text-xs font-bold text-[var(--text-main)] hover:bg-[var(--bg-surface-elevated)] transition-colors'
+                  className='flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[var(--border-main)] bg-[var(--bg-surface)] font-sans text-xs font-semibold text-[var(--text-main)] hover:bg-[var(--bg-surface-elevated)] transition-colors'
                 >
                   <span className='max-w-[70px] truncate'>{user.name.split(' ')[0]}</span>
                   <span className='text-[10px] text-[var(--text-faint)]'>▼</span>
                 </button>
 
                 {isUserMenuOpen && (
-                  <div className='absolute right-0 mt-2 w-52 bg-[var(--bg-surface)] border-2 border-[var(--border-main)] shadow-[var(--shadow-neo)] py-2 z-50 font-editorial-mono text-xs animate-scale-in'>
-                    <div className='px-4 py-2 border-b-2 border-[var(--border-subtle)]'>
-                      <p className='font-bold text-[var(--text-main)] truncate'>{user.name}</p>
-                      <p className='text-[10px] text-[var(--text-faint)] truncate'>{user.email}</p>
-                      <span className='inline-block mt-1 px-2 py-0.5 text-[9px] font-bold bg-[var(--bg-accent-yellow)] text-black border border-[var(--border-main)]'>
+                  <div className='absolute right-0 mt-2 w-52 bg-[var(--bg-surface)] border border-[var(--border-main)] rounded-2xl shadow-xl py-2 z-50 font-sans text-xs animate-scale-in'>
+                    <div className='px-4 py-2 border-b border-[var(--border-subtle)]'>
+                      <p className='font-semibold text-[var(--text-main)] truncate'>{user.name}</p>
+                      <p className='text-[11px] text-[var(--text-faint)] truncate'>{user.email}</p>
+                      <span className='inline-block mt-1 px-2 py-0.5 text-[9px] font-semibold rounded-full bg-[var(--bg-surface-elevated)] text-[var(--text-muted)]'>
                         {user.role}
                       </span>
                     </div>
@@ -185,7 +184,7 @@ export function Navbar() {
                       <Link
                         href='/admin'
                         onClick={() => setIsUserMenuOpen(false)}
-                        className='block px-4 py-2 font-bold text-[var(--bg-accent-blue)] hover:bg-[var(--bg-surface-elevated)]'
+                        className='block px-4 py-2 font-semibold text-blue-600 hover:bg-[var(--bg-surface-elevated)]'
                       >
                         ⚡ Admin Dashboard
                       </Link>
@@ -195,21 +194,21 @@ export function Navbar() {
                       onClick={() => setIsUserMenuOpen(false)}
                       className='block px-4 py-2 text-[var(--text-main)] hover:bg-[var(--bg-surface-elevated)]'
                     >
-                      Order Archives
+                      Orders & Invoices
                     </Link>
                     <Link
                       href='/wishlist'
                       onClick={() => setIsUserMenuOpen(false)}
                       className='block px-4 py-2 text-[var(--text-main)] hover:bg-[var(--bg-surface-elevated)]'
                     >
-                      Saved Editions ({wishlistCount})
+                      Wishlist ({wishlistCount})
                     </Link>
                     <button
                       onClick={() => {
                         logout();
                         setIsUserMenuOpen(false);
                       }}
-                      className='w-full text-left px-4 py-2 text-rose-500 hover:bg-rose-500/10 border-t border-[var(--border-subtle)] mt-1 font-bold'
+                      className='w-full text-left px-4 py-2 text-rose-500 hover:bg-rose-500/10 border-t border-[var(--border-subtle)] mt-1 font-semibold'
                     >
                       Sign Out ↗
                     </button>
@@ -221,18 +220,17 @@ export function Navbar() {
                 <Link
                   href='/login'
                   data-cursor='interactive'
-                  className='hidden sm:inline-block font-cabinet font-700 text-xs text-black px-3 py-1.5 hover:underline'
+                  className='hidden sm:inline-block font-sans font-semibold text-xs text-[var(--text-muted)] hover:text-[var(--text-main)] px-2.5 py-1.5 transition-colors'
                 >
                   Sign In
                 </Link>
                 <Link
                   href='/books'
                   data-cursor='interactive'
-                  className='font-cabinet font-700 text-xs text-white bg-black border-2 border-black px-4 py-1.5 uppercase tracking-wide flex items-center gap-1 hover:-translate-y-0.5 transition-transform'
-                  style={{ boxShadow: '3px 3px 0 rgba(0,0,0,0.3)' }}
+                  className='font-sans font-semibold text-xs text-[var(--bg-page)] bg-[var(--text-main)] rounded-full px-4 py-2 hover:opacity-90 transition-opacity flex items-center gap-1 shadow-xs'
                 >
-                  <span>START READING</span>
-                  <span>↗</span>
+                  <span>Explore</span>
+                  <span className='text-[10px]'>↗</span>
                 </Link>
               </div>
             )}
@@ -241,9 +239,9 @@ export function Navbar() {
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               aria-label='Toggle menu'
-              className='md:hidden w-9 h-9 rounded-full border-2 border-[var(--border-main)] bg-[var(--bg-surface)] flex items-center justify-center text-[var(--text-main)]'
+              className='md:hidden w-9 h-9 rounded-full border border-[var(--border-main)] bg-[var(--bg-surface)] flex items-center justify-center text-[var(--text-main)]'
             >
-              <svg className='w-5 h-5' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
+              <svg className='w-4 h-4' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
                 <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d={isMobileMenuOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16'} />
               </svg>
             </button>
@@ -252,14 +250,14 @@ export function Navbar() {
 
         {/* ── Mobile Navigation Drawer ── */}
         {isMobileMenuOpen && (
-          <div className='md:hidden py-4 border-t-2 border-[var(--border-main)] space-y-3 font-editorial-mono text-xs font-bold animate-fade-in'>
+          <div className='md:hidden py-4 border-t border-[var(--border-main)] space-y-3 font-sans text-xs font-semibold animate-fade-in'>
             <form onSubmit={handleSearchSubmit} className='relative'>
               <input
                 type='text'
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder='Search books...'
-                className='w-full px-3 py-2 text-xs rounded-xl bg-[var(--bg-surface)] border-2 border-[var(--border-main)] text-[var(--text-main)]'
+                className='w-full px-4 py-2 text-xs rounded-full bg-[var(--bg-surface-elevated)] border border-[var(--border-main)] text-[var(--text-main)] focus:outline-none'
               />
             </form>
             <div className='flex flex-col space-y-1.5'>
@@ -268,11 +266,11 @@ export function Navbar() {
                   key={'mobile-' + item.label}
                   href={item.href}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className='px-3 py-2 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-subtle)] flex items-center justify-between text-[var(--text-main)]'
+                  className='px-3.5 py-2.5 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-subtle)] flex items-center justify-between text-[var(--text-main)] hover:bg-[var(--bg-surface-elevated)]'
                 >
                   <span>{item.label}</span>
                   {item.count !== undefined && item.count > 0 && (
-                    <span className='px-2 py-0.5 bg-[var(--bg-accent-yellow)] text-black rounded text-[10px]'>
+                    <span className='px-2 py-0.5 bg-[var(--bg-surface-elevated)] text-[var(--text-main)] rounded-full text-[10px]'>
                       {item.count}
                     </span>
                   )}
@@ -281,9 +279,9 @@ export function Navbar() {
               <Link
                 href='/cart'
                 onClick={() => setIsMobileMenuOpen(false)}
-                className='px-3 py-2 rounded-xl bg-[var(--text-main)] text-[var(--bg-page)] flex items-center justify-between'
+                className='px-3.5 py-2.5 rounded-xl bg-[var(--text-main)] text-[var(--bg-page)] flex items-center justify-between'
               >
-                <span>SHOPPING CART</span>
+                <span>Shopping Bag</span>
                 <span>({itemCount})</span>
               </Link>
             </div>

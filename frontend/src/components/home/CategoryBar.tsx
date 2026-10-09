@@ -10,24 +10,23 @@ interface CategoryBarProps {
 }
 
 export function CategoryBar({ categories, selectedCategory, onSelectCategory }: CategoryBarProps) {
-  const all = [{ id: '__all', name: 'ALL GENRES', slug: '' }, ...categories.map((c) => ({ ...c, name: c.name.toUpperCase() }))];
+  const all = [{ id: '__all', name: 'All Editions', slug: '' }, ...categories.map((c) => ({ ...c, name: c.name }))];
 
   return (
     <div className='border-y border-[var(--border-main)] bg-[var(--bg-surface)]'>
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-        <div className='flex items-center gap-0 overflow-x-auto scrollbar-hide'>
-          {all.map((cat, i) => {
+        <div className='flex items-center gap-1 py-2.5 overflow-x-auto scrollbar-hide'>
+          {all.map((cat) => {
             const isActive = selectedCategory === cat.slug;
             return (
               <button
                 key={cat.id}
                 onClick={() => onSelectCategory(cat.slug)}
                 className={
-                  'px-5 py-3 font-editorial-mono text-[10px] font-bold tracking-[0.18em] whitespace-nowrap transition-all border-r border-[var(--border-subtle)] shrink-0 ' +
+                  'px-4 py-2 font-sans text-xs font-semibold rounded-full whitespace-nowrap transition-all shrink-0 ' +
                   (isActive
                     ? 'bg-[var(--text-main)] text-[var(--bg-page)]'
-                    : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-surface-elevated)]') +
-                  (i === 0 ? ' border-l-0' : '')
+                    : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-surface-elevated)]')
                 }
               >
                 {cat.name}

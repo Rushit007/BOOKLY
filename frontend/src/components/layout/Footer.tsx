@@ -13,7 +13,7 @@ const GENRES = [
 
 const NAV_LINKS = [
   { label: 'Explore Catalog', href: '/#catalog' },
-  { label: 'Book Match', href: '/book-match' },
+  { label: 'Book Match AI', href: '/book-match' },
   { label: 'Saved Editions', href: '/wishlist' },
   { label: 'Shopping Cart', href: '/cart' },
   { label: 'FAQ', href: '/faq' },
@@ -24,82 +24,47 @@ const NAV_LINKS = [
 const LEGAL_LINKS = [
   { label: 'Privacy Policy', href: '/privacy' },
   { label: 'Terms of Service', href: '/terms' },
-  { label: 'FAQ', href: '/faq' },
-  { label: 'Contact', href: '/contact' },
-];
-
-const SOCIALS = [
-  { label: 'TW', href: '#' },
-  { label: 'IG', href: '#' },
-  { label: 'GH', href: '#' },
-  { label: 'LI', href: '#' },
+  { label: 'Shipping Policy', href: '/shipping' },
+  { label: 'Returns', href: '/returns' },
 ];
 
 export function Footer() {
   return (
-    <footer className='border-t border-[var(--border-main)] bg-[#111113] text-neutral-300 transition-colors'>
-      <div className='max-w-7xl mx-auto'>
-        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4' style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+    <footer className='border-t border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-muted)] transition-colors'>
+      <div className='max-w-7xl mx-auto px-6 lg:px-8 py-16'>
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-[var(--border-subtle)]'>
 
           {/* Brand column */}
-          <div className='p-8' style={{ borderRight: '1px solid rgba(255,255,255,0.08)' }}>
-            <div className='mb-6'>
-              <Link href='/' className='group flex items-center gap-3'>
-                <div
-                  className='w-9 h-9 flex items-center justify-center border transition-colors bg-neutral-900 border-neutral-700 group-hover:bg-[var(--bg-accent-yellow)] group-hover:text-black shadow-xs'
-                >
-                  <span className='font-marker text-lg text-white group-hover:text-black leading-none'>B</span>
-                </div>
-                <div>
-                  <span className='font-marker text-2xl text-white tracking-wide block leading-none'>BOOKLY</span>
-                  <span className='font-pixel text-[7px] text-[var(--bg-accent-yellow)] uppercase tracking-wider block mt-1'>
-                    [ ARCHIVE · 2026 ]
-                  </span>
-                </div>
-              </Link>
-            </div>
-            <p className='font-editorial-sans text-xs leading-relaxed mb-6 text-neutral-400'>
-              Curated editions for inquisitive minds. An independent haven built on physical craft, care, and enduring literature.
+          <div className='space-y-4'>
+            <Link href='/' className='inline-flex items-center gap-2.5 group'>
+              <div className='w-8 h-8 rounded-lg bg-[var(--text-main)] text-[var(--bg-page)] flex items-center justify-center font-editorial-serif font-bold text-base shadow-xs'>
+                B
+              </div>
+              <div>
+                <span className='font-editorial-serif text-xl font-bold text-[var(--text-main)] tracking-tight leading-none block'>
+                  BOOKLY
+                </span>
+                <span className='font-sans text-[9px] uppercase tracking-[0.2em] text-[var(--text-faint)] font-semibold block mt-0.5'>
+                  Curated Editions
+                </span>
+              </div>
+            </Link>
+            <p className='font-sans text-xs leading-relaxed text-[var(--text-muted)] max-w-sm'>
+              Curated physical editions for inquisitive minds. Built on archival craft, timeless ideas, and deliberate reading.
             </p>
-            {/* Social icon squares */}
-            <div className='flex items-center gap-2'>
-              {SOCIALS.map(s => (
-                <a
-                  key={s.label}
-                  href={s.href}
-                  className='w-10 h-10 flex items-center justify-center border font-cabinet font-700 text-xs transition-all duration-150'
-                  style={{ backgroundColor: '#272727', borderColor: 'rgba(255,255,255,0.12)', color: '#b7c6c2' }}
-                  onMouseEnter={e => {
-                    const el = e.currentTarget as HTMLAnchorElement;
-                    el.style.backgroundColor = '#ffe17c';
-                    el.style.color = '#000';
-                    el.style.borderColor = '#ffe17c';
-                  }}
-                  onMouseLeave={e => {
-                    const el = e.currentTarget as HTMLAnchorElement;
-                    el.style.backgroundColor = '#272727';
-                    el.style.color = '#b7c6c2';
-                    el.style.borderColor = 'rgba(255,255,255,0.12)';
-                  }}
-                >
-                  {s.label}
-                </a>
-              ))}
-            </div>
           </div>
 
           {/* Genres */}
-          <div className='p-8' style={{ borderRight: '1px solid rgba(255,255,255,0.08)' }}>
-            <p className='font-cabinet font-700 text-[9px] uppercase tracking-[0.22em] mb-5' style={{ color: 'rgba(255,255,255,0.3)' }}>
-              Top Genres
+          <div>
+            <p className='font-sans text-xs uppercase tracking-wider font-semibold text-[var(--text-main)] mb-4'>
+              Collections
             </p>
-            <ul className='space-y-3'>
+            <ul className='space-y-2.5 font-sans text-xs'>
               {GENRES.map(g => (
                 <li key={g.slug}>
                   <Link
                     href={`/?category=${g.slug}#catalog`}
-                    className='font-cabinet text-sm transition-colors hover:text-[#ffe17c]'
-                    style={{ color: 'rgba(255,255,255,0.55)' }}
+                    className='text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors'
                   >
                     {g.label}
                   </Link>
@@ -109,17 +74,16 @@ export function Footer() {
           </div>
 
           {/* Navigation */}
-          <div className='p-8' style={{ borderRight: '1px solid rgba(255,255,255,0.08)' }}>
-            <p className='font-cabinet font-700 text-[9px] uppercase tracking-[0.22em] mb-5' style={{ color: 'rgba(255,255,255,0.3)' }}>
-              Navigate
+          <div>
+            <p className='font-sans text-xs uppercase tracking-wider font-semibold text-[var(--text-main)] mb-4'>
+              Navigation
             </p>
-            <ul className='space-y-3'>
+            <ul className='space-y-2.5 font-sans text-xs'>
               {NAV_LINKS.map(l => (
                 <li key={l.href}>
                   <Link
                     href={l.href}
-                    className='font-cabinet text-sm transition-colors hover:text-[#ffe17c]'
-                    style={{ color: 'rgba(255,255,255,0.55)' }}
+                    className='text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors'
                   >
                     {l.label}
                   </Link>
@@ -129,49 +93,28 @@ export function Footer() {
           </div>
 
           {/* Project info */}
-          <div className='p-8'>
-            <p className='font-cabinet font-700 text-[9px] uppercase tracking-[0.22em] mb-5' style={{ color: 'rgba(255,255,255,0.3)' }}>
-              Academic Project
+          <div className='space-y-3 font-sans text-xs'>
+            <p className='uppercase tracking-wider font-semibold text-[var(--text-main)]'>
+              Academic Capstone
             </p>
-            <div className='space-y-2'>
-              <p className='font-cabinet font-700 text-base text-white'>Gondaliya Rushit R.</p>
-              <p className='font-cabinet text-[10px]' style={{ color: 'rgba(255,255,255,0.4)' }}>
-                Enrollment: <span style={{ color: '#ffe17c' }}>240841102020</span>
-              </p>
-              <p className='font-cabinet text-[10px]' style={{ color: 'rgba(255,255,255,0.4)' }}>
-                Final Year Capstone Project
-              </p>
-            </div>
-            <div className='mt-6 pt-6' style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
-              <p className='font-cabinet font-700 text-[9px] uppercase tracking-[0.22em] mb-3' style={{ color: 'rgba(255,255,255,0.3)' }}>
-                Legal
-              </p>
-              <div className='flex flex-wrap gap-x-3 gap-y-1.5'>
-                {LEGAL_LINKS.map(l => (
-                  <Link
-                    key={l.href}
-                    href={l.href}
-                    className='font-cabinet text-[9px] uppercase tracking-wider transition-colors hover:text-[#ffe17c]'
-                    style={{ color: 'rgba(255,255,255,0.35)' }}
-                  >
-                    {l.label}
-                  </Link>
-                ))}
-              </div>
+            <p className='font-medium text-[var(--text-main)]'>Gondaliya Rushit R.</p>
+            <p className='text-[var(--text-faint)]'>Enrollment: 240841102020</p>
+            <div className='pt-4 border-t border-[var(--border-subtle)] flex flex-wrap gap-x-3 gap-y-1.5 text-[11px] text-[var(--text-faint)]'>
+              {LEGAL_LINKS.map(l => (
+                <Link key={l.href} href={l.href} className='hover:text-[var(--text-main)] transition-colors'>
+                  {l.label}
+                </Link>
+              ))}
             </div>
           </div>
         </div>
 
         {/* Bottom bar */}
-        <div className='px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3'>
-          <p className='font-cabinet text-[9px] uppercase tracking-[0.18em]' style={{ color: 'rgba(255,255,255,0.3)' }}>
-            © 2026 BOOKLY Bookstore · Designed & Built by Gondaliya Rushit R.
-          </p>
-          <div className='flex items-center gap-1.5'>
-            <span className='w-1.5 h-1.5 rounded-full animate-pulse' style={{ backgroundColor: '#b7c6c2' }} />
-            <span className='font-cabinet text-[9px] uppercase tracking-wider' style={{ color: 'rgba(255,255,255,0.3)' }}>
-              All Systems Operational
-            </span>
+        <div className='pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 font-sans text-xs text-[var(--text-faint)]'>
+          <p>© 2026 BOOKLY Bookstore · All Rights Reserved</p>
+          <div className='flex items-center gap-2'>
+            <span className='w-2 h-2 rounded-full bg-emerald-500 animate-pulse' />
+            <span>Archive Operational</span>
           </div>
         </div>
       </div>

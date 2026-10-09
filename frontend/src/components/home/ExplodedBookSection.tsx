@@ -333,7 +333,7 @@ export function ExplodedBookSection({ book = DEFAULT_ATOMIC_HABITS }: ExplodedBo
       ref={trackRef}
       id="exploded-showcase"
       suppressHydrationWarning
-      className="relative w-full border-b-2 border-black bg-[#0d0f12] text-white"
+      className="relative w-full border-b border-[var(--border-main)] bg-[#0d0f12] text-white"
       style={{
         // 140vh provides responsive, smooth, non-trapping scroll runway
         height: '140vh',

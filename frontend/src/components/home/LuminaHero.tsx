@@ -1,160 +1,134 @@
 'use client';
 import React from 'react';
 import Link from 'next/link';
-import { CreepyButton } from '../common/CreepyButton';
 import { TubesBackground } from './TubesBackground';
 
 export function LuminaHero() {
   return (
-    <section
-      className="lumina-dot-bg border-b border-[var(--border-main)] relative bg-[var(--bg-surface-elevated)] transition-colors"
-    >
+    <section className="border-b border-[var(--border-main)] relative bg-[var(--bg-surface-elevated)] transition-colors">
       <TubesBackground enableClickInteraction={true}>
-        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-16 lg:py-24">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-20 lg:py-28">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
 
-          {/* ── Left Column ── */}
-          <div className="space-y-8">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2.5 bg-[var(--bg-surface)] border border-[var(--border-main)] rounded-full px-4 py-2 shadow-xs">
-              <span className="font-pixel text-[8px] text-[var(--bg-accent-orange)]">[ ARCHIVE 2026 ]</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-[var(--bg-accent-mint)] animate-pulse" />
-              <span className="font-editorial-mono font-bold text-xs text-[var(--text-main)] uppercase tracking-wider">
-                Curated Physical Editions & Book Match
-              </span>
-            </div>
-
-            {/* Heading */}
-            <h1
-              className="font-editorial-serif font-black text-[var(--text-main)] leading-tight tracking-tight"
-              style={{ fontSize: 'clamp(2.75rem, 6.5vw, 5.2rem)', lineHeight: 1.05 }}
-            >
-              Books that carry{' '}
-              <span className="font-marker text-[var(--bg-accent-orange)] inline-block -rotate-1">
-                weight
-              </span>{' '}
-              and soul.
-            </h1>
-
-            {/* Sub-line */}
-            <p className="font-editorial-sans text-[var(--text-muted)] text-base sm:text-lg leading-relaxed max-w-lg">
-              Curated for inquisitive minds. Foundational engineering craft, seminal non-fiction, and timeless literature printed to endure for generations.
-            </p>
-
-            {/* CTA group */}
-            <div className="flex flex-wrap items-center gap-4">
-              <Link href="/books">
-                <CreepyButton
-                  primary="#18181b"
-                  primaryHover="#27272a"
-                  eyeColor="#fcd34d"
-                  style={{ fontSize: '0.95rem', minWidth: '13em' }}
-                >
-                  Explore Collection ↗
-                </CreepyButton>
-              </Link>
-              <Link href="/book-match">
-                <CreepyButton
-                  primary="#ffffff"
-                  primaryHover="#f4f4f5"
-                  eyeColor="#18181b"
-                  style={{ fontSize: '0.95rem', minWidth: '13em', '--cb-black': '#18181b' } as React.CSSProperties}
-                >
-                  ✦ Personal Book Match
-                </CreepyButton>
-              </Link>
-            </div>
-
-            {/* Trust strip */}
-            <div className="flex flex-wrap items-center gap-5 text-[var(--text-muted)]">
-              <span className="font-editorial-mono text-xs font-semibold flex items-center gap-1.5">
-                <span className="text-[var(--bg-accent-mint)]">✓</span> 100% Genuine First Editions
-              </span>
-              <span className="font-editorial-mono text-xs font-semibold flex items-center gap-1.5">
-                <span className="text-[var(--bg-accent-mint)]">✓</span> Archival Paper Craft
-              </span>
-              <span className="font-editorial-mono text-xs font-semibold flex items-center gap-1.5">
-                <span className="text-[var(--bg-accent-mint)]">✓</span> Express Worldwide Dispatch
-              </span>
-            </div>
-          </div>
-
-          {/* ── Right Column: Browser Mockup ── */}
-          <div className="relative">
-            {/* Offset shadow block */}
-            <div
-              className="absolute inset-0 translate-x-3 translate-y-3 bg-black rounded-sm"
-              style={{ zIndex: 0 }}
-            />
-            <div
-              className="relative bg-white border-2 border-black rounded-sm overflow-hidden"
-              style={{ zIndex: 1, boxShadow: '12px 12px 0 #000' }}
-            >
-              {/* Browser chrome */}
-              <div className="bg-[#f4f4f5] border-b-2 border-black px-4 py-3 flex items-center gap-2">
-                <span className="w-3 h-3 rounded-full bg-[#ff5f57] border border-black/20" />
-                <span className="w-3 h-3 rounded-full bg-[#febc2e] border border-black/20" />
-                <span className="w-3 h-3 rounded-full bg-[#28c840] border border-black/20" />
-                <div className="ml-3 flex-1 bg-white border border-gray-200 rounded px-3 py-1">
-                  <span className="font-cabinet text-xs text-gray-400">bookly.store/catalog</span>
-                </div>
+            {/* ── Left Column ── */}
+            <div className="lg:col-span-7 space-y-8">
+              {/* Refined Minimal Badge */}
+              <div className="inline-flex items-center gap-2.5 bg-[var(--bg-surface)] border border-[var(--border-main)] rounded-full px-4 py-1.5 shadow-xs">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="font-sans font-semibold text-xs text-[var(--text-main)] uppercase tracking-wider">
+                  Archival Editions · Personal Book Match
+                </span>
               </div>
 
-              {/* Dashboard content */}
-              <div className="p-5 space-y-4">
-                {/* Top stats row */}
-                <div className="grid grid-cols-3 gap-3">
-                  {[
-                    { label: 'Curated', val: '24+', color: 'var(--bg-accent-yellow)' },
-                    { label: 'Rating', val: '4.9★', color: 'var(--bg-surface-elevated)' },
-                    { label: 'Dispatch', val: '24H', color: 'var(--bg-surface-elevated)' },
-                  ].map(s => (
-                    <div
-                      key={s.label}
-                      className="border border-[var(--border-main)] p-2.5 text-center shadow-xs"
-                      style={{ backgroundColor: s.color }}
-                    >
-                      <p className="font-editorial-serif font-black text-[var(--text-main)] text-base">{s.val}</p>
-                      <p className="font-editorial-mono text-[var(--text-muted)] text-[9px] uppercase tracking-wider mt-0.5">{s.label}</p>
-                    </div>
-                  ))}
+              {/* Minimal Editorial Heading */}
+              <h1
+                className="font-editorial-serif font-bold text-[var(--text-main)] leading-[1.08] tracking-tight"
+                style={{ fontSize: 'clamp(2.75rem, 6vw, 4.8rem)' }}
+              >
+                Books that carry{' '}
+                <span className="italic font-normal text-[var(--text-muted)]">
+                  depth
+                </span>{' '}
+                and enduring substance.
+              </h1>
+
+              {/* Sub-line */}
+              <p className="font-sans text-[var(--text-muted)] text-base sm:text-lg leading-relaxed max-w-xl">
+                Curated for inquisitive minds. Foundational engineering craft, seminal non-fiction, and timeless literature printed on archival paper for deliberate readers.
+              </p>
+
+              {/* Minimal CTA Buttons */}
+              <div className="flex flex-wrap items-center gap-4 pt-2">
+                <Link
+                  href="/books"
+                  className="px-7 py-3.5 rounded-full bg-[var(--text-main)] text-[var(--bg-page)] font-sans text-sm font-semibold hover:opacity-90 transition-opacity shadow-sm flex items-center gap-2"
+                >
+                  <span>Explore Collection</span>
+                  <span className="text-xs">↗</span>
+                </Link>
+                <Link
+                  href="/book-match"
+                  className="px-7 py-3.5 rounded-full bg-[var(--bg-surface)] text-[var(--text-main)] border border-[var(--border-main)] font-sans text-sm font-semibold hover:bg-[var(--bg-surface-elevated)] transition-colors shadow-xs flex items-center gap-2"
+                >
+                  <span>✦ Book Match Quiz</span>
+                </Link>
+              </div>
+
+              {/* Minimal Trust Strip */}
+              <div className="flex flex-wrap items-center gap-6 pt-4 text-[var(--text-muted)] border-t border-[var(--border-subtle)]">
+                <span className="font-sans text-xs font-medium flex items-center gap-1.5">
+                  <span className="text-emerald-600 dark:text-emerald-400">✓</span> 100% Genuine First Editions
+                </span>
+                <span className="font-sans text-xs font-medium flex items-center gap-1.5">
+                  <span className="text-emerald-600 dark:text-emerald-400">✓</span> Archival Acid-Free Paper
+                </span>
+                <span className="font-sans text-xs font-medium flex items-center gap-1.5">
+                  <span className="text-emerald-600 dark:text-emerald-400">✓</span> Free Express Dispatch
+                </span>
+              </div>
+            </div>
+
+            {/* ── Right Column: Sleek Minimal Showcase ── */}
+            <div className="lg:col-span-5 relative">
+              <div className="relative bg-[var(--bg-surface)] border border-[var(--border-main)] rounded-2xl p-6 sm:p-8 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.07)] dark:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.4)] transition-all">
+                {/* Header tag */}
+                <div className="flex items-center justify-between pb-6 border-b border-[var(--border-subtle)]">
+                  <div>
+                    <span className="font-sans text-[11px] font-semibold text-[var(--text-faint)] uppercase tracking-wider block">
+                      CURATOR&apos;S PICK
+                    </span>
+                    <h3 className="font-editorial-serif text-xl font-bold text-[var(--text-main)] mt-0.5">
+                      Essential Classics
+                    </h3>
+                  </div>
+                  <span className="text-xs font-mono font-medium px-2.5 py-1 rounded-full bg-[var(--bg-surface-elevated)] text-[var(--text-muted)] border border-[var(--border-subtle)]">
+                    3 Volumes
+                  </span>
                 </div>
 
-                {/* Book list mockup */}
-                <div className="space-y-2">
+                {/* Minimal Book List */}
+                <div className="space-y-3.5 my-6">
                   {[
-                    { title: 'Clean Code', author: 'Robert C. Martin', price: '₹699', badge: 'CS' },
-                    { title: 'Atomic Habits', author: 'James Clear', price: '₹374', badge: 'MIND' },
-                    { title: 'Zero to One', author: 'Peter Thiel', price: '₹360', badge: 'BIZ' },
-                  ].map(b => (
-                    <div key={b.title} className="flex items-center justify-between border border-[var(--border-main)] p-2.5 bg-[var(--bg-surface)] shadow-xs">
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-7 h-9 bg-[var(--text-main)] text-[var(--bg-page)] border border-[var(--border-main)] flex items-center justify-center text-[7px] font-pixel text-center leading-tight">
-                          {b.badge}
-                        </div>
+                    { title: 'Designing Data-Intensive Applications', author: 'Martin Kleppmann', cat: 'Systems', price: '₹1,499' },
+                    { title: 'The Psychology of Money', author: 'Morgan Housel', cat: 'Finance', price: '₹399' },
+                    { title: 'Thinking, Fast and Slow', author: 'Daniel Kahneman', cat: 'Mindset', price: '₹499' },
+                  ].map((item, idx) => (
+                    <div
+                      key={item.title}
+                      className="p-3.5 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface-elevated)]/60 hover:bg-[var(--bg-surface-elevated)] transition-colors flex items-center justify-between gap-3"
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="w-6 h-6 rounded-full bg-[var(--bg-surface)] border border-[var(--border-subtle)] text-[var(--text-faint)] font-mono text-xs flex items-center justify-center font-medium">
+                          {idx + 1}
+                        </span>
                         <div>
-                          <p className="font-editorial-sans font-bold text-[var(--text-main)] text-xs">{b.title}</p>
-                          <p className="font-editorial-mono text-[var(--text-faint)] text-[9px]">{b.author}</p>
+                          <p className="font-sans font-semibold text-xs sm:text-sm text-[var(--text-main)] line-clamp-1">
+                            {item.title}
+                          </p>
+                          <p className="font-sans text-[11px] text-[var(--text-muted)]">
+                            {item.author} · <span className="text-[var(--text-faint)]">{item.cat}</span>
+                          </p>
                         </div>
                       </div>
-                      <span className="font-editorial-mono font-bold text-[var(--text-main)] text-xs">{b.price}</span>
+                      <span className="font-mono text-xs font-semibold text-[var(--text-main)] whitespace-nowrap">
+                        {item.price}
+                      </span>
                     </div>
                   ))}
                 </div>
 
-                {/* Accent panel */}
-                <div className="border border-[var(--border-main)] p-2.5 bg-[var(--bg-surface-elevated)] shadow-xs">
-                  <div className="flex items-center gap-1.5">
-                    <span className="font-pixel text-[8px] text-[var(--bg-accent-orange)]">✦</span>
-                    <p className="font-editorial-mono font-bold text-[var(--text-main)] text-[11px] uppercase tracking-wider">Book Match Algorithm</p>
-                  </div>
-                  <p className="font-editorial-sans text-[var(--text-muted)] text-[11px] mt-0.5">Matching reader pace, mood, and depth…</p>
-                </div>
+                {/* Minimal Footer CTA */}
+                <Link
+                  href="/books"
+                  className="w-full block py-3 rounded-xl text-center font-sans text-xs font-semibold uppercase tracking-wider bg-[var(--bg-surface-elevated)] hover:bg-[var(--text-main)] text-[var(--text-main)] hover:text-[var(--bg-page)] border border-[var(--border-main)] transition-colors"
+                >
+                  View Full Library Archive →
+                </Link>
               </div>
             </div>
+
           </div>
         </div>
-      </div>
       </TubesBackground>
     </section>
   );

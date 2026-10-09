@@ -17,59 +17,59 @@ function discountedPrice(price: number, discount: number = 0) {
   return discount > 0 ? Math.round(price * (1 - discount / 100)) : price;
 }
 
-// 4 Distinctive Editorial Color Palettes for the Deck
+// 4 Refined Minimal Color Palettes for the Deck
 const CARD_THEMES = [
   {
-    bg: '#FFFDF5',
-    darkBg: '#1c1b18',
-    accent: '#f59e0b',
-    border: '#1c1917',
-    badgeBg: '#1c1917',
-    badgeText: '#ffe17c',
+    bg: '#ffffff',
+    darkBg: '#121215',
+    accent: '#d97706',
+    border: 'var(--border-main)',
+    badgeBg: 'var(--bg-surface-elevated)',
+    badgeText: 'var(--text-main)',
     highlight: '#d97706',
     pillBg: '#fef3c7',
-    shadow: '14px 14px 0px #1c1917',
-    tag: 'DESIGN & UI/UX · MASTERPIECE #01',
-    coverTint: 'from-amber-400/20 to-transparent',
+    shadow: '0 20px 40px -15px rgba(0,0,0,0.08)',
+    tag: 'DESIGN & CRAFT · CURATED #01',
+    coverTint: 'from-amber-400/10 to-transparent',
   },
   {
-    bg: '#F0F9FF',
-    darkBg: '#0f172a',
-    accent: '#0284c7',
-    border: '#0c4a6e',
-    badgeBg: '#0369a1',
-    badgeText: '#ffffff',
-    highlight: '#0284c7',
-    pillBg: '#e0f2fe',
-    shadow: '14px 14px 0px #0c4a6e',
-    tag: 'ANTHROPOLOGY & NATURE · MASTERPIECE #02',
-    coverTint: 'from-sky-400/20 to-transparent',
+    bg: '#ffffff',
+    darkBg: '#121215',
+    accent: '#2563eb',
+    border: 'var(--border-main)',
+    badgeBg: 'var(--bg-surface-elevated)',
+    badgeText: 'var(--text-main)',
+    highlight: '#2563eb',
+    pillBg: '#dbeafe',
+    shadow: '0 20px 40px -15px rgba(0,0,0,0.08)',
+    tag: 'SCIENCE & HISTORY · CURATED #02',
+    coverTint: 'from-blue-400/10 to-transparent',
   },
   {
-    bg: '#FDF2F8',
-    darkBg: '#2a1122',
+    bg: '#ffffff',
+    darkBg: '#121215',
     accent: '#db2777',
-    border: '#831843',
-    badgeBg: '#be185d',
-    badgeText: '#ffffff',
-    highlight: '#ec4899',
+    border: 'var(--border-main)',
+    badgeBg: 'var(--bg-surface-elevated)',
+    badgeText: 'var(--text-main)',
+    highlight: '#db2777',
     pillBg: '#fce7f3',
-    shadow: '14px 14px 0px #831843',
-    tag: 'REGIONAL CLASSICS · MASTERPIECE #03',
-    coverTint: 'from-pink-400/20 to-transparent',
+    shadow: '0 20px 40px -15px rgba(0,0,0,0.08)',
+    tag: 'LITERATURE · CURATED #03',
+    coverTint: 'from-pink-400/10 to-transparent',
   },
   {
-    bg: '#F0FDF4',
-    darkBg: '#0c221a',
+    bg: '#ffffff',
+    darkBg: '#121215',
     accent: '#059669',
-    border: '#064e3b',
-    badgeBg: '#047857',
-    badgeText: '#ffffff',
-    highlight: '#10b981',
+    border: 'var(--border-main)',
+    badgeBg: 'var(--bg-surface-elevated)',
+    badgeText: 'var(--text-main)',
+    highlight: '#059669',
     pillBg: '#d1fae5',
-    shadow: '14px 14px 0px #064e3b',
-    tag: 'VENTURE & PRODUCT · MASTERPIECE #04',
-    coverTint: 'from-emerald-400/20 to-transparent',
+    shadow: '0 20px 40px -15px rgba(0,0,0,0.08)',
+    tag: 'VENTURE & STRATEGY · CURATED #04',
+    coverTint: 'from-emerald-400/10 to-transparent',
   },
 ];
 
@@ -119,7 +119,6 @@ export function FeaturedSection({ books }: FeaturedSectionProps) {
         if (!cardEl) return;
 
         if (i === 0) {
-          // Base card: scales down, drifts slightly up into the stacked fan
           const scale = Math.max(0.86, 1 - progress * 0.12);
           const translateY = -progress * 22;
           const opacity = Math.max(0.5, 1 - progress * 0.35);
@@ -131,12 +130,10 @@ export function FeaturedSection({ books }: FeaturedSectionProps) {
           const end = i / numTransitions;
 
           if (progress <= start) {
-            // Waiting below the viewport with physical angle
             cardEl.style.transform = `perspective(1400px) translate3d(0, 120%, -60px) rotateX(12deg) rotateZ(-2deg) scale(0.96)`;
             cardEl.style.opacity = '0';
             cardEl.style.zIndex = `${10 + i * 5}`;
           } else if (progress >= end) {
-            // Landed into the deck! Stacks with subtle elevation
             const postProgress = (progress - end) / (1 - end || 1);
             const scale = Math.max(0.88, 1 - postProgress * 0.1);
             const translateY = -postProgress * 18;
@@ -145,9 +142,7 @@ export function FeaturedSection({ books }: FeaturedSectionProps) {
             cardEl.style.opacity = `${opacity}`;
             cardEl.style.zIndex = `${10 + i * 5}`;
           } else {
-            // Actively sliding into the deck with dynamic 3D angle
             const rawT = (progress - start) / (end - start);
-            // Silky smooth Hermite / Smoothstep easing for a luxurious physical card draw
             const t = rawT * rawT * (3 - 2 * rawT);
             const translateY = (1 - t) * 110;
             const rotateX = (1 - t) * 9;
@@ -165,7 +160,6 @@ export function FeaturedSection({ books }: FeaturedSectionProps) {
     [totalCards, featured]
   );
 
-  // Synchronize Page Scroll with Stacking Card Deck with Silky Lerp Smoothing
   useEffect(() => {
     if (!mounted || totalCards === 0) return;
 
@@ -188,7 +182,6 @@ export function FeaturedSection({ books }: FeaturedSectionProps) {
     };
 
     const renderLoop = () => {
-      // Damped lerp for ultra-smooth inertia
       currentProgress += (targetProgress - currentProgress) * 0.09;
       if (Math.abs(targetProgress - currentProgress) < 0.0005) {
         currentProgress = targetProgress;
@@ -213,7 +206,6 @@ export function FeaturedSection({ books }: FeaturedSectionProps) {
     };
   }, [mounted, totalCards, updateCardPositions]);
 
-  // Jump to specific card in the stack
   const scrollToCard = (index: number) => {
     if (!trackRef.current) return;
     const trackTop = trackRef.current.offsetTop;
@@ -235,25 +227,24 @@ export function FeaturedSection({ books }: FeaturedSectionProps) {
       ref={trackRef}
       id="featured"
       suppressHydrationWarning
-      className="relative w-full border-b-2 border-black bg-[var(--bg-page)]"
+      className="relative w-full border-b border-[var(--border-main)] bg-[var(--bg-page)]"
       style={{
-        // 460vh provides an unhurried, calm, and majestic stacking runway
         height: `${Math.max(380, totalCards * 115)}vh`,
       }}
     >
-      {/* ── Sticky Fullscreen Viewport (Pins user to the deck stage) ── */}
+      {/* ── Sticky Fullscreen Viewport ── */}
       <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-between select-none">
 
         {/* ── Section Header Bar ── */}
-        <div className="relative z-30 border-b-2 border-black bg-[var(--bg-surface)] backdrop-blur-md">
+        <div className="relative z-30 border-b border-[var(--border-main)] bg-[var(--bg-surface)] backdrop-blur-md">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <span className="w-3.5 h-3.5 bg-[#ffe17c] border-2 border-black shadow-[2px_2px_0px_#000]" />
+              <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
               <div>
-                <p className="font-editorial-mono text-[9px] uppercase tracking-[0.22em] text-[var(--text-faint)] font-bold">
-                  EDITOR&apos;S CHOICE · 3D STACKING DECK
+                <p className="font-sans text-[10px] uppercase tracking-[0.2em] text-[var(--text-faint)] font-semibold">
+                  CURATED SELECTION · 3D SLIDING DECK
                 </p>
-                <h2 className="font-editorial-serif text-2xl sm:text-3xl text-[var(--text-main)] font-black leading-tight">
+                <h2 className="font-editorial-serif text-2xl sm:text-3xl text-[var(--text-main)] font-bold leading-tight">
                   Featured Editions
                 </h2>
               </div>
@@ -261,41 +252,41 @@ export function FeaturedSection({ books }: FeaturedSectionProps) {
 
             {/* Scroll Progress & Quick Catalog Link */}
             <div className="flex items-center gap-5">
-              <div className="hidden sm:flex items-center gap-3 bg-[var(--bg-surface-elevated)] border-2 border-black px-3.5 py-1.5 rounded-lg shadow-[2px_2px_0px_#000]">
-                <span className="font-editorial-mono text-[10px] font-bold uppercase text-[var(--text-muted)]">
+              <div className="hidden sm:flex items-center gap-3 bg-[var(--bg-surface-elevated)] border border-[var(--border-main)] px-3.5 py-1.5 rounded-full">
+                <span className="font-sans text-[10px] font-semibold uppercase text-[var(--text-muted)]">
                   Deck Stack
                 </span>
                 <div className="w-24 h-1.5 bg-black/10 dark:bg-white/10 rounded-full overflow-hidden">
                   <div
                     ref={progressBarRef}
-                    className="h-full bg-[#f59e0b] transition-all duration-75"
+                    className="h-full bg-amber-500 transition-all duration-75"
                     style={{ width: '0%' }}
                   />
                 </div>
                 <span
                   ref={progressTextRef}
-                  className="font-editorial-mono text-xs font-black text-[var(--text-main)] w-12 text-right"
+                  className="font-mono text-xs font-semibold text-[var(--text-main)] w-12 text-right"
                 >
                   01 / 0{totalCards}
                 </span>
               </div>
 
               <Link
-                href="#catalog"
-                className="flex items-center gap-2 font-editorial-mono text-xs font-bold uppercase tracking-wider text-black bg-[#ffe17c] border-2 border-black px-4 py-2 hover:bg-black hover:text-[#ffe17c] transition-all shadow-hard-4"
+                href="/books"
+                className="font-sans text-xs font-semibold uppercase tracking-wider px-4 py-2 border border-[var(--border-main)] rounded-full hover:bg-[var(--bg-surface-elevated)] text-[var(--text-main)] transition-colors"
               >
-                View Catalog <span className="text-base leading-none">↗</span>
+                Browse All →
               </Link>
             </div>
           </div>
         </div>
 
-        {/* ── Center Stage: Deck of 3D Stacking Cards ── */}
-        <div className="relative z-20 flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-4 sm:py-6 overflow-hidden">
-          <div className="relative w-full max-w-5xl h-[560px] sm:h-[590px] flex items-center justify-center">
+        {/* ── 3D Tactile Stacking Cards Stage ── */}
+        <div className="relative flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center justify-center">
+          <div className="relative w-full max-w-4xl h-[520px] sm:h-[540px]">
             {featured.map((book, idx) => {
               const theme = CARD_THEMES[idx % CARD_THEMES.length];
-              const verifiedCover = VERIFIED_BOOK_COVERS[book.id] || book.coverImage;
+              const verifiedCover = VERIFIED_BOOK_COVERS[book.id];
               const fallbackSvg = generateBookCoverSvg({
                 title: book.title,
                 author: book.author,
@@ -313,55 +304,39 @@ export function FeaturedSection({ books }: FeaturedSectionProps) {
                   ref={(el) => {
                     cardsRef.current[idx] = el;
                   }}
-                  className="absolute inset-0 w-full h-full border-3 border-black rounded-2xl overflow-hidden flex flex-col md:flex-row transition-all duration-300"
+                  className="absolute inset-0 w-full h-full border border-[var(--border-main)] rounded-2xl overflow-hidden flex flex-col md:flex-row transition-all duration-300 shadow-xl"
                   style={{
-                    backgroundColor: theme.bg,
-                    borderColor: theme.border,
-                    boxShadow: theme.shadow,
+                    backgroundColor: 'var(--bg-surface)',
                     willChange: 'transform, opacity',
                     transform: idx === 0 ? 'perspective(1400px) translate3d(0, 0, 0)' : 'perspective(1400px) translate3d(0, 120%, -60px)',
                     zIndex: 10 + idx * 5,
                   }}
                 >
-                  {/* Left Column: Premium Book Cover Artwork with theme styling */}
+                  {/* Left Column: Book Cover Artwork */}
                   <div
-                    className="md:w-5/12 p-6 sm:p-8 flex flex-col justify-between border-b-2 md:border-b-0 md:border-r-3 relative overflow-hidden group"
-                    style={{
-                      borderColor: theme.border,
-                      background: `linear-gradient(135deg, ${theme.bg} 0%, ${theme.pillBg} 100%)`,
-                    }}
+                    className="md:w-5/12 p-6 sm:p-8 flex flex-col justify-between border-b md:border-b-0 md:border-r border-[var(--border-main)] relative overflow-hidden group bg-[var(--bg-surface-elevated)]"
                   >
-                    {/* Background Dot Texture */}
-                    <div className="absolute inset-0 lumina-dot-bg opacity-30 pointer-events-none" />
-
                     {/* Top Badges */}
                     <div className="relative z-10 flex items-center justify-between gap-2">
                       <div className="flex items-center gap-2">
-                        <span
-                          className="font-editorial-mono text-[10px] font-black uppercase px-2.5 py-1 border border-black shadow-[2px_2px_0px_#000]"
-                          style={{
-                            backgroundColor: theme.badgeBg,
-                            color: theme.badgeText,
-                          }}
-                        >
+                        <span className="font-sans text-[10px] font-semibold uppercase px-2.5 py-1 rounded-full bg-[var(--bg-surface)] text-[var(--text-main)] border border-[var(--border-main)]">
                           {book.category?.name || 'Curated'}
                         </span>
                         {book.discount > 0 && (
-                          <span className="font-editorial-mono text-[10px] font-black uppercase px-2.5 py-1 bg-[#ec4899] text-white border border-black shadow-[2px_2px_0px_#000]">
+                          <span className="font-sans text-[10px] font-semibold uppercase px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
                             -{book.discount}% OFF
                           </span>
                         )}
                       </div>
 
-                      {/* Card Number Watermark */}
-                      <span className="font-editorial-mono text-xs font-black" style={{ color: theme.border }}>
+                      <span className="font-mono text-xs font-semibold text-[var(--text-faint)]">
                         VOL. 0{idx + 1}
                       </span>
                     </div>
 
-                    {/* Center Book Cover with 3D shadow lift */}
+                    {/* Center Book Cover with soft shadow lift */}
                     <div className="relative z-10 my-4 flex justify-center">
-                      <div className="relative w-44 sm:w-52 aspect-[3/4] bg-black border-2 border-black shadow-[8px_8px_0px_#000] overflow-hidden group-hover:scale-105 group-hover:rotate-1 transition-transform duration-500">
+                      <div className="relative w-40 sm:w-48 aspect-[3/4] rounded-lg shadow-xl overflow-hidden group-hover:scale-105 transition-transform duration-500">
                         <img
                           src={coverSrc}
                           alt={book.title}
@@ -370,35 +345,35 @@ export function FeaturedSection({ books }: FeaturedSectionProps) {
                             (e.currentTarget as HTMLImageElement).src = fallbackSvg;
                           }}
                         />
-                        <div className="absolute inset-0 bg-gradient-to-tr from-black/40 via-transparent to-white/20 pointer-events-none" />
+                        <div className="absolute inset-0 bg-gradient-to-tr from-black/20 via-transparent to-white/10 pointer-events-none" />
                       </div>
                     </div>
 
                     {/* Bottom Metadata Mini-strip */}
-                    <div className="relative z-10 flex items-center justify-between text-xs font-editorial-mono font-bold border-t border-black/15 pt-3 text-black/70">
+                    <div className="relative z-10 flex items-center justify-between text-xs font-mono border-t border-[var(--border-subtle)] pt-3 text-[var(--text-muted)]">
                       <span>ISBN: 978-01{idx}44</span>
-                      <span className="font-black text-black">
+                      <span className="font-bold text-[var(--text-main)]">
                         ★ {book.rating || 4.8} / 5.0
                       </span>
                     </div>
                   </div>
 
-                  {/* Right Column: Book Specifications, Summary & Action Deck */}
-                  <div className="md:w-7/12 p-6 sm:p-10 flex flex-col justify-between overflow-y-auto bg-white/60 dark:bg-black/20">
+                  {/* Right Column: Book Specifications & Actions */}
+                  <div className="md:w-7/12 p-6 sm:p-8 flex flex-col justify-between overflow-y-auto bg-[var(--bg-surface)]">
                     <div>
                       {/* Sub-header */}
                       <div className="flex items-center justify-between gap-4 mb-2">
-                        <span className="font-editorial-mono text-xs uppercase tracking-widest font-black" style={{ color: theme.highlight }}>
+                        <span className="font-sans text-xs uppercase tracking-wider font-semibold text-[var(--text-faint)]">
                           {theme.tag}
                         </span>
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => toggleWishlist(book)}
                             aria-label="Save to Wishlist"
-                            className={`w-9 h-9 rounded-full border-2 border-black flex items-center justify-center transition-all cursor-pointer ${
+                            className={`w-8 h-8 rounded-full border border-[var(--border-main)] flex items-center justify-center transition-all cursor-pointer ${
                               inFav
-                                ? 'bg-[#ec4899] text-white shadow-[2px_2px_0px_#000]'
-                                : 'bg-white hover:bg-[#ffe17c] text-black shadow-[2px_2px_0px_#000]'
+                                ? 'bg-rose-500 text-white'
+                                : 'bg-[var(--bg-surface-elevated)] hover:bg-[var(--border-main)] text-[var(--text-main)]'
                             }`}
                           >
                             {inFav ? '♥' : '♡'}
@@ -406,10 +381,10 @@ export function FeaturedSection({ books }: FeaturedSectionProps) {
                           <button
                             onClick={() => (inComp ? removeFromCompare(book.id) : addToCompare(book))}
                             aria-label="Compare Edition"
-                            className={`w-9 h-9 rounded-full border-2 border-black flex items-center justify-center text-xs font-bold transition-all cursor-pointer ${
+                            className={`w-8 h-8 rounded-full border border-[var(--border-main)] flex items-center justify-center text-xs font-bold transition-all cursor-pointer ${
                               inComp
-                                ? 'bg-[#3b82f6] text-white shadow-[2px_2px_0px_#000]'
-                                : 'bg-white hover:bg-[#3b82f6] hover:text-white text-black shadow-[2px_2px_0px_#000]'
+                                ? 'bg-blue-600 text-white'
+                                : 'bg-[var(--bg-surface-elevated)] hover:bg-[var(--border-main)] text-[var(--text-main)]'
                             }`}
                           >
                             ⇄
@@ -418,56 +393,53 @@ export function FeaturedSection({ books }: FeaturedSectionProps) {
                       </div>
 
                       {/* Main Title */}
-                      <h3 className="font-editorial-serif font-black text-2xl sm:text-4xl text-black tracking-tight leading-tight mb-2">
+                      <h3 className="font-editorial-serif font-bold text-2xl sm:text-3xl text-[var(--text-main)] tracking-tight leading-tight mb-1.5">
                         {book.title}
                       </h3>
 
                       {/* Author & Rating */}
-                      <div className="flex flex-wrap items-center gap-3 mb-5">
-                        <span className="font-cabinet font-700 text-sm sm:text-base text-black/75">
-                          by <strong className="text-black">{book.author}</strong>
+                      <div className="flex flex-wrap items-center gap-2 mb-4">
+                        <span className="font-sans text-sm text-[var(--text-muted)]">
+                          by <strong className="text-[var(--text-main)]">{book.author}</strong>
                         </span>
-                        <span className="text-black/30">·</span>
+                        <span className="text-[var(--text-faint)]">·</span>
                         <div className="flex items-center gap-1.5">
                           <RatingStars rating={book.rating || 4.8} size="sm" />
-                          <span className="font-editorial-mono text-xs text-black/60 font-bold">
+                          <span className="font-mono text-xs text-[var(--text-faint)]">
                             ({book.numReviews || 420})
                           </span>
                         </div>
                       </div>
 
                       {/* Editorial Synopsis */}
-                      <p className="font-cabinet text-sm sm:text-base text-black/80 leading-relaxed line-clamp-3 sm:line-clamp-4 mb-6 font-500">
+                      <p className="font-sans text-sm text-[var(--text-muted)] leading-relaxed line-clamp-3 sm:line-clamp-4 mb-5">
                         {book.description ||
                           'A seminal work of uncompromising clarity and depth. Hand-selected for our permanent collection for its profound insights into craft, human behavior, and enduring systems.'}
                       </p>
 
                       {/* Spec Pills */}
-                      <div
-                        className="grid grid-cols-3 gap-3 p-3.5 border-2 border-black mb-6 rounded-lg"
-                        style={{ backgroundColor: theme.pillBg }}
-                      >
+                      <div className="grid grid-cols-3 gap-3 p-3 bg-[var(--bg-surface-elevated)] border border-[var(--border-main)] mb-5 rounded-xl">
                         <div>
-                          <p className="font-editorial-mono text-[9px] uppercase tracking-wider text-black/60 font-bold">
+                          <p className="font-sans text-[10px] uppercase tracking-wider text-[var(--text-faint)] font-semibold">
                             Format
                           </p>
-                          <p className="font-cabinet font-800 text-xs sm:text-sm text-black">
+                          <p className="font-sans font-semibold text-xs sm:text-sm text-[var(--text-main)]">
                             Hardcover Archival
                           </p>
                         </div>
                         <div>
-                          <p className="font-editorial-mono text-[9px] uppercase tracking-wider text-black/60 font-bold">
-                            Stock Status
+                          <p className="font-sans text-[10px] uppercase tracking-wider text-[var(--text-faint)] font-semibold">
+                            Availability
                           </p>
-                          <p className="font-cabinet font-800 text-xs sm:text-sm text-[#059669]">
-                            {book.stock || 24} Copies Left
+                          <p className="font-sans font-semibold text-xs sm:text-sm text-emerald-600 dark:text-emerald-400">
+                            {book.stock || 24} In Stock
                           </p>
                         </div>
                         <div>
-                          <p className="font-editorial-mono text-[9px] uppercase tracking-wider text-black/60 font-bold">
+                          <p className="font-sans text-[10px] uppercase tracking-wider text-[var(--text-faint)] font-semibold">
                             Dispatch
                           </p>
-                          <p className="font-cabinet font-800 text-xs sm:text-sm text-black">
+                          <p className="font-sans font-semibold text-xs sm:text-sm text-[var(--text-main)]">
                             24H Express
                           </p>
                         </div>
@@ -475,46 +447,42 @@ export function FeaturedSection({ books }: FeaturedSectionProps) {
                     </div>
 
                     {/* Bottom Action Deck */}
-                    <div className="border-t-2 border-black/15 pt-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="border-t border-[var(--border-subtle)] pt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       {/* Pricing block */}
                       <div>
-                        <div className="flex items-baseline gap-2.5">
-                          <span className="font-cabinet font-900 text-2xl sm:text-3xl text-black">
+                        <div className="flex items-baseline gap-2">
+                          <span className="font-serif font-bold text-2xl sm:text-3xl text-[var(--text-main)]">
                             ₹{finalPrice}
                           </span>
                           {book.discount > 0 && (
-                            <span className="font-cabinet text-base text-black/40 line-through">
+                            <span className="font-mono text-sm text-[var(--text-faint)] line-through">
                               ₹{book.price}
                             </span>
                           )}
                           {savings > 0 && (
-                            <span
-                              className="font-editorial-mono text-[10px] font-black uppercase px-2 py-0.5 border border-black shadow-[2px_2px_0px_#000]"
-                              style={{ backgroundColor: theme.accent, color: '#000' }}
-                            >
+                            <span className="font-sans text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
                               Save ₹{savings}
                             </span>
                           )}
                         </div>
-                        <p className="font-editorial-mono text-[10px] text-black/60 mt-0.5">
-                          Includes taxes & complimentary express shipping
+                        <p className="font-sans text-[11px] text-[var(--text-faint)] mt-0.5">
+                          Taxes included · Free express shipping
                         </p>
                       </div>
 
                       {/* Primary Actions */}
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2.5">
                         <Link
                           href={`/books/${book.id}`}
-                          className="font-cabinet font-800 text-xs sm:text-sm uppercase tracking-wider px-4 sm:px-5 py-3 border-2 border-black bg-white hover:bg-black hover:text-white transition-all text-center shadow-[3px_3px_0px_#000]"
+                          className="font-sans font-semibold text-xs uppercase tracking-wider px-4 py-2.5 rounded-full border border-[var(--border-main)] hover:bg-[var(--bg-surface-elevated)] transition-colors text-center text-[var(--text-main)]"
                         >
                           Inspect →
                         </Link>
                         <button
                           onClick={() => addToCart(book, 1)}
-                          className="font-cabinet font-800 text-xs sm:text-sm uppercase tracking-wider px-6 sm:px-7 py-3 text-black border-2 border-black shadow-[4px_4px_0px_#000] hover:shadow-[2px_2px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 transition-all text-center active:translate-x-1 active:translate-y-1 cursor-pointer"
-                          style={{ backgroundColor: theme.accent }}
+                          className="font-sans font-semibold text-xs uppercase tracking-wider px-5 py-2.5 rounded-full bg-[var(--text-main)] text-[var(--bg-page)] hover:opacity-90 transition-opacity text-center cursor-pointer shadow-sm"
                         >
-                          Add to Cart ⚡
+                          Add to Cart
                         </button>
                       </div>
                     </div>
@@ -526,19 +494,19 @@ export function FeaturedSection({ books }: FeaturedSectionProps) {
         </div>
 
         {/* ── Bottom Deck Controls & Card Selector ── */}
-        <div className="relative z-30 border-t-2 border-black bg-[var(--bg-surface)] py-3 px-4 sm:px-8 flex items-center justify-between">
+        <div className="relative z-30 border-t border-[var(--border-main)] bg-[var(--bg-surface)] py-3 px-4 sm:px-8 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="font-editorial-mono text-[10px] font-bold uppercase text-[var(--text-faint)] mr-2 hidden sm:inline">
-              Scroll down to slide deck or jump:
+            <span className="font-sans text-[11px] font-semibold uppercase text-[var(--text-faint)] mr-2 hidden sm:inline">
+              Scroll down to slide or select:
             </span>
             {featured.map((b, i) => (
               <button
                 key={'deck-step-' + i}
                 onClick={() => scrollToCard(i)}
-                className={`font-editorial-mono text-xs font-bold px-3 py-1 border-2 border-black rounded transition-all cursor-pointer ${
+                className={`font-sans text-xs font-semibold px-3 py-1 rounded-full border transition-all cursor-pointer ${
                   activeIdx === i
-                    ? 'bg-[#ffe17c] text-black shadow-[2px_2px_0px_#000] scale-105'
-                    : 'bg-[var(--bg-surface-elevated)] text-[var(--text-muted)] hover:bg-white'
+                    ? 'bg-[var(--text-main)] text-[var(--bg-page)] border-[var(--text-main)]'
+                    : 'bg-[var(--bg-surface)] text-[var(--text-muted)] border-[var(--border-main)] hover:bg-[var(--bg-surface-elevated)]'
                 }`}
               >
                 0{i + 1}
@@ -547,7 +515,7 @@ export function FeaturedSection({ books }: FeaturedSectionProps) {
           </div>
 
           <div className="flex items-center gap-3">
-            <span className="font-editorial-mono text-xs font-bold text-[var(--text-muted)] flex items-center gap-1.5 animate-bounce">
+            <span className="font-sans text-xs font-semibold text-[var(--text-muted)] flex items-center gap-1.5 animate-bounce">
               <span>↓</span> Scroll to stack next card
             </span>
           </div>
