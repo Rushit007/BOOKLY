@@ -109,7 +109,7 @@ async function main() {
       categoryId: csCategory.id,
       rating: 4.8,
       numReviews: 342,
-      coverImage: 'https://images.unsplash.com/photo-1532012164546-f432f2e3777a?q=80&w=600&auto=format&fit=crop',
+      coverImage: 'https://covers.openlibrary.org/b/id/10287413-L.jpg',
     },
     {
       title: 'Designing Data-Intensive Applications',
@@ -124,7 +124,7 @@ async function main() {
       categoryId: csCategory.id,
       rating: 4.9,
       numReviews: 512,
-      coverImage: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=600&auto=format&fit=crop',
+      coverImage: 'https://covers.openlibrary.org/b/id/10543594-L.jpg',
     },
     {
       title: 'The Pragmatic Programmer',
@@ -139,7 +139,7 @@ async function main() {
       categoryId: csCategory.id,
       rating: 4.9,
       numReviews: 280,
-      coverImage: 'https://images.unsplash.com/photo-1516259762381-22954d7d3ad2?q=80&w=600&auto=format&fit=crop',
+      coverImage: 'https://covers.openlibrary.org/b/id/9255566-L.jpg',
     },
     {
       title: 'Atomic Habits',
@@ -154,7 +154,7 @@ async function main() {
       categoryId: selfHelpCategory.id,
       rating: 4.9,
       numReviews: 1420,
-      coverImage: 'https://images.unsplash.com/photo-1589829085413-56de8ae18c73?q=80&w=600&auto=format&fit=crop',
+      coverImage: 'https://covers.openlibrary.org/b/id/12843470-L.jpg',
     },
     {
       title: 'The Psychology of Money',
@@ -169,7 +169,7 @@ async function main() {
       categoryId: businessCategory.id,
       rating: 4.8,
       numReviews: 890,
-      coverImage: 'https://images.unsplash.com/photo-1559526324-4b87b5e36e44?q=80&w=600&auto=format&fit=crop',
+      coverImage: 'https://covers.openlibrary.org/b/id/10403362-L.jpg',
     },
     {
       title: 'The Alchemist',
@@ -184,7 +184,7 @@ async function main() {
       categoryId: fictionCategory.id,
       rating: 4.7,
       numReviews: 950,
-      coverImage: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=600&auto=format&fit=crop',
+      coverImage: 'https://covers.openlibrary.org/b/id/10515152-L.jpg',
     },
     {
       title: 'Refactoring',
@@ -199,7 +199,7 @@ async function main() {
       categoryId: csCategory.id,
       rating: 4.7,
       numReviews: 185,
-      coverImage: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=600&auto=format&fit=crop',
+      coverImage: 'https://covers.openlibrary.org/b/id/10545938-L.jpg',
     },
     {
       title: 'Thinking, Fast and Slow',
@@ -214,7 +214,7 @@ async function main() {
       categoryId: selfHelpCategory.id,
       rating: 4.6,
       numReviews: 760,
-      coverImage: 'https://images.unsplash.com/photo-1507842229443-5a0a4c21966c?q=80&w=600&auto=format&fit=crop',
+      coverImage: 'https://covers.openlibrary.org/b/id/8231856-L.jpg',
     },
     {
       title: "Don't Make Me Think",
@@ -229,7 +229,7 @@ async function main() {
       categoryId: designCategory.id,
       rating: 4.8,
       numReviews: 410,
-      coverImage: 'https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?q=80&w=600&auto=format&fit=crop',
+      coverImage: 'https://covers.openlibrary.org/b/id/8381896-L.jpg',
     },
     {
       title: 'Cosmos',
@@ -244,7 +244,7 @@ async function main() {
       categoryId: scienceCategory.id,
       rating: 4.9,
       numReviews: 620,
-      coverImage: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=600&auto=format&fit=crop',
+      coverImage: 'https://covers.openlibrary.org/b/id/12627914-L.jpg',
     },
     {
       title: 'Zero to One',
@@ -259,7 +259,7 @@ async function main() {
       categoryId: businessCategory.id,
       rating: 4.7,
       numReviews: 430,
-      coverImage: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=600&auto=format&fit=crop',
+      coverImage: 'https://covers.openlibrary.org/b/id/12848981-L.jpg',
     },
     {
       title: '1984',
@@ -274,7 +274,7 @@ async function main() {
       categoryId: fictionCategory.id,
       rating: 4.8,
       numReviews: 1850,
-      coverImage: 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=600&auto=format&fit=crop',
+      coverImage: 'https://covers.openlibrary.org/b/id/8575782-L.jpg',
     },
   ];
 

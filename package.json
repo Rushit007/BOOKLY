@@ -1,0 +1,12 @@
+{
+  "name": "bookly-workspace",
+  "version": "1.0.0",
+  "private": true,
+  "description": "BOOKLY - Root orchestrator",
+  "scripts": {
+    "start": "start-project.bat",
+    "dev": "npx concurrently -k -n \"BACKEND,FRONTEND\" -c \"cyan,magenta\" \"npm --prefix backend run start:dev\" \"npm --prefix frontend run dev\"",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down"
+  }
+}

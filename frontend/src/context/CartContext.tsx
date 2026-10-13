@@ -62,34 +62,54 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   // Sync state from real backend Cart response
   const applyBackendCart = (cart: Cart) => {
-    setItems(cart.items || []);
-    setSubtotal(cart.subtotal || 0);
-    setTotalDiscount(cart.totalDiscount || 0);
-    setTotalAmount(cart.totalAmount || 0);
-    setItemCount(cart.itemCount || 0);
+    const newItems = cart && Array.isArray(cart.items) ? cart.items : [];
+    setItems(newItems);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('bookly_cart', JSON.stringify(newItems));
+    }
+    setSubtotal(cart?.subtotal || 0);
+    setTotalDiscount(cart?.totalDiscount || 0);
+    setTotalAmount(cart?.totalAmount || 0);
+    setItemCount(cart?.itemCount || 0);
   };
 
   const refreshCart = useCallback(async () => {
+    // 1. Always load local saved items first so nothing disappears
+    let localSavedItems: CartItem[] = [];
+    try {
+      const saved = typeof window !== 'undefined' ? localStorage.getItem('bookly_cart') : null;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          localSavedItems = parsed;
+          setItems(parsed);
+          recalculateGuestTotals(parsed);
+        }
+      }
+    } catch (e) {
+      console.error('Failed to load cart from localStorage:', e);
+    }
+
+    // 2. If authenticated, sync with backend
     if (isAuthenticated) {
       try {
         const backendCart = await api.getCart();
-        applyBackendCart(backendCart);
-        return;
+        if (backendCart && Array.isArray(backendCart.items) && backendCart.items.length > 0) {
+          applyBackendCart(backendCart);
+          return;
+        } else if (localSavedItems.length > 0) {
+          // Sync local items into the backend cart
+          for (const it of localSavedItems) {
+            try {
+              await api.addToCart(it.bookId, it.quantity);
+            } catch {
+              // Ignore single item sync failure
+            }
+          }
+        }
       } catch (err) {
         console.warn('Could not fetch backend cart, falling back to local storage:', err);
       }
-    }
-
-    // Guest / Local Mode
-    try {
-      const saved = localStorage.getItem('bookly_cart');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        setItems(parsed);
-        recalculateGuestTotals(parsed);
-      }
-    } catch (e) {
-      console.error('Failed to load guest cart:', e);
     }
   }, [isAuthenticated]);
 
@@ -97,34 +117,25 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     refreshCart().finally(() => setIsInitialized(true));
   }, [refreshCart]);
 
-  // Persist guest cart
+  // Always persist cart to localStorage whenever items update (after initialization)
   useEffect(() => {
-    if (isInitialized && !isAuthenticated) {
+    if (isInitialized && typeof window !== 'undefined') {
       try {
         localStorage.setItem('bookly_cart', JSON.stringify(items));
+        recalculateGuestTotals(items);
       } catch (e) {
-        console.error('Failed to save guest cart to localStorage:', e);
+        console.error('Failed to save cart to localStorage:', e);
       }
     }
-  }, [items, isInitialized, isAuthenticated]);
+  }, [items, isInitialized]);
 
   const openCartDrawer = () => setIsCartDrawerOpen(true);
   const closeCartDrawer = () => setIsCartDrawerOpen(false);
 
   const addToCart = async (book: Book, quantity: number = 1) => {
     showSuccess('Added to Cart', `${book.title} (x${quantity}) added to bag`);
-    if (isAuthenticated) {
-      try {
-        const updatedCart = await api.addToCart(book.id, quantity);
-        applyBackendCart(updatedCart);
-        setIsCartDrawerOpen(true);
-        return;
-      } catch (err: any) {
-        console.error('Failed to add to real cart:', err);
-      }
-    }
 
-    // Guest Mode fallback
+    // 1. Immediately update local cart state for instant, snappy UI response
     setItems((prev) => {
       const existingIndex = prev.findIndex((item) => item.bookId === book.id);
       let updated: CartItem[];
@@ -147,7 +158,17 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       recalculateGuestTotals(updated);
       return updated;
     });
+
     setIsCartDrawerOpen(true);
+
+    // 2. If authenticated, sync with backend in background
+    if (isAuthenticated) {
+      try {
+        await api.addToCart(book.id, quantity);
+      } catch {
+        // Silently handled by local cart fallback
+      }
+    }
   };
 
   const updateQuantity = async (bookId: string, quantity: number) => {
@@ -207,17 +228,18 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     showInfo('Cart Cleared', 'All items removed from cart');
     if (isAuthenticated) {
       try {
-        const updatedCart = await api.clearCart();
-        applyBackendCart(updatedCart);
-        return;
+        await api.clearCart();
       } catch (err) {
         console.error('Failed to clear cart on server:', err);
       }
     }
 
-    // Guest Mode fallback
+    // Completely reset local items and storage
     setItems([]);
     recalculateGuestTotals([]);
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('bookly_cart');
+    }
   };
 
   return (

@@ -10,11 +10,12 @@ import { WorksWheel } from '../components/home/WorksWheel';
 import { CategoryBar } from '../components/home/CategoryBar';
 import { FeaturedSection } from '../components/home/FeaturedSection';
 import { IndianLanguageSection } from '../components/home/IndianLanguageSection';
-import { ExplodedBookSection } from '../components/home/ExplodedBookSection';
+import { AuthorsOfTheMonth } from '../components/home/AuthorsOfTheMonth';
 import { BookGrid } from '../components/books/BookGrid';
 import { BookFilters } from '../components/books/BookFilters';
 import { BookSort } from '../components/books/BookSort';
 import { MOCK_BOOKS } from '../data/mockBooks';
+import { LandingIntro3D } from '../components/home/LandingIntro3D';
 
 function HomeContent() {
   const searchParams = useSearchParams();
@@ -82,24 +83,24 @@ function HomeContent() {
     setPage(1);
   };
 
-  // Books for WorksWheel and FlyingPosters
+  // 16 Books for WorksWheel and FlyingPosters
   const wheelBooks = MOCK_BOOKS.filter(
     b => b.categoryId !== 'cat-7' && b.categoryId !== 'cat-8'
-  ).slice(0, 9);
+  ).slice(0, 16);
 
   return (
     <div className='flex flex-col min-h-screen bg-[var(--bg-page)] text-[var(--text-main)]'>
       {/* ── Minimalist Hero ── */}
       <LuminaHero />
 
-      {/* ── 3D Interactive Book Wheel (Scrolling Effect) ── */}
+      {/* ── 3D Interactive Book Wheel (Enlarged, Slower & Smoother) ── */}
       <WorksWheel books={wheelBooks} />
 
-      {/* ── 3D WebGL Distortion Gallery ── */}
+      {/* ── 10 Books of the Month with WebGL 3D Flight & Editorial Summaries ── */}
       <FlyingPostersGallery books={wheelBooks} />
 
-      {/* ── 3D Exploded View Unboxing & Anatomy Section ── */}
-      <ExplodedBookSection />
+      {/* ── Authors of the Month & Upcoming Releases Showcase ── */}
+      <AuthorsOfTheMonth />
 
       {/* ── Category Bar ── */}
       <CategoryBar
@@ -124,14 +125,14 @@ function HomeContent() {
       <div id='catalog' className='border-y border-[var(--border-main)] bg-[var(--bg-surface)]'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4'>
           <div className='flex items-center gap-3'>
-            <span className='tactile-pixel-badge bg-[var(--bg-surface-elevated)] text-[var(--text-main)] shadow-xs'>
+            <span className='px-3 py-1 rounded-full bg-[#FF66B3] text-white font-pixel text-[9px] shadow-sm'>
               CATALOG
             </span>
             <div>
-              <p className='font-sans text-xs uppercase tracking-[0.2em] font-semibold text-[var(--text-faint)]'>
+              <p className='font-array text-xs uppercase tracking-[0.2em] font-semibold text-[#42BFDD]'>
                 CURATED PHYSICAL EDITIONS
               </p>
-              <h2 className='font-editorial-serif text-2xl sm:text-3xl font-bold text-[var(--text-main)] mt-0.5'>
+              <h2 className='font-pixel text-base sm:text-lg font-bold text-[#084B83] dark:text-[#F0F6F6] mt-1'>
                 Browse All Titles ({totalItems})
               </h2>
             </div>
@@ -208,14 +209,17 @@ function HomeContent() {
 
 export default function HomePage() {
   return (
-    <Suspense
-      fallback={
-        <div className='min-h-screen flex items-center justify-center bg-[var(--bg-page)]'>
-          <div className='w-8 h-8 border-2 border-[var(--border-main)] border-t-[var(--text-main)] rounded-full animate-spin' />
-        </div>
-      }
-    >
-      <HomeContent />
-    </Suspense>
+    <>
+      <LandingIntro3D />
+      <Suspense
+        fallback={
+          <div className='min-h-screen flex items-center justify-center bg-[var(--bg-page)]'>
+            <div className='w-8 h-8 border-2 border-[var(--border-main)] border-t-[var(--text-main)] rounded-full animate-spin' />
+          </div>
+        }
+      >
+        <HomeContent />
+      </Suspense>
+    </>
   );
 }

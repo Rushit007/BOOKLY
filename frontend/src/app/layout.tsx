@@ -12,6 +12,13 @@ import { AIChatbot } from '../components/common/AIChatbot';
 export const metadata: Metadata = {
   title: 'BOOKLY — Curated Online Bookstore & Independent Press',
   description: 'Books that mean something. Curated editions, foundational engineering craft, and timeless literature with character.',
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+    ],
+    shortcut: '/favicon.svg',
+    apple: '/favicon.svg',
+  },
 };
 
 export default function RootLayout({

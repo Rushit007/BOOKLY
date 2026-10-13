@@ -2,14 +2,6 @@
 @import 'tailwindcss';
 
 @font-face {
-  font-family: 'Permanent Marker';
-  src: url('/fonts/Permanent_Marker/PermanentMarker-Regular.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
   font-family: 'Press Start 2P';
   src: url('/fonts/Press_Start_2P/PressStart2P-Regular.ttf') format('truetype');
   font-weight: 400;
@@ -17,64 +9,144 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: 'Array Wide';
+  src: url('/fonts/Array/Array-Wide.woff2') format('woff2'),
+       url('/fonts/Array/Array-Wide.woff') format('woff'),
+       url('/fonts/Array/Array-Wide.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Array Wide';
+  src: url('/fonts/Array/Array-BoldWide.woff2') format('woff2'),
+       url('/fonts/Array/Array-BoldWide.woff') format('woff'),
+       url('/fonts/Array/Array-BoldWide.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Array';
+  src: url('/fonts/Array/Array-Regular.woff2') format('woff2'),
+       url('/fonts/Array/Array-Regular.woff') format('woff'),
+       url('/fonts/Array/Array-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  --color-brand-black: #09090b;
+  --color-brand-white: #ffffff;
+  --color-brand-canvas: #fafafa;
+  --color-brand-muted: #71717a;
+  --color-brand-gold: #c5a059;
+
+  --font-primary: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-secondary: 'Space Mono', monospace;
+}
+
 :root {
-  /* Ultra-minimalist luxury gallery palette — light mode */
-  --bg-page: #fafafa;
-  --bg-surface: #ffffff;
-  --bg-surface-elevated: #f4f4f5;
-  --bg-accent-yellow: #f59e0b;      /* subtle warm amber */
-  --bg-accent-blue: #2563eb;        /* refined cobalt */
-  --bg-accent-pink: #ec4899;        /* soft rose */
-  --bg-accent-mint: #059669;        /* refined sage */
-  --bg-accent-violet: #6366f1;      /* quiet indigo */
-  --bg-accent-orange: #ea580c;      /* warm terracotta */
-  --bg-accent-teal: #0d9488;
-  --bg-accent-red: #dc2626;
+  /* ── Modern Editorial Minimalist Palette (Black, White, Alabaster & Subtle Gold) ── */
+  --bg-page: #fafafa;               /* Pure Alabaster Canvas */
+  --bg-surface: #ffffff;            /* Crisp White Card Surface */
+  --bg-surface-elevated: #f4f4f5;   /* Subtle Stone Elevated */
   
-  --border-main: #e4e4e7;           /* clean subtle hairline border */
-  --border-subtle: #f4f4f5;         /* ultra faint divider */
-  --border-strong: #18181b;         /* contrast accent border */
+  --color-primary: #09090b;         /* Deep Carbon Black */
+  --color-secondary: #27272a;       /* Charcoal Slate */
+  --color-accent: #c5a059;          /* Subtle Luxury Gold */
+  --color-canvas: #fafafa;          /* Soft White Canvas */
+  --color-tertiary: #e4e4e7;        /* Clean Divider */
+
+  --bg-primary: #09090b;            /* Black Action */
+  --bg-accent-yellow: #fef08a;      /* Readable pastel yellow badge */
+  --bg-accent-blue: #dbeafe;        /* Readable pastel blue badge */
+  --bg-accent-pink: #fce7f3;        /* Readable pastel pink badge */
+  --bg-accent-mint: #dcfce7;        /* Readable pastel mint badge */
+  --bg-accent-violet: #ede9fe;      /* Readable pastel violet badge */
+  --bg-accent-orange: #ffedd5;      /* Readable pastel orange badge */
+  --bg-accent-teal: #ccfbf1;        /* Readable pastel teal badge */
+  --bg-accent-red: #fee2e2;         /* Readable pastel red badge */
   
-  --text-main: #18181b;             /* deep slate black */
-  --text-muted: #52525b;            /* refined neutral secondary */
-  --text-faint: #a1a1aa;            /* muted metadata */
+  --border-main: #e4e4e7;           /* Hairline Neutral Border */
+  --border-subtle: #f4f4f5;         /* Ultra Faint Divider */
+  --border-strong: #09090b;         /* Deep Contrast Border */
+  --border-navy: #27272a;
   
-  --shadow-neo: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
-  --shadow-neo-lg: 0 12px 28px -4px rgba(0, 0, 0, 0.08), 0 4px 8px -2px rgba(0, 0, 0, 0.03);
-  --shadow-neo-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+  --text-main: #09090b;             /* Pure Obsidian Black */
+  --text-primary: #09090b;          /* Pure Text */
+  --text-muted: #3f3f46;            /* High Contrast Slate Text */
+  --text-faint: #52525b;            /* Crisp Charcoal Metadata */
+
+  /* High-Contrast Readable Accent Texts in Light Mode */
+  --text-accent-blue: #1d4ed8;
+  --text-accent-pink: #be185d;
+  --text-accent-mint: #047857;
+  --text-accent-yellow: #b45309;
+  --text-accent-violet: #6d28d9;
+  --text-accent-orange: #c2410c;
   
+  --shadow-neo: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.03);
+  --shadow-neo-lg: 0 12px 30px -4px rgba(0, 0, 0, 0.08), 0 4px 10px -2px rgba(0, 0, 0, 0.03);
+  --shadow-neo-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+  
+  /* Modern Editorial Typography */
+  --font-pixel: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-array: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-comico: 'Plus Jakarta Sans', system-ui, sans-serif;
   --font-serif: 'DM Serif Display', Georgia, serif;
   --font-mono: 'Space Mono', monospace;
   --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
-  --font-marker: 'Permanent Marker', cursive, sans-serif;
-  --font-pixel: 'Plus Jakarta Sans', system-ui, sans-serif; /* replaced retro arcade font with crisp typography */
+  --font-marker: 'Permanent Marker', cursive;
 }
 
 .dark {
-  /* Minimalist gallery dark mode */
+  /* Dark Mode Minimalist */
   --bg-page: #09090b;
-  --bg-surface: #111113;
+  --bg-surface: #121214;
   --bg-surface-elevated: #18181b;
-  --bg-accent-yellow: #fbbf24;
-  --bg-accent-blue: #3b82f6;
-  --bg-accent-pink: #f472b6;
-  --bg-accent-mint: #34d399;
-  --bg-accent-violet: #818cf8;
-  --bg-accent-orange: #fb923c;
-  --bg-accent-teal: #2dd4bf;
-  --bg-accent-red: #f87171;
   
-  --border-main: #27272a;           /* subtle dark hairline */
-  --border-subtle: #18181b;
-  --border-strong: #fafafa;
+  --color-primary: #ffffff;
+  --color-secondary: #e4e4e7;
+  --color-accent: #d4af37;
+  --color-canvas: #09090b;
+  --color-tertiary: #27272a;
+
+  --bg-primary: #ffffff;
+  --bg-accent-yellow: rgba(234, 179, 8, 0.22);
+  --bg-accent-blue: rgba(59, 130, 246, 0.22);
+  --bg-accent-pink: rgba(236, 72, 153, 0.22);
+  --bg-accent-mint: rgba(16, 185, 129, 0.22);
+  --bg-accent-violet: rgba(139, 92, 246, 0.22);
+  --bg-accent-orange: rgba(249, 115, 22, 0.22);
+  --bg-accent-teal: rgba(20, 184, 166, 0.22);
+  --bg-accent-red: rgba(239, 68, 68, 0.22);
+  
+  --border-main: #27272a;
+  --border-subtle: #1c1c1f;
+  --border-strong: #ffffff;
+  --border-navy: #3f3f46;
   
   --text-main: #f4f4f5;
-  --text-muted: #a1a1aa;
-  --text-faint: #71717a;
+  --text-primary: #ffffff;
+  --text-muted: #cbd5e1;
+  --text-faint: #94a3b8;
+
+  /* High-Contrast Readable Accent Texts in Dark Mode */
+  --text-accent-blue: #60a5fa;
+  --text-accent-pink: #f472b6;
+  --text-accent-mint: #34d399;
+  --text-accent-yellow: #fde047;
+  --text-accent-violet: #c084fc;
+  --text-accent-orange: #fb923c;
   
-  --shadow-neo: 0 1px 3px 0 rgba(0, 0, 0, 0.4);
-  --shadow-neo-lg: 0 14px 30px -4px rgba(0, 0, 0, 0.6);
-  --shadow-neo-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.25);
+  --shadow-neo: 0 1px 3px 0 rgba(0, 0, 0, 0.6);
+  --shadow-neo-lg: 0 16px 40px -4px rgba(0, 0, 0, 0.7);
+  --shadow-neo-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
 }
 
 html {
@@ -93,49 +165,46 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Explicit Readable Hierarchy for Headings */
-h1 {
-  font-size: clamp(2.25rem, 5vw, 3.5rem);
-  line-height: 1.12;
-  font-weight: 800;
+/* Primary Headlines: Press Start 2P */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-primary);
   letter-spacing: -0.02em;
 }
 
+h1 {
+  font-size: clamp(1.35rem, 3.2vw, 2.2rem);
+  line-height: 1.45;
+}
+
 h2 {
-  font-size: clamp(1.75rem, 3.5vw, 2.5rem);
-  line-height: 1.18;
-  font-weight: 800;
-  letter-spacing: -0.015em;
+  font-size: clamp(1.15rem, 2.4vw, 1.65rem);
+  line-height: 1.5;
 }
 
 h3 {
-  font-size: clamp(1.3rem, 2.2vw, 1.75rem);
-  line-height: 1.25;
-  font-weight: 700;
+  font-size: clamp(0.95rem, 1.8vw, 1.25rem);
+  line-height: 1.55;
 }
 
 h4 {
-  font-size: clamp(1.1rem, 1.8vw, 1.35rem);
-  line-height: 1.3;
-  font-weight: 700;
+  font-size: 0.95rem;
+  line-height: 1.6;
 }
 
 h5 {
-  font-size: 1.05rem;
-  line-height: 1.35;
-  font-weight: 600;
+  font-size: 0.85rem;
+  line-height: 1.6;
 }
 
 h6 {
-  font-size: 0.95rem;
-  line-height: 1.4;
-  font-weight: 600;
-  letter-spacing: 0.02em;
+  font-size: 0.75rem;
+  line-height: 1.6;
 }
 
 p {
-  font-size: 1.025rem;
-  line-height: 1.65;
+  font-family: var(--font-secondary);
+  font-size: 0.95rem;
+  line-height: 1.7;
 }
 
 /* Ensure inputs, textareas, selects are always legible in both themes */
@@ -143,7 +212,8 @@ input, select, textarea {
   color: var(--text-main);
   background-color: var(--bg-surface);
   border-color: var(--border-main);
-  font-size: 15px;
+  font-family: var(--font-secondary);
+  font-size: 14px;
 }
 
 input::placeholder, textarea::placeholder {
@@ -152,25 +222,24 @@ input::placeholder, textarea::placeholder {
 }
 
 /* Custom typography classes */
-.font-editorial-serif {
-  font-family: var(--font-serif);
+.font-primary,
+.font-pixel,
+.font-editorial-serif,
+.font-comico {
+  font-family: var(--font-primary);
+  letter-spacing: -0.01em;
 }
 
-.font-editorial-mono {
-  font-family: var(--font-mono);
-}
-
+.font-secondary,
+.font-array,
+.font-editorial-mono,
 .font-editorial-sans {
-  font-family: var(--font-sans);
-}
-
-.font-marker {
-  font-family: var(--font-marker);
+  font-family: var(--font-secondary);
   letter-spacing: 0.02em;
 }
 
-.font-pixel {
-  font-family: var(--font-pixel);
+.font-marker {
+  font-family: var(--font-primary);
   letter-spacing: -0.01em;
 }
 
@@ -230,10 +299,10 @@ input::placeholder, textarea::placeholder {
   right: 14px;
   width: 16px;
   height: 38px;
-  background: #dc2626;
+  background: #FF66B3;
   z-index: 20;
   clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 82%, 0 100%);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  box-shadow: 0 2px 6px rgba(8, 75, 131, 0.25);
   transition: height 0.3s ease;
 }
 
@@ -243,18 +312,19 @@ input::placeholder, textarea::placeholder {
 
 /* Tactile Ink Stamp */
 .tactile-stamp {
-  font-family: var(--font-marker);
-  border: 2px dashed currentColor;
+  font-family: var(--font-comico);
+  border: 2px dashed #084B83;
+  color: #084B83;
   padding: 2px 8px;
   display: inline-block;
   transform: rotate(-2deg);
   letter-spacing: 0.05em;
-  border-radius: 2px;
+  border-radius: 4px;
 }
 
 /* Minimalist pill badge */
 .tactile-pixel-badge {
-  font-family: var(--font-sans);
+  font-family: var(--font-array);
   font-size: 11px;
   font-weight: 600;
   line-height: 1.2;
@@ -263,9 +333,11 @@ input::placeholder, textarea::placeholder {
   text-transform: uppercase;
   border-radius: 9999px;
   border: 1px solid var(--border-main);
+  background-color: var(--bg-surface);
+  color: var(--text-main);
 }
 
-/* Yellow Highlighter Underline Accent (exact signature from reference) */
+/* Highlighter Underline Accent */
 .editorial-highlighter {
   position: relative;
   display: inline-block;
@@ -279,21 +351,22 @@ input::placeholder, textarea::placeholder {
   right: -2px;
   bottom: 8%;
   height: 38%;
-  background-color: var(--bg-accent-yellow);
+  background-color: #BBE6E4;
+  opacity: 0.8;
   z-index: -1;
   transform: rotate(-0.5deg);
   border-radius: 2px;
 }
 
 .dark .editorial-highlighter::after {
-  background-color: rgba(252, 211, 77, 0.35);
+  background-color: rgba(66, 191, 221, 0.35);
 }
 
 /* Minimalist Card & Button Styles */
 .neo-card {
   background-color: var(--bg-surface);
   border: 1px solid var(--border-main);
-  border-radius: 12px;
+  border-radius: 16px;
   box-shadow: var(--shadow-neo);
   transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease;
 }
@@ -301,103 +374,111 @@ input::placeholder, textarea::placeholder {
 .neo-card:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-neo-lg);
-  border-color: rgba(0, 0, 0, 0.15);
+  border-color: #42BFDD;
 }
 
 .dark .neo-card:hover {
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: #42BFDD;
 }
 
 .neo-card-flat {
   background-color: var(--bg-surface);
   border: 1px solid var(--border-main);
-  border-radius: 12px;
+  border-radius: 16px;
 }
 
 .neo-btn-primary {
-  background-color: var(--text-main);
-  color: var(--bg-page);
-  border: 1px solid var(--text-main);
+  background-color: #FF66B3;
+  color: #FFFFFF;
+  border: 1.5px solid #FF66B3;
   border-radius: 9999px;
-  font-family: var(--font-sans);
-  font-weight: 600;
-  font-size: 0.875rem;
-  letter-spacing: 0.01em;
+  font-family: var(--font-array);
+  text-transform: uppercase;
+  font-weight: 700;
+  font-size: 0.8125rem;
+  letter-spacing: 0.05em;
   transition: all 0.2s ease;
   padding: 0.625rem 1.25rem;
+  box-shadow: 0 4px 12px rgba(255, 102, 179, 0.35);
 }
 
 .neo-btn-primary:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
+  background-color: #42BFDD;
+  color: #084B83;
+  border-color: #42BFDD;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(66, 191, 221, 0.4);
 }
 
 .neo-btn-secondary {
   background-color: transparent;
-  color: var(--text-main);
-  border: 1px solid var(--border-main);
+  color: #084B83;
+  border: 1.5px solid #42BFDD;
   border-radius: 9999px;
-  font-family: var(--font-sans);
-  font-weight: 600;
-  font-size: 0.875rem;
-  letter-spacing: 0.01em;
+  font-family: var(--font-array);
+  text-transform: uppercase;
+  font-weight: 700;
+  font-size: 0.8125rem;
+  letter-spacing: 0.05em;
   transition: all 0.2s ease;
   padding: 0.625rem 1.25rem;
 }
 
 .neo-btn-secondary:hover {
-  background-color: var(--bg-surface-elevated);
-  border-color: var(--text-main);
+  background-color: #E5F3F4;
+  border-color: #FF66B3;
+  color: #FF66B3;
   transform: translateY(-1px);
 }
 
 .neo-btn-accent {
-  background-color: var(--bg-accent-yellow);
-  color: #0c0c0c;
-  border: 2px solid #0c0c0c;
+  background-color: #42BFDD;
+  color: #084B83;
+  border: 1.5px solid #084B83;
   border-radius: 9999px;
-  font-family: var(--font-mono);
+  font-family: var(--font-array);
+  text-transform: uppercase;
   font-weight: 700;
   letter-spacing: 0.05em;
   transition: all 0.2s ease;
 }
 
 .neo-btn-accent:hover {
-  background-color: #0c0c0c;
-  color: #f7f5f0;
+  background-color: #084B83;
+  border-color: #084B83;
   transform: translateY(-1px);
 }
 
 /* Badge pills */
 .badge-pill-yellow {
-  background-color: var(--bg-accent-yellow);
-  color: #0c0c0c;
-  border: 2px solid #0c0c0c;
-  font-family: var(--font-mono);
+  background-color: #42BFDD;
+  color: #084B83;
+  border: 1.5px solid #084B83;
+  font-family: var(--font-array);
   font-weight: 700;
 }
 
 .badge-pill-blue {
-  background-color: var(--bg-accent-blue);
-  color: #ffffff;
-  border: 2px solid #0c0c0c;
-  font-family: var(--font-mono);
+  background-color: #084B83;
+  color: #FFFFFF;
+  border: 1.5px solid #42BFDD;
+  font-family: var(--font-array);
   font-weight: 700;
 }
 
 .badge-pill-pink {
-  background-color: var(--bg-accent-pink);
-  color: #ffffff;
-  border: 2px solid #0c0c0c;
-  font-family: var(--font-mono);
+  background-color: #FF66B3;
+  color: #FFFFFF;
+  border: 1.5px solid #084B83;
+  font-family: var(--font-array);
   font-weight: 700;
 }
 
 .badge-pill-mint {
-  background-color: var(--bg-accent-mint);
-  color: #0c0c0c;
-  border: 2px solid #0c0c0c;
-  font-family: var(--font-mono);
+  background-color: #BBE6E4;
+  color: #084B83;
+  border: 1.5px solid #084B83;
+  font-family: var(--font-array);
   font-weight: 700;
 }
 

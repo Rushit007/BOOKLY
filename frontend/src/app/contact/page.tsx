@@ -58,7 +58,7 @@ export default function ContactPage() {
         <div className='max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12'>
           <div className='flex flex-col md:flex-row md:items-end md:justify-between gap-4'>
             <div>
-              <p className='font-editorial-mono text-[9px] uppercase tracking-[0.3em] text-[var(--bg-accent-pink)] font-bold mb-2'>
+              <p className='font-editorial-mono text-xs uppercase tracking-[0.2em] text-[var(--text-accent-pink)] font-bold mb-2'>
                 GET IN TOUCH
               </p>
               <h1 className='font-editorial-serif text-4xl sm:text-5xl lg:text-6xl text-[var(--text-main)] leading-tight'>
@@ -97,10 +97,10 @@ export default function ContactPage() {
                     {method.icon}
                   </div>
                   <div>
-                    <p className='font-editorial-mono text-[9px] uppercase tracking-[0.22em] text-[var(--text-faint)] font-bold'>
+                    <p className='font-editorial-mono text-xs uppercase tracking-[0.2em] text-[var(--text-faint)] font-bold'>
                       {method.label}
                     </p>
-                    <p className='font-editorial-sans text-sm text-[var(--text-main)] mt-0.5 group-hover:text-[var(--bg-accent-blue)] transition-colors'>
+                    <p className='font-editorial-sans text-sm font-semibold text-[var(--text-main)] mt-0.5 group-hover:text-[var(--text-accent-blue)] transition-colors'>
                       {method.value}
                     </p>
                   </div>
@@ -110,15 +110,15 @@ export default function ContactPage() {
 
             {/* Social Links */}
             <div className='border-2 border-[var(--border-main)] bg-[var(--bg-surface-elevated)] p-5'>
-              <p className='font-editorial-mono text-[9px] uppercase tracking-[0.22em] text-[var(--text-faint)] font-bold mb-3'>
+              <p className='font-editorial-mono text-xs uppercase tracking-[0.2em] text-[var(--text-faint)] font-bold mb-3'>
                 FOLLOW US
               </p>
-              <div className='flex gap-2'>
+              <div className='flex gap-2 flex-wrap'>
                 {['Twitter / X', 'Instagram', 'LinkedIn', 'GitHub'].map(
                   (platform) => (
                     <span
                       key={platform}
-                      className='px-3 py-1.5 border border-[var(--border-subtle)] font-editorial-mono text-[9px] font-bold uppercase tracking-wider text-[var(--text-muted)] hover:border-[var(--border-main)] hover:text-[var(--text-main)] hover:bg-[var(--bg-accent-yellow)] cursor-pointer transition-all'
+                      className='px-3 py-1.5 border border-[var(--border-subtle)] font-editorial-mono text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] hover:border-[var(--border-main)] hover:text-[var(--text-main)] hover:bg-[var(--bg-accent-yellow)] cursor-pointer transition-all'
                     >
                       {platform}
                     </span>
@@ -136,10 +136,10 @@ export default function ContactPage() {
                 <div className='flex items-center gap-3'>
                   <span className='inline-block w-3 h-3 bg-[var(--bg-accent-pink)] border-2 border-[var(--border-main)]' />
                   <div>
-                    <p className='font-editorial-mono text-[9px] uppercase tracking-[0.22em] text-[var(--text-faint)]'>
+                    <p className='font-editorial-mono text-xs uppercase tracking-[0.2em] text-[var(--text-faint)] font-bold'>
                       SEND A MESSAGE
                     </p>
-                    <h2 className='font-editorial-serif text-xl text-[var(--text-main)] mt-0.5'>
+                    <h2 className='font-editorial-serif text-xl font-bold text-[var(--text-main)] mt-0.5'>
                       Write to Us
                     </h2>
                   </div>
@@ -148,8 +148,8 @@ export default function ContactPage() {
 
               {/* Success message */}
               {isSubmitted && (
-                <div className='mx-6 mt-6 border-2 border-[var(--bg-accent-mint)] bg-[var(--bg-accent-mint)]/10 p-4 animate-fade-in-up'>
-                  <p className='font-editorial-mono text-[10px] font-bold uppercase tracking-wider text-[var(--bg-accent-mint)]'>
+                <div className='mx-6 mt-6 border-2 border-[var(--text-accent-mint)] bg-[var(--bg-accent-mint)]/10 p-4 animate-fade-in-up'>
+                  <p className='font-editorial-mono text-xs font-bold uppercase tracking-wider text-[var(--text-accent-mint)]'>
                     ✓ Message sent successfully!
                   </p>
                   <p className='font-editorial-sans text-xs text-[var(--text-muted)] mt-1'>

@@ -9,6 +9,7 @@ import { useToast } from '../../components/common/Toast';
 import { RatingStars } from '../../components/common/RatingStars';
 import { Book } from '../../types/book';
 import { api } from '../../services/api';
+import { getAuthenticCover } from '../../utils/bookCovers';
 
 export default function ComparePage() {
   const { compareBooks, removeFromCompare, clearCompare, addToCompare } = useCompare();
@@ -144,7 +145,7 @@ export default function ComparePage() {
           </div>
           <button
             onClick={() => setShowInfoModal(true)}
-            className='font-editorial-mono text-xs font-bold text-[var(--bg-accent-blue)] hover:underline whitespace-nowrap'
+            className='font-editorial-mono text-xs font-bold text-[var(--text-accent-blue)] hover:underline whitespace-nowrap'
           >
             Read Feature Specs &amp; Tips →
           </button>
@@ -261,13 +262,7 @@ export default function ComparePage() {
 
                     <div className='flex flex-col items-center text-center space-y-3 mb-4'>
                       <div className='w-24 aspect-[3/4] border-2 border-[var(--border-main)] bg-[var(--bg-surface)] overflow-hidden shadow-[2px_2px_0px_var(--border-main)]'>
-                        {book.coverImage ? (
-                          <img src={book.coverImage} alt={book.title} className='w-full h-full object-cover' />
-                        ) : (
-                          <div className='p-2 bg-[var(--bg-surface-elevated)] w-full h-full flex flex-col items-center justify-center text-[9px] font-editorial-mono'>
-                            <span>{book.title}</span>
-                          </div>
-                        )}
+                        <img src={getAuthenticCover(book)} alt={book.title} className='w-full h-full object-cover' />
                       </div>
                       <div>
                         <Link
@@ -384,9 +379,9 @@ export default function ComparePage() {
               {compareBooks.map((b) => (
                 <div key={'stk-' + b.id} className='px-3 border-l-2 border-[var(--border-subtle)] font-bold'>
                   {b.stock > 0 ? (
-                    <span className='text-[var(--bg-accent-mint)]'>In Stock ({b.stock} left)</span>
+                    <span className='text-[var(--text-accent-mint)]'>In Stock ({b.stock} left)</span>
                   ) : (
-                    <span className='text-[var(--bg-accent-pink)]'>Sold Out</span>
+                    <span className='text-[var(--text-accent-pink)]'>Sold Out</span>
                   )}
                 </div>
               ))}

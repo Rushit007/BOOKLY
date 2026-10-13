@@ -10,128 +10,194 @@ function LoginForm() {
   const searchParams = useSearchParams();
   const redirectPath = searchParams.get('redirect') || '/';
 
-  const { login, demoAdminLogin } = useAuth();
+  const { login } = useAuth();
 
-  const [email, setEmail] = useState('');
+  const [activeTab, setActiveTab] = useState<'reader' | 'admin'>(
+    redirectPath.startsWith('/admin') ? 'admin' : 'reader'
+  );
+  const [identifier, setIdentifier] = useState(''); // email or phone
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(
+    searchParams.get('error') === 'admin_clearance_required'
+      ? '🔒 Admin Clearance Required: Sign in with store owner credentials to access the administrative dashboard.'
+      : null
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setIsLoading(true);
+
     try {
-      await login({ email, password });
+      if (activeTab === 'admin') {
+        const cleanEmail = identifier.trim().toLowerCase();
+        await login({ email: cleanEmail, password });
+        
+        // Check if authenticated user is ADMIN
+        const savedUserStr = localStorage.getItem('bookly_user');
+        const loggedUser = savedUserStr ? JSON.parse(savedUserStr) : null;
+        if (loggedUser && loggedUser.role !== 'ADMIN') {
+          setError('Access Denied: This account does not possess administrator clearance.');
+          setIsLoading(false);
+          return;
+        }
+
+        router.push(redirectPath !== '/' ? redirectPath : '/admin');
+        return;
+      }
+
+      // Reader Login (supports email or 10-digit phone)
+      const cleanEmail = identifier.includes('@')
+        ? identifier.trim().toLowerCase()
+        : `${identifier.replace(/\D/g, '')}@phone.bookly.in`;
+
+      await login({ email: cleanEmail, password });
       router.push(redirectPath);
     } catch (err: any) {
-      setError(err.message || 'Invalid email or password. Please verify credentials.');
+      setError(err.message || 'Invalid credentials. Access denied.');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleDemoSignIn = () => {
-    demoAdminLogin();
-    router.push(redirectPath);
-  };
-
   return (
-    <div className='min-h-[90vh] flex items-center justify-center px-4 py-12 bg-[#faf9f5] dark:bg-[#0c0c0c]'>
-      <div className='w-full max-w-4xl grid grid-cols-1 lg:grid-cols-12 border-2 border-black dark:border-white/20 shadow-[8px_8px_0px_#000] dark:shadow-[8px_8px_0px_rgba(255,255,255,0.15)] bg-white dark:bg-[#141414] overflow-hidden'>
+    <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-[#f4ede2] dark:bg-[#09090b] relative overflow-hidden font-sans">
+      {/* Background Vintage Wooden Desk Texture */}
+      <div className="absolute inset-0 bg-[radial-gradient(#d3c5b4_1px,transparent_1px)] [background-size:24px_24px] opacity-40 pointer-events-none" />
+
+      {/* Main Skeuomorphic Notebook Container */}
+      <div className="w-full max-w-3xl relative">
         
-        {/* Left Column: Brand & Aesthetic Editorial Panel */}
-        <div className='lg:col-span-5 bg-[#ffe17c] p-8 lg:p-10 flex flex-col justify-between border-b-2 lg:border-b-0 lg:border-r-2 border-black text-black relative overflow-hidden'>
-          <div className='absolute -right-12 -bottom-12 w-48 h-48 rounded-full bg-black/5 pointer-events-none' />
-          
-          <div>
-            <div className='flex items-center gap-2 mb-6'>
-              <div className='w-8 h-8 bg-black flex items-center justify-center border border-black'>
-                <span className='text-[#ffe17c] font-black text-sm'>⚡</span>
-              </div>
-              <span className='font-cabinet font-900 text-lg tracking-tight'>BOOKLY</span>
+        {/* Spiral Binder Loops on Top / Left */}
+        <div className="hidden sm:flex absolute -left-5 top-12 bottom-12 flex-col justify-between z-30 pointer-events-none">
+          {[...Array(12)].map((_, i) => (
+            <div key={i} className="flex items-center">
+              <div className="w-8 h-4 rounded-full bg-gradient-to-r from-zinc-700 via-zinc-400 to-zinc-800 shadow-md border border-zinc-600 transform -rotate-12" />
+              <div className="w-2.5 h-2.5 rounded-full bg-zinc-900/60 shadow-inner -ml-1" />
             </div>
-
-            <div className='inline-block px-2.5 py-1 bg-black text-[#ffe17c] font-editorial-mono text-[9px] font-bold uppercase tracking-[0.2em] mb-4'>
-              Member Portal
-            </div>
-
-            <h2 className='font-cabinet font-800 text-3xl lg:text-4xl leading-[1.08] tracking-tight mb-4'>
-              Welcome Back to Your Library.
-            </h2>
-
-            <p className='font-cabinet text-sm text-black/75 leading-relaxed mb-6'>
-              Sign in to manage your reading wishlist, tracked orders, book comparisons, and express one-click checkout.
-            </p>
-          </div>
-
-          <div className='space-y-4 pt-6 border-t border-black/20'>
-            <div className='flex items-center gap-3'>
-              <span className='w-2 h-2 rounded-full bg-black' />
-              <span className='font-editorial-mono text-xs font-semibold'>Curated volumes & author editions</span>
-            </div>
-            <div className='flex items-center gap-3'>
-              <span className='w-2 h-2 rounded-full bg-black' />
-              <span className='font-editorial-mono text-xs font-semibold'>Saved comparisons & reading wishlist</span>
-            </div>
-            <div className='flex items-center gap-3'>
-              <span className='w-2 h-2 rounded-full bg-black' />
-              <span className='font-editorial-mono text-xs font-semibold'>Instant UPI & safe checkout</span>
-            </div>
-
-            <div className='pt-4'>
-              <blockquote className='italic font-editorial-serif text-sm text-black/80 border-l-2 border-black pl-3'>
-                &ldquo;A reader lives a thousand lives before he dies.&rdquo;
-              </blockquote>
-            </div>
-          </div>
+          ))}
         </div>
 
-        {/* Right Column: Sign In Form */}
-        <div className='lg:col-span-7 p-8 lg:p-12 flex flex-col justify-center bg-white dark:bg-[#141414]'>
-          <div className='mb-6'>
-            <p className='font-editorial-mono text-[10px] uppercase tracking-[0.2em] text-neutral-500 mb-1'>
-              Account Authorization
-            </p>
-            <h1 className='font-cabinet font-800 text-3xl text-neutral-900 dark:text-neutral-100'>
-              Sign In
-            </h1>
+        {/* Notebook Top Sticky Tabs (Reader vs Admin) */}
+        <div className="flex items-end gap-2 pl-8 sm:pl-12 mb-0 relative z-20">
+          <button
+            type="button"
+            onClick={() => {
+              setActiveTab('reader');
+              setError(null);
+            }}
+            className={`px-5 py-2.5 rounded-t-xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer flex items-center gap-2 border-t-2 border-x-2 ${
+              activeTab === 'reader'
+                ? 'bg-[#fffdf9] dark:bg-[#18181b] text-zinc-900 dark:text-zinc-100 border-[#d8cdbd] dark:border-zinc-700 shadow-sm translate-y-0.5'
+                : 'bg-[#e8ded0] dark:bg-zinc-800 text-zinc-500 hover:text-zinc-800 border-transparent hover:bg-[#ede5d8]'
+            }`}
+          >
+            <span>📖</span>
+            <span>Reader Account</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setActiveTab('admin');
+              setError(null);
+            }}
+            className={`px-5 py-2.5 rounded-t-xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer flex items-center gap-2 border-t-2 border-x-2 ${
+              activeTab === 'admin'
+                ? 'bg-[#fffdf9] dark:bg-[#18181b] text-zinc-900 dark:text-zinc-100 border-[#d8cdbd] dark:border-zinc-700 shadow-sm translate-y-0.5'
+                : 'bg-[#e8ded0] dark:bg-zinc-800 text-zinc-500 hover:text-zinc-800 border-transparent hover:bg-[#ede5d8]'
+            }`}
+          >
+            <span>🔐</span>
+            <span>Admin Portal</span>
+          </button>
+        </div>
+
+        {/* Notebook Sheet Page */}
+        <div
+          className="relative rounded-2xl p-8 sm:p-14 shadow-2xl border-2 border-[#d8cdbd] dark:border-zinc-800 bg-[#fffdf9] dark:bg-[#141416] overflow-hidden"
+          style={{
+            backgroundImage: `repeating-linear-gradient(transparent, transparent 31px, rgba(148, 163, 184, 0.22) 31px, rgba(148, 163, 184, 0.22) 32px)`,
+          }}
+        >
+          {/* Vertical Red Ledger Margin Line */}
+          <div className="absolute top-0 bottom-0 left-16 sm:left-24 w-0.5 bg-rose-400/50 pointer-events-none" />
+
+          {/* Top Stamp & Metadata */}
+          <div className="pl-12 sm:pl-16 mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-200 dark:border-zinc-800/80 pb-4">
+            <div>
+              <div className="inline-flex items-center gap-2 font-mono text-[10px] text-zinc-500 uppercase tracking-widest">
+                <span>ENTRY REF: #BK-{new Date().getFullYear()}</span>
+                <span>·</span>
+                <span className="text-rose-600 font-bold">CONFIDENTIAL</span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-serif font-black text-zinc-900 dark:text-zinc-100 mt-1">
+                {activeTab === 'reader' ? 'Reader Library Log-In' : 'Admin Security Verification'}
+              </h1>
+              <p className="text-xs text-zinc-500 mt-0.5">
+                {activeTab === 'reader'
+                  ? 'Access your saved volumes, order tracker, and consensus votes.'
+                  : 'Administrative control room for catalog, orders, inventory, and returns.'}
+              </p>
+            </div>
+
+            {/* Rubber Stamp Badge */}
+            <div className="border-2 border-dashed border-zinc-400 dark:border-zinc-600 rounded-lg p-2 text-center rotate-3 self-start sm:self-center opacity-80">
+              <p className="font-mono text-[9px] font-black uppercase tracking-widest text-zinc-700 dark:text-zinc-300">
+                BOOKLY ARCHIVE
+              </p>
+              <p className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+                VERIFIED PASS
+              </p>
+            </div>
           </div>
 
-          {error && (
-            <div className='mb-6 p-3.5 border-2 border-rose-500 bg-rose-50 dark:bg-rose-950/30 text-rose-800 dark:text-rose-200 text-xs font-editorial-mono flex items-start gap-2.5'>
-              <span className='font-black text-rose-600'>⚠</span>
-              <span>{error}</span>
-            </div>
-          )}
+          {/* Form Content */}
+          <form onSubmit={handleSubmit} className="pl-12 sm:pl-16 space-y-6">
+            {error && (
+              <div className="p-4 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 rounded-xl text-xs text-rose-700 dark:text-rose-300 font-medium">
+                {error}
+              </div>
+            )}
 
-          <form onSubmit={handleSubmit} className='space-y-4'>
-            <div>
-              <label className='font-editorial-mono text-[10px] font-bold uppercase tracking-wider text-neutral-700 dark:text-neutral-300 block mb-1.5'>
-                Email Address
+            {/* Identifier: Email OR Mobile Number */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-bold uppercase tracking-wider text-zinc-700 dark:text-zinc-300">
+                {activeTab === 'reader' ? 'Email Address or 10-Digit Mobile Number' : 'Admin Master Email / User'}
               </label>
               <input
-                type='email'
+                type="text"
                 required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder='name@example.com'
-                className='w-full px-4 py-3 font-editorial-mono text-sm bg-neutral-50 dark:bg-neutral-900 border-2 border-black dark:border-white/20 text-neutral-900 dark:text-white placeholder:text-neutral-400 focus:outline-none focus:bg-[#ffe17c]/10 focus:border-black dark:focus:border-[#ffe17c] transition-colors'
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
+                placeholder={
+                  activeTab === 'reader'
+                    ? 'e.g. reader@bookly.com or 9876543210'
+                    : 'Enter authorized administrator credentials'
+                }
+                className="w-full px-4 py-3 rounded-xl bg-white/90 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 shadow-xs transition"
               />
+              <p className="text-[11px] text-zinc-500 italic">
+                {activeTab === 'reader'
+                  ? 'Enter your registered email ID or Indian mobile number.'
+                  : 'Authorized personnel only. No public registration permitted.'}
+              </p>
             </div>
 
-            <div>
-              <div className='flex items-center justify-between mb-1.5'>
-                <label className='font-editorial-mono text-[10px] font-bold uppercase tracking-wider text-neutral-700 dark:text-neutral-300'>
+            {/* Password Field */}
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <label className="block text-xs font-bold uppercase tracking-wider text-zinc-700 dark:text-zinc-300">
                   Password
                 </label>
                 <button
-                  type='button'
+                  type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className='text-[10px] font-editorial-mono text-neutral-500 hover:text-black dark:hover:text-white uppercase tracking-wider underline cursor-pointer'
+                  className="text-xs text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200"
                 >
-                  {showPassword ? 'Hide' : 'Show'}
+                  {showPassword ? 'Hide 👁' : 'Show 👁'}
                 </button>
               </div>
               <input
@@ -139,62 +205,35 @@ function LoginForm() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder='••••••••••••'
-                className='w-full px-4 py-3 font-editorial-mono text-sm bg-neutral-50 dark:bg-neutral-900 border-2 border-black dark:border-white/20 text-neutral-900 dark:text-white placeholder:text-neutral-400 focus:outline-none focus:bg-[#ffe17c]/10 focus:border-black dark:focus:border-[#ffe17c] transition-colors'
+                placeholder="••••••••••••"
+                className="w-full px-4 py-3 rounded-xl bg-white/90 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 shadow-xs transition"
               />
             </div>
 
-            <button
-              type='submit'
-              disabled={isLoading}
-              className='w-full py-3.5 px-6 font-cabinet font-800 text-xs uppercase tracking-widest text-black bg-[#ffe17c] hover:bg-[#fed053] border-2 border-black shadow-[4px_4px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_2px_0px_#000] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed mt-2'
-            >
-              {isLoading ? (
-                <>
-                  <span className='w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin' />
-                  <span>Authorizing...</span>
-                </>
-              ) : (
-                <span>Sign In to BOOKLY ↗</span>
-              )}
-            </button>
-          </form>
-
-          {/* Quick Demo Login Option */}
-          <div className='mt-6 pt-5 border-t border-neutral-200 dark:border-neutral-800'>
-            <div className='flex items-center justify-between gap-3'>
-              <div className='text-left'>
-                <p className='font-cabinet font-bold text-xs text-neutral-900 dark:text-neutral-100'>
-                  Testing or Evaluating?
-                </p>
-                <p className='font-editorial-mono text-[10px] text-neutral-500'>
-                  One-click demo administrator session
-                </p>
-              </div>
+            {/* Action Buttons */}
+            <div className="pt-2 space-y-3">
               <button
-                type='button'
-                onClick={handleDemoSignIn}
-                className='px-3 py-1.5 border border-black dark:border-white/30 text-xs font-editorial-mono font-bold uppercase tracking-wider bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 transition-colors'
+                type="submit"
+                disabled={isLoading}
+                className="w-full py-3.5 px-6 rounded-xl bg-zinc-900 hover:bg-black text-white dark:bg-white dark:text-black dark:hover:bg-zinc-200 font-bold text-xs uppercase tracking-widest shadow-lg transition-all hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
               >
-                1-Click Demo
+                {isLoading ? 'Verifying Credentials...' : activeTab === 'reader' ? 'Sign In to Library ↗' : 'Authenticate & Enter Admin Deck ↗'}
               </button>
             </div>
-          </div>
 
-          {/* Register Link */}
-          <div className='mt-6 text-center text-xs font-cabinet'>
-            <span className='text-neutral-500 dark:text-neutral-400'>
-              First time on BOOKLY?{' '}
-            </span>
-            <Link
-              href={`/register${redirectPath !== '/' ? `?redirect=${encodeURIComponent(redirectPath)}` : ''}`}
-              className='font-bold text-neutral-900 dark:text-[#ffe17c] underline underline-offset-4 hover:text-[#fed053]'
-            >
-              Create a free reader account →
-            </Link>
-          </div>
+            {/* Bottom Register Switch */}
+            <div className="pt-4 border-t border-zinc-200 dark:border-zinc-800 text-center text-xs text-zinc-600 dark:text-zinc-400">
+              New to BOOKLY?{' '}
+              <Link
+                href="/register"
+                className="font-bold text-zinc-900 dark:text-white underline underline-offset-4 hover:text-amber-600"
+              >
+                Create a Free Notebook Account ↗
+              </Link>
+            </div>
+          </form>
+
         </div>
-
       </div>
     </div>
   );
@@ -202,7 +241,13 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className='min-h-[80vh] flex items-center justify-center font-editorial-mono text-xs'>Loading sign in...</div>}>
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-[#f4ede2]">
+          <div className="w-8 h-8 border-2 border-zinc-400 border-t-zinc-900 rounded-full animate-spin" />
+        </div>
+      }
+    >
       <LoginForm />
     </Suspense>
   );

@@ -26,28 +26,37 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
   const [isInitialized, setIsInitialized] = useState(false);
 
   const applyBackendWishlist = (wishlist: Wishlist) => {
-    setItems(wishlist.items || []);
+    const newItems = wishlist.items && wishlist.items.length > 0 ? wishlist.items : items;
+    setItems(newItems);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('bookly_wishlist', JSON.stringify(newItems));
+    }
   };
 
   const refreshWishlist = useCallback(async () => {
     if (isAuthenticated) {
       try {
         const backendWishlist = await api.getWishlist();
-        applyBackendWishlist(backendWishlist);
-        return;
+        if (backendWishlist && backendWishlist.items && backendWishlist.items.length > 0) {
+          applyBackendWishlist(backendWishlist);
+          return;
+        }
       } catch (err) {
         console.warn('Could not fetch backend wishlist, falling back to localStorage:', err);
       }
     }
 
-    // Guest / Local Mode
+    // Load from localStorage
     try {
       const saved = localStorage.getItem('bookly_wishlist');
       if (saved) {
-        setItems(JSON.parse(saved));
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setItems(parsed);
+        }
       }
     } catch (e) {
-      console.error('Failed to load guest wishlist from localStorage:', e);
+      console.error('Failed to load wishlist from localStorage:', e);
     }
   }, [isAuthenticated]);
 
@@ -55,16 +64,16 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
     refreshWishlist().finally(() => setIsInitialized(true));
   }, [refreshWishlist]);
 
-  // Persist guest wishlist
+  // Always persist wishlist to localStorage whenever items update (after initialization)
   useEffect(() => {
-    if (isInitialized && !isAuthenticated) {
+    if (isInitialized && typeof window !== 'undefined') {
       try {
         localStorage.setItem('bookly_wishlist', JSON.stringify(items));
       } catch (e) {
-        console.error('Failed to save guest wishlist to localStorage:', e);
+        console.error('Failed to save wishlist to localStorage:', e);
       }
     }
-  }, [items, isInitialized, isAuthenticated]);
+  }, [items, isInitialized]);
 
   const isInWishlist = (bookId: string) => {
     return items.some((item) => item.bookId === bookId);

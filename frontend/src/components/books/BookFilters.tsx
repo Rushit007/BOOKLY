@@ -12,6 +12,8 @@ interface BookFiltersProps {
   onPriceChange: (min: number | undefined, max: number | undefined) => void;
   minRating: number | undefined;
   onRatingChange: (rating: number | undefined) => void;
+  selectedTier?: string;
+  onTierChange?: (tier: string | undefined) => void;
   inStockOnly: boolean;
   onInStockChange: (inStock: boolean) => void;
   onResetFilters: () => void;
@@ -26,6 +28,8 @@ export function BookFilters({
   onPriceChange,
   minRating,
   onRatingChange,
+  selectedTier,
+  onTierChange,
   inStockOnly,
   onInStockChange,
   onResetFilters,
@@ -116,13 +120,59 @@ export function BookFilters({
         </div>
       </div>
 
+      {/* 4-Tier Reader Consensus Filter */}
+      <div className='p-4 border-b border-[var(--border-subtle)]'>
+        <div className='flex items-center justify-between mb-2'>
+          <p className='font-sans text-xs uppercase tracking-wider font-semibold text-[var(--text-faint)]'>
+            Reader Consensus Verdict
+          </p>
+          {selectedTier && (
+            <button
+              type='button'
+              onClick={() => onTierChange?.(undefined)}
+              className='text-[10px] text-amber-500 hover:underline font-mono'
+            >
+              Clear
+            </button>
+          )}
+        </div>
+        <div className='space-y-1.5'>
+          {[
+            { key: 'perfection', label: '👑 Perfection (Masterpiece)', color: '#10b981' },
+            { key: 'go_for_it', label: '⚡ Go For It (Recommended)', color: '#3b82f6' },
+            { key: 'timepass', label: '☕ Timepass (Casual)', color: '#f59e0b' },
+            { key: 'skip', label: '⛔ Skip (Not Recommended)', color: '#ef4444' },
+          ].map((tier) => {
+            const isSelected = selectedTier === tier.key;
+            return (
+              <button
+                key={tier.key}
+                type='button'
+                onClick={() => onTierChange?.(isSelected ? undefined : tier.key)}
+                className={`w-full text-left px-2.5 py-2 rounded-lg text-xs font-medium transition flex items-center justify-between cursor-pointer border ${
+                  isSelected
+                    ? 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 border-zinc-900 dark:border-white shadow-xs font-bold'
+                    : 'border-transparent text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800'
+                }`}
+              >
+                <div className='flex items-center gap-2'>
+                  <span className='w-2 h-2 rounded-full shrink-0' style={{ backgroundColor: tier.color }} />
+                  <span className='truncate'>{tier.label}</span>
+                </div>
+                {isSelected && <span className='text-xs'>✓</span>}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       {/* Rating */}
       <div className='p-4 border-b border-[var(--border-subtle)]'>
         <p className='font-sans text-xs uppercase tracking-wider font-semibold text-[var(--text-faint)] mb-3'>
-          Minimum Rating
+          Minimum Star Rating
         </p>
         <div className='space-y-1'>
-          {[4, 3, 2].map((r) => (
+          {[4.5, 4.0, 3.5].map((r) => (
             <button
               key={r}
               onClick={() => onRatingChange(minRating === r ? undefined : r)}

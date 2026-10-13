@@ -221,6 +221,12 @@ export const PillNav: React.FC<PillNavProps> = ({
         <div ref={logoContainerRef} onMouseEnter={handleLogoEnter}>
           <Link
             href="/"
+            onClick={(e) => {
+              if (typeof window !== 'undefined' && window.location.pathname === '/') {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }
+            }}
             aria-label="Home"
             className="flex items-center justify-center rounded-full overflow-hidden"
             style={{
@@ -250,14 +256,21 @@ export const PillNav: React.FC<PillNavProps> = ({
                     role="menuitem"
                     href={item.href}
                     aria-label={item.ariaLabel || item.label}
+                    onClick={(e) => {
+                      if (item.href === '/' && typeof window !== 'undefined' && window.location.pathname === '/') {
+                        e.preventDefault();
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }
+                    }}
                     className={basePillClasses}
                     style={{
                       background: 'var(--pn-pill)',
                       color: 'var(--pn-pill-text)',
                       paddingLeft: 'var(--pn-pad-x)',
                       paddingRight: 'var(--pn-pad-x)',
-                      outline: isActive ? `2px solid ${baseColor}` : 'none',
-                      outlineOffset: '-2px',
+                      outline: isActive ? '1.5px solid #f59e0b' : 'none',
+                      outlineOffset: '-1px',
+                      boxShadow: isActive ? '0 0 14px rgba(245, 158, 11, 0.4)' : 'none',
                     }}
                     onMouseEnter={() => handleEnter(i)}
                     onMouseLeave={() => handleLeave(i)}
@@ -269,13 +282,18 @@ export const PillNav: React.FC<PillNavProps> = ({
                       aria-hidden="true"
                       ref={(el) => { circleRefs.current[i] = el; }}
                     />
-                    {/* Label stack */}
-                    <span className="relative inline-block leading-none z-[2] overflow-hidden py-1">
-                      <span className="pill-label relative z-[2] inline-block" style={{ willChange: 'transform' }}>
+                    {/* Label stack with refined literary indicator */}
+                    <span className="relative inline-flex items-center gap-1.5 leading-none z-[2] overflow-hidden py-1">
+                      {isActive && (
+                        <span className="text-[10px] text-amber-400 animate-pulse drop-shadow-[0_0_6px_#f59e0b]">
+                          ✦
+                        </span>
+                      )}
+                      <span className="pill-label relative z-[2] inline-block font-bold" style={{ willChange: 'transform' }}>
                         {item.label}
                       </span>
                       <span
-                        className="pill-label-hover absolute left-0 top-1 z-[3] inline-block w-full text-center"
+                        className="pill-label-hover absolute left-0 top-1 z-[3] inline-block w-full text-center font-bold"
                         style={{ color: 'var(--pn-hover-text)', willChange: 'transform, opacity' }}
                         aria-hidden="true"
                       >
@@ -291,13 +309,12 @@ export const PillNav: React.FC<PillNavProps> = ({
                         {item.count}
                       </span>
                     )}
-                    {/* Active dot */}
+                    {/* Electric Blinking Active Indicator */}
                     {isActive && (
-                      <span
-                        className="absolute left-1/2 -bottom-0.5 -translate-x-1/2 w-1 h-1 rounded-full z-[4]"
-                        style={{ background: baseColor }}
-                        aria-hidden="true"
-                      />
+                      <div className="absolute left-1/2 -bottom-1 -translate-x-1/2 flex items-center justify-center z-[5] pointer-events-none">
+                        <span className="absolute w-2 h-2 rounded-full bg-amber-400/80 animate-ping" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shadow-[0_0_8px_#f59e0b]" />
+                      </div>
                     )}
                   </Link>
                 </li>
@@ -336,7 +353,13 @@ export const PillNav: React.FC<PillNavProps> = ({
               <li key={item.href}>
                 <Link
                   href={item.href}
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  onClick={(e) => {
+                    setIsMobileMenuOpen(false);
+                    if (item.href === '/' && typeof window !== 'undefined' && window.location.pathname === '/') {
+                      e.preventDefault();
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                  }}
                   className="flex items-center justify-between py-3 px-5 text-[11px] font-bold uppercase tracking-[0.14em] rounded-xl transition-all"
                   style={{
                     background: isActive ? pillColor : 'transparent',

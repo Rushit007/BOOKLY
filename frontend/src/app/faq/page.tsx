@@ -84,7 +84,7 @@ export default function FAQPage() {
         <div className='max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12'>
           <div className='flex flex-col md:flex-row md:items-end md:justify-between gap-4'>
             <div>
-              <p className='font-editorial-mono text-[9px] uppercase tracking-[0.3em] text-[var(--bg-accent-blue)] font-bold mb-2'>
+              <p className='font-editorial-mono text-xs uppercase tracking-[0.2em] text-[var(--text-accent-blue)] font-bold mb-2'>
                 HELP CENTER
               </p>
               <h1 className='font-editorial-serif text-4xl sm:text-5xl lg:text-6xl text-[var(--text-main)] leading-tight'>
@@ -164,7 +164,7 @@ export default function FAQPage() {
                             <span className='font-editorial-mono text-[10px] font-bold text-[var(--text-faint)] shrink-0'>
                               {String(idx + 1).padStart(2, '0')}
                             </span>
-                            <h3 className='font-editorial-sans text-sm font-semibold text-[var(--text-main)] group-hover:text-[var(--bg-accent-blue)] transition-colors'>
+                            <h3 className='font-editorial-sans text-sm font-semibold text-[var(--text-main)] group-hover:text-[var(--text-accent-blue)] transition-colors'>
                               {faq.question}
                             </h3>
                           </div>

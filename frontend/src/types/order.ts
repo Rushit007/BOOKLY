@@ -3,12 +3,30 @@
 export type OrderStatus =
   | 'PENDING'
   | 'CONFIRMED'
-  | 'PROCESSING'
+  | 'PACKED'
   | 'SHIPPED'
+  | 'OUT_FOR_DELIVERY'
   | 'DELIVERED'
-  | 'CANCELLED';
+  | 'CANCELLED'
+  | 'RETURN_REQUESTED'
+  | 'RETURN_PICKED'
+  | 'RETURN_IN_TRANSIT'
+  | 'RETURN_RECEIVED'
+  | 'REFUNDED';
 
 export type PaymentStatus = 'PENDING' | 'PAID' | 'FAILED' | 'REFUNDED';
+
+export type PaymentMethod = 'CARD' | 'COD' | 'UPI' | 'NET_BANKING';
+
+export interface ReturnDetails {
+  reason: string;
+  comments?: string;
+  upiId?: string;
+  bankDetails?: string;
+  requestedAt: string;
+  status: 'PENDING' | 'APPROVED' | 'PICKED_UP' | 'IN_TRANSIT' | 'RECEIVED' | 'REFUNDED';
+  refundAmount?: number;
+}
 
 export interface OrderItem {
   id: string;
@@ -47,17 +65,35 @@ export interface Order {
   finalAmount: number;
   paymentStatus: PaymentStatus;
   orderStatus: OrderStatus;
+  paymentMethod?: PaymentMethod | string;
   shippingAddress: string;
+  shippingName?: string;
+  shippingPhone?: string;
+  shippingCity?: string;
+  customerName?: string;
+  customerEmail?: string;
+  customerPhone?: string;
+  returnDetails?: ReturnDetails;
   createdAt: string;
   updatedAt: string;
   items: OrderItem[];
   payment?: Payment;
 }
 
+
 // ── DTOs ─────────────────────────────────────────────────────────────────────
 
 export interface CheckoutDto {
   shippingAddress: string;
+  paymentMethod?: PaymentMethod | string;
+  items?: any[];
+  totalAmount?: number;
+  discountAmount?: number;
+  finalAmount?: number;
+  shippingName?: string;
+  shippingPhone?: string;
+  shippingCity?: string;
+  userId?: string;
 }
 
 export interface CreatePaymentOrderDto {

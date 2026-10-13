@@ -102,7 +102,7 @@ export default function OrderDetailPage() {
               <span className='px-3 py-1 rounded-full text-xs font-black bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800'>
                 {order.orderStatus}
               </span>
-              {(order.orderStatus === 'PENDING' || order.orderStatus === 'CONFIRMED') && (
+              {(order.orderStatus as any === 'PENDING' || order.orderStatus as any === 'CONFIRMED') && (
                 <button
                   type='button'
                   onClick={handleCancel}
@@ -124,8 +124,12 @@ export default function OrderDetailPage() {
           </div>
           <div className='p-4 bg-slate-50 dark:bg-slate-800/60 rounded-2xl space-y-1.5 border border-slate-200/60 dark:border-slate-700/60'>
             <span className='font-bold uppercase tracking-wider text-slate-400 block'>Payment Details</span>
-            <p className='font-semibold text-slate-800 dark:text-slate-200'>Status: <span className='text-emerald-600 dark:text-emerald-400 font-bold'>{order.paymentStatus}</span></p>
-            <p className='text-slate-500'>Provider: Razorpay Test Simulation</p>
+            <p className='font-semibold text-slate-800 dark:text-slate-200'>
+              Method: <span className='font-bold text-amber-600 dark:text-amber-400'>{String(order.paymentMethod || '').toUpperCase() === 'COD' ? '💵 Cash on Delivery (COD)' : '💳 Prepaid Online'}</span>
+            </p>
+            <p className='font-semibold text-slate-800 dark:text-slate-200'>
+              Status: <span className='text-emerald-600 dark:text-emerald-400 font-bold'>{order.paymentStatus || (String(order.paymentMethod || '').toUpperCase() === 'COD' ? 'DUE AT DOORSTEP' : 'PAID')}</span>
+            </p>
           </div>
         </div>
 
@@ -176,8 +180,8 @@ export default function OrderDetailPage() {
             </div>
           )}
           <div className='flex justify-between text-base font-black text-slate-900 dark:text-white pt-2 border-t border-slate-200 dark:border-slate-800'>
-            <span>Total Paid</span>
-            <span className='text-indigo-600 dark:text-indigo-400'>{rupee}{order.finalAmount}</span>
+            <span>{String(order.paymentMethod || '').toUpperCase() === 'COD' ? 'Amount Due on Delivery' : 'Total Paid Online'}</span>
+            <span className='text-amber-600 dark:text-amber-400 font-mono'>{rupee}{order.finalAmount || order.totalAmount}</span>
           </div>
         </div>
       </div>

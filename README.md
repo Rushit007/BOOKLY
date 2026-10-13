@@ -60,22 +60,42 @@ D:\BOOKLY\
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Running the Entire Project in One Command
 
-1. **Clone / Open Workspace:**
-   Open directory `D:\BOOKLY` in Antigravity IDE / VS Code.
+You can start the full stack (Docker containers, Backend, and Frontend) using **any** of the following single commands from the project root (`D:\BOOKLY`):
 
-2. **Environment Setup:**
+### Option 1: Command Prompt / Double-click (Recommended)
+```cmd
+start-project.bat
+```
+*(Or simply double-click [start-project.bat](file:///d:/BOOKLY/start-project.bat) in File Explorer)*
+
+### Option 2: PowerShell
+```powershell
+.\start-project.ps1
+```
+
+### Option 3: Terminal (Unified Logs via npm)
+```bash
+npm run dev
+```
+
+---
+
+## 🛠️ Manual Step-by-Step (Optional)
+
+1. **Environment Setup:**
    Copy `.env.example` to `.env` in root, `frontend`, and `backend` directories.
 
-3. **Frontend:**
+2. **Frontend:**
    ```bash
    cd frontend
    npm run dev
    ```
 
-4. **Backend:**
+3. **Backend:**
    ```bash
    cd backend
    npm run start:dev
    ```
+

@@ -20,6 +20,7 @@ function CatalogPageContent() {
 
   const [search, setSearch] = useState(initialSearch);
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
+  const [selectedTier, setSelectedTier] = useState<string | undefined>(undefined);
   const [minPrice, setMinPrice] = useState<number | undefined>(undefined);
   const [maxPrice, setMaxPrice] = useState<number | undefined>(undefined);
   const [minRating, setMinRating] = useState<number | undefined>(undefined);
@@ -44,23 +45,36 @@ function CatalogPageContent() {
     setIsLoading(true);
     try {
       const res = await api.getBooks({
-        page, limit: 12, search, category: selectedCategory,
+        page, limit: 16, search, category: selectedCategory,
         minPrice, maxPrice, minRating, inStock: inStockOnly ? true : undefined, sort,
       });
-      setBooks(res.data);
+
+      let filteredList = res.data;
+      if (selectedTier) {
+        filteredList = filteredList.filter((b) => {
+          if (b.tierRating === selectedTier) return true;
+          if (selectedTier === 'perfection') return b.rating >= 4.8;
+          if (selectedTier === 'go_for_it') return b.rating >= 4.5 && b.rating < 4.8;
+          if (selectedTier === 'timepass') return (b.tierRating === 'timepass') || (b.rating >= 3.5 && b.rating < 4.5);
+          if (selectedTier === 'skip') return (b.tierRating === 'skip') || b.rating < 3.5;
+          return true;
+        });
+      }
+
+      setBooks(filteredList);
       setTotalPages(res.meta.totalPages);
-      setTotalItems(res.meta.totalItems);
+      setTotalItems(selectedTier ? filteredList.length : res.meta.totalItems);
     } catch (err) {
       console.error('Failed to fetch books', err);
     } finally {
       setIsLoading(false);
     }
-  }, [page, search, selectedCategory, minPrice, maxPrice, minRating, inStockOnly, sort]);
+  }, [page, search, selectedCategory, selectedTier, minPrice, maxPrice, minRating, inStockOnly, sort]);
 
   useEffect(() => { fetchBooks(); }, [fetchBooks]);
 
   const handleResetFilters = () => {
-    setSearch(''); setSelectedCategory(''); setMinPrice(undefined);
+    setSearch(''); setSelectedCategory(''); setSelectedTier(undefined); setMinPrice(undefined);
     setMaxPrice(undefined); setMinRating(undefined); setInStockOnly(false);
     setSort('newest'); setPage(1);
     router.push('/books');
@@ -153,6 +167,8 @@ function CatalogPageContent() {
               onPriceChange={(min, max) => { setMinPrice(min); setMaxPrice(max); setPage(1); }}
               minRating={minRating}
               onRatingChange={(r) => { setMinRating(r); setPage(1); }}
+              selectedTier={selectedTier}
+              onTierChange={(t) => { setSelectedTier(t); setPage(1); }}
               inStockOnly={inStockOnly}
               onInStockChange={(stk) => { setInStockOnly(stk); setPage(1); }}
               onResetFilters={handleResetFilters}

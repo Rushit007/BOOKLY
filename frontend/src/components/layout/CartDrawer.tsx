@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { useCart } from '../../context/CartContext';
+import { getAuthenticCover } from '../../utils/bookCovers';
 
 export function CartDrawer() {
   const {
@@ -77,19 +78,11 @@ export function CartDrawer() {
                   <div key={item.bookId} className='py-4 px-5 flex gap-4 items-start'>
                     {/* Cover */}
                     <div className='w-12 h-16 border-2 border-[var(--border-main)] bg-[var(--bg-surface-elevated)] overflow-hidden shrink-0'>
-                      {item.book.coverImage ? (
-                        <img
-                          src={item.book.coverImage}
-                          alt={item.book.title}
-                          className='w-full h-full object-cover'
-                        />
-                      ) : (
-                        <div className='w-full h-full flex items-end p-1'>
-                          <span className='font-editorial-mono text-[7px] text-[var(--text-faint)] leading-tight line-clamp-3'>
-                            {item.book.title}
-                          </span>
-                        </div>
-                      )}
+                      <img
+                        src={getAuthenticCover(item.book)}
+                        alt={item.book.title}
+                        className='w-full h-full object-cover'
+                      />
                     </div>
 
                     {/* Info */}
@@ -134,7 +127,7 @@ export function CartDrawer() {
                         </div>
                         <button
                           onClick={() => removeFromCart(item.bookId)}
-                          className='font-editorial-mono text-[9px] uppercase tracking-wider text-[var(--bg-accent-pink)] hover:underline'
+                          className='font-editorial-mono text-xs uppercase tracking-wider text-[var(--text-accent-pink)] hover:underline font-bold'
                         >
                           Remove
                         </button>
@@ -143,7 +136,7 @@ export function CartDrawer() {
 
                     {/* Line total */}
                     <div className='text-right shrink-0'>
-                      <span className='font-editorial-serif text-base font-bold text-[var(--text-main)]'>
+                      <span className='font-editorial-serif text-lg font-bold text-[var(--text-main)]'>
                         {rupee}{dp * item.quantity}
                       </span>
                     </div>
@@ -156,15 +149,15 @@ export function CartDrawer() {
           {/* Footer Summary + CTA */}
           {items.length > 0 && (
             <div className='border-t-2 border-[var(--border-main)] bg-[var(--bg-surface-elevated)] px-5 py-5'>
-              <div className='space-y-2 mb-4'>
-                <div className='flex justify-between'>
-                  <span className='font-editorial-mono text-[9px] uppercase tracking-wider text-[var(--text-faint)]'>Subtotal</span>
-                  <span className='font-editorial-mono text-[10px] font-bold text-[var(--text-main)]'>{rupee}{subtotal}</span>
+              <div className='space-y-2.5 mb-4'>
+                <div className='flex justify-between text-xs'>
+                  <span className='font-editorial-mono uppercase tracking-wider text-[var(--text-faint)]'>Subtotal</span>
+                  <span className='font-editorial-mono font-bold text-[var(--text-main)]'>{rupee}{subtotal}</span>
                 </div>
                 {totalDiscount > 0 && (
-                  <div className='flex justify-between'>
-                    <span className='font-editorial-mono text-[9px] uppercase tracking-wider text-[var(--bg-accent-mint)]'>Savings</span>
-                    <span className='font-editorial-mono text-[10px] font-bold text-[var(--bg-accent-mint)]'>
+                  <div className='flex justify-between text-xs'>
+                    <span className='font-editorial-mono uppercase tracking-wider text-[var(--text-accent-mint)] font-bold'>Savings</span>
+                    <span className='font-editorial-mono font-bold text-[var(--text-accent-mint)]'>
                       −{rupee}{Math.round(totalDiscount)}
                     </span>
                   </div>

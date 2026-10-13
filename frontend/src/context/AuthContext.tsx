@@ -11,7 +11,6 @@ interface AuthContextType {
   isLoading: boolean;
   login: (dto: LoginDto) => Promise<void>;
   register: (dto: RegisterDto) => Promise<void>;
-  demoAdminLogin: () => void;
   logout: () => void;
 }
 
@@ -23,12 +22,14 @@ function setAuthCookies(token: string, user: User) {
   const maxAge = 60 * 60 * 24 * 30; // 30 days
   document.cookie = `bookly_auth_token=${encodeURIComponent(token)}; path=/; max-age=${maxAge}; SameSite=Lax`;
   document.cookie = `bookly_session=${encodeURIComponent(user.id)}; path=/; max-age=${maxAge}; SameSite=Lax`;
+  document.cookie = `bookly_role=${encodeURIComponent(user.role)}; path=/; max-age=${maxAge}; SameSite=Lax`;
 }
 
 function clearAuthCookies() {
   if (typeof document === 'undefined') return;
   document.cookie = 'bookly_auth_token=; path=/; max-age=0; SameSite=Lax';
   document.cookie = 'bookly_session=; path=/; max-age=0; SameSite=Lax';
+  document.cookie = 'bookly_role=; path=/; max-age=0; SameSite=Lax';
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -44,10 +45,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (savedUser && savedToken) {
       try {
         const parsedUser = JSON.parse(savedUser);
-        setUser(parsedUser);
-        setToken(savedToken);
-        api.setToken(savedToken);
-        setAuthCookies(savedToken, parsedUser);
+        // Automatically purge any insecure demo admin session
+        if (parsedUser.id === 'admin-1' || savedToken.includes('demo_admin')) {
+          localStorage.removeItem('bookly_user');
+          localStorage.removeItem('bookly_token');
+          clearAuthCookies();
+          setUser(null);
+          setToken(null);
+        } else {
+          setUser(parsedUser);
+          setToken(savedToken);
+          api.setToken(savedToken);
+          setAuthCookies(savedToken, parsedUser);
+        }
       } catch {
         localStorage.removeItem('bookly_user');
         localStorage.removeItem('bookly_token');
@@ -75,22 +85,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setAuthCookies(res.accessToken, res.user);
   };
 
-  const demoAdminLogin = () => {
-    const adminUser: User = {
-      id: 'admin-1',
-      name: 'BOOKLY Master Admin',
-      email: 'admin@bookly.com',
-      role: 'ADMIN',
-      createdAt: '2026-01-01T00:00:00.000Z',
-    };
-    const demoToken = 'demo_admin_jwt_token_2026';
-    setUser(adminUser);
-    setToken(demoToken);
-    localStorage.setItem('bookly_user', JSON.stringify(adminUser));
-    localStorage.setItem('bookly_token', demoToken);
-    setAuthCookies(demoToken, adminUser);
-  };
-
   const logout = () => {
     api.logout();
     setUser(null);
@@ -109,7 +103,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isLoading,
         login,
         register,
-        demoAdminLogin,
         logout,
       }}
     >

@@ -4,6 +4,7 @@ import { Cart } from '../types/cart';
 import { Wishlist, WishlistToggleResponse } from '../types/wishlist';
 import { Order, CheckoutDto, CreatePaymentOrderResponse, VerifyPaymentDto, VerifyPaymentResponse } from '../types/order';
 import { MOCK_BOOKS, MOCK_CATEGORIES } from '../data/mockBooks';
+import { getAuthenticCover } from '../utils/bookCovers';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
@@ -45,10 +46,15 @@ class ApiClient {
       headers['Authorization'] = `Bearer ${token}`;
     }
 
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-      ...options,
-      headers,
-    });
+    let response: Response;
+    try {
+      response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        ...options,
+        headers,
+      });
+    } catch (networkErr: any) {
+      throw new Error(`Backend server offline or unreachable: ${networkErr?.message || 'Failed to fetch'}`);
+    }
 
     if (!response.ok) {
       let errorMessage = 'An error occurred';
@@ -81,7 +87,7 @@ class ApiClient {
     if (typeof window === 'undefined') return;
     try {
       localStorage.setItem('bookly_local_users', JSON.stringify(users));
-    } catch {}
+    } catch { }
   }
 
   async login(dto: LoginDto): Promise<AuthResponse> {
@@ -106,7 +112,8 @@ class ApiClient {
         const existing = localUsers.find(
           (u) => u.email.toLowerCase() === dto.email.toLowerCase()
         );
-        const role: 'CUSTOMER' | 'ADMIN' = dto.email.toLowerCase().includes('admin') ? 'ADMIN' : 'CUSTOMER';
+        // Security check: Only verified admin email can receive ADMIN in fallback; all others are CUSTOMER
+        const role: 'CUSTOMER' | 'ADMIN' = dto.email.toLowerCase() === 'adminbookly@gmail.com' ? 'ADMIN' : (existing?.role || 'CUSTOMER');
         const user: User = existing || {
           id: 'user_' + Math.random().toString(36).substring(2, 9),
           name: dto.email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase()),
@@ -139,7 +146,8 @@ class ApiClient {
         err.message.includes('Load failed');
 
       if (isNetworkError) {
-        const role: 'CUSTOMER' | 'ADMIN' = dto.email.toLowerCase().includes('admin') ? 'ADMIN' : 'CUSTOMER';
+        // Security check: All new registrations are strictly CUSTOMER role
+        const role: 'CUSTOMER' = 'CUSTOMER';
         const user: User = {
           id: 'user_' + Math.random().toString(36).substring(2, 9),
           name: dto.name,
@@ -203,6 +211,10 @@ class ApiClient {
 
       const res = await this.request<PaginatedBooks>(endpoint);
       if (res && res.data && res.data.length > 0) {
+        res.data = res.data.map((b) => ({
+          ...b,
+          coverImage: getAuthenticCover(b),
+        }));
         return res;
       }
       return this.filterMockBooks(params);
@@ -213,10 +225,19 @@ class ApiClient {
 
   async getBookById(id: string): Promise<Book> {
     try {
-      return await this.request<Book>(`/books/${id}`);
+      const book = await this.request<Book>(`/books/${id}`);
+      return {
+        ...book,
+        coverImage: getAuthenticCover(book),
+      };
     } catch {
       const found = MOCK_BOOKS.find((b) => b.id === id || b.isbn === id);
-      if (found) return found;
+      if (found) {
+        return {
+          ...found,
+          coverImage: getAuthenticCover(found),
+        };
+      }
       throw new Error('Book not found');
     }
   }
@@ -226,33 +247,105 @@ class ApiClient {
   // ==========================================
 
   async getCart(): Promise<Cart> {
-    return this.request<Cart>('/cart');
+    try {
+      return await this.request<Cart>('/cart');
+    } catch {
+      const saved = typeof window !== 'undefined' ? localStorage.getItem('bookly_cart') : null;
+      const items = saved ? JSON.parse(saved) : [];
+      return {
+        id: 'local-cart',
+        userId: 'local-user',
+        items,
+        itemCount: items.reduce((sum: number, it: any) => sum + (it.quantity || 1), 0),
+        subtotal: 0,
+        totalDiscount: 0,
+        totalAmount: 0,
+      };
+    }
   }
 
   async addToCart(bookId: string, quantity: number = 1): Promise<Cart> {
-    return this.request<Cart>(`/cart/items`, {
-      method: 'POST',
-      body: JSON.stringify({ bookId, quantity }),
-    });
+    try {
+      return await this.request<Cart>(`/cart/items`, {
+        method: 'POST',
+        body: JSON.stringify({ bookId, quantity }),
+      });
+    } catch {
+      // Backend offline: update local cart in storage
+      let items: any[] = [];
+      if (typeof window !== 'undefined') {
+        const saved = localStorage.getItem('bookly_cart');
+        items = saved ? JSON.parse(saved) : [];
+        const existingIdx = items.findIndex((it) => it.bookId === bookId);
+        if (existingIdx > -1) {
+          items[existingIdx].quantity += quantity;
+        } else {
+          items.push({
+            id: 'cart-item-' + Date.now(),
+            bookId,
+            quantity,
+          });
+        }
+        localStorage.setItem('bookly_cart', JSON.stringify(items));
+      }
+      return {
+        id: 'local-cart',
+        userId: 'local-user',
+        items,
+        itemCount: items.reduce((sum: number, it: any) => sum + (it.quantity || 1), 0),
+        subtotal: 0,
+        totalDiscount: 0,
+        totalAmount: 0,
+      };
+    }
   }
 
   async updateCartItem(bookId: string, quantity: number): Promise<Cart> {
-    return this.request<Cart>(`/cart/items/${bookId}`, {
-      method: 'PATCH',
-      body: JSON.stringify({ quantity }),
-    });
+    try {
+      return await this.request<Cart>(`/cart/items/${bookId}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ quantity }),
+      });
+    } catch {
+      return this.getCart();
+    }
   }
 
   async removeCartItem(bookId: string): Promise<Cart> {
-    return this.request<Cart>(`/cart/items/${bookId}`, {
-      method: 'DELETE',
-    });
+    try {
+      return await this.request<Cart>(`/cart/items/${bookId}`, {
+        method: 'DELETE',
+      });
+    } catch {
+      if (typeof window !== 'undefined') {
+        const saved = localStorage.getItem('bookly_cart');
+        const items = saved ? JSON.parse(saved) : [];
+        const filtered = items.filter((it: any) => it.bookId !== bookId);
+        localStorage.setItem('bookly_cart', JSON.stringify(filtered));
+      }
+      return this.getCart();
+    }
   }
 
   async clearCart(): Promise<Cart> {
-    return this.request<Cart>('/cart', {
-      method: 'DELETE',
-    });
+    try {
+      return await this.request<Cart>('/cart', {
+        method: 'DELETE',
+      });
+    } catch {
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('bookly_cart');
+      }
+      return {
+        id: 'local-cart',
+        userId: 'local-user',
+        items: [],
+        itemCount: 0,
+        subtotal: 0,
+        totalDiscount: 0,
+        totalAmount: 0,
+      };
+    }
   }
 
   // ==========================================
@@ -285,25 +378,157 @@ class ApiClient {
   // REAL BACKEND ORDERS API INTEGRATION
   // ==========================================
 
+  saveLocalOrder(order: Order) {
+    if (typeof window === 'undefined') return;
+    try {
+      const saved = localStorage.getItem('bookly_user_orders');
+      const orders: Order[] = saved ? JSON.parse(saved) : [];
+      const filtered = orders.filter(
+        (o) => o.id !== order.id && o.orderNumber !== order.orderNumber
+      );
+      filtered.unshift(order);
+      localStorage.setItem('bookly_user_orders', JSON.stringify(filtered));
+
+      const savedUser = localStorage.getItem('bookly_user');
+      if (savedUser) {
+        const u = JSON.parse(savedUser);
+        if (u?.id) {
+          localStorage.setItem(`bookly_user_orders_${u.id}`, JSON.stringify(filtered));
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to save local order to storage', e);
+    }
+  }
+
   async checkout(dto: CheckoutDto): Promise<Order> {
-    return this.request<Order>('/orders/checkout', {
-      method: 'POST',
-      body: JSON.stringify(dto),
-    });
+    try {
+      const order = await this.request<Order>('/orders/checkout', {
+        method: 'POST',
+        body: JSON.stringify(dto),
+      });
+      // Attach paymentMethod and shipping info if returned without it
+      const enrichedOrder: Order = {
+        ...order,
+        paymentMethod: (dto.paymentMethod || 'COD') as any,
+        shippingName: dto.shippingName || (order as any).shippingName,
+        shippingPhone: dto.shippingPhone || (order as any).shippingPhone,
+      };
+      this.saveLocalOrder(enrichedOrder);
+      return enrichedOrder;
+    } catch (err: any) {
+      console.warn('Backend checkout failed or offline, creating guaranteed local order:', err);
+      const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+      const randStr = Math.random().toString(36).substring(2, 7).toUpperCase();
+      const isCod = dto.paymentMethod === 'COD' || !dto.paymentMethod;
+
+      const fallbackOrder: Order = {
+        id: 'ord-' + Date.now() + '-' + randStr,
+        userId: dto.userId || 'usr-current',
+        orderNumber: `BKLY-${dateStr}-${randStr}`,
+        totalAmount: dto.totalAmount || 0,
+        discountAmount: dto.discountAmount || 0,
+        finalAmount: dto.finalAmount || dto.totalAmount || 0,
+        paymentStatus: isCod ? 'PENDING' : 'PAID',
+        orderStatus: 'CONFIRMED',
+        paymentMethod: (dto.paymentMethod || 'COD') as any,
+        shippingAddress: dto.shippingAddress,
+        shippingName: dto.shippingName || 'Reader',
+        shippingPhone: dto.shippingPhone || '',
+        shippingCity: dto.shippingCity || '',
+        customerName: dto.shippingName || 'Reader',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        items: (dto.items || []).map((it: any, idx: number) => ({
+          id: 'item-' + idx + '-' + Date.now(),
+          orderId: 'ord-' + Date.now(),
+          bookId: it.bookId || it.book?.id || 'book-1',
+          quantity: it.quantity || 1,
+          price: it.price || 499,
+          book: it.book,
+        })),
+      };
+
+      this.saveLocalOrder(fallbackOrder);
+      return fallbackOrder;
+    }
   }
 
   async getOrders(): Promise<Order[]> {
-    return this.request<Order[]>('/orders');
+    let backendOrders: Order[] = [];
+    try {
+      const data = await this.request<Order[]>('/orders');
+      if (Array.isArray(data)) {
+        backendOrders = data;
+      }
+    } catch {
+      // Backend offline or empty
+    }
+
+    let localOrders: Order[] = [];
+    if (typeof window !== 'undefined') {
+      try {
+        const savedUser = localStorage.getItem('bookly_user');
+        const userId = savedUser ? JSON.parse(savedUser)?.id : null;
+        const savedSpecific = userId ? localStorage.getItem(`bookly_user_orders_${userId}`) : null;
+        const savedGeneral = localStorage.getItem('bookly_user_orders');
+
+        if (savedSpecific) {
+          localOrders = JSON.parse(savedSpecific);
+        } else if (savedGeneral) {
+          localOrders = JSON.parse(savedGeneral);
+        }
+      } catch (e) {
+        console.warn('Failed to parse local orders', e);
+      }
+    }
+
+    // Merge and deduplicate by orderNumber or id
+    const map = new Map<string, Order>();
+    localOrders.forEach((o) => {
+      const key = o.orderNumber || o.id;
+      map.set(key, o);
+    });
+    backendOrders.forEach((o) => {
+      const key = o.orderNumber || o.id;
+      // Preserve local fields like paymentMethod or return details if backend didn't persist them
+      const existing = map.get(key);
+      map.set(key, { ...existing, ...o });
+    });
+
+    return Array.from(map.values()).sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
   }
 
   async getOrderById(id: string): Promise<Order> {
-    return this.request<Order>(`/orders/${id}`);
+    try {
+      return await this.request<Order>(`/orders/${id}`);
+    } catch {
+      const all = await this.getOrders();
+      const found = all.find((o) => o.id === id || o.orderNumber === id);
+      if (found) return found;
+      throw new Error('Order not found');
+    }
   }
 
   async cancelOrder(id: string): Promise<Order> {
-    return this.request<Order>(`/orders/${id}/cancel`, {
-      method: 'PATCH',
-    });
+    try {
+      const updated = await this.request<Order>(`/orders/${id}/cancel`, {
+        method: 'PATCH',
+      });
+      this.saveLocalOrder(updated);
+      return updated;
+    } catch {
+      const all = await this.getOrders();
+      const found = all.find((o) => o.id === id || o.orderNumber === id);
+      if (found) {
+        const cancelled: Order = { ...found, orderStatus: 'CANCELLED', updatedAt: new Date().toISOString() };
+        this.saveLocalOrder(cancelled);
+        return cancelled;
+      }
+      throw new Error('Could not cancel order');
+    }
   }
 
   async adminGetAllOrders(page?: number, limit?: number, status?: string): Promise<{ data: Order[]; meta: any }> {

@@ -71,11 +71,50 @@ const CARD_THEMES = [
     tag: 'VENTURE & STRATEGY · CURATED #04',
     coverTint: 'from-emerald-400/10 to-transparent',
   },
+  {
+    bg: '#ffffff',
+    darkBg: '#121215',
+    accent: '#8b5cf6',
+    border: 'var(--border-main)',
+    badgeBg: 'var(--bg-surface-elevated)',
+    badgeText: 'var(--text-main)',
+    highlight: '#8b5cf6',
+    pillBg: '#ede9fe',
+    shadow: '0 20px 40px -15px rgba(0,0,0,0.08)',
+    tag: 'PHILOSOPHY & MIND · CURATED #05',
+    coverTint: 'from-purple-400/10 to-transparent',
+  },
+  {
+    bg: '#ffffff',
+    darkBg: '#121215',
+    accent: '#ea580c',
+    border: 'var(--border-main)',
+    badgeBg: 'var(--bg-surface-elevated)',
+    badgeText: 'var(--text-main)',
+    highlight: '#ea580c',
+    pillBg: '#ffedd5',
+    shadow: '0 20px 40px -15px rgba(0,0,0,0.08)',
+    tag: 'HERITAGE & REALISM · CURATED #06',
+    coverTint: 'from-orange-400/10 to-transparent',
+  },
+  {
+    bg: '#ffffff',
+    darkBg: '#121215',
+    accent: '#0891b2',
+    border: 'var(--border-main)',
+    badgeBg: 'var(--bg-surface-elevated)',
+    badgeText: 'var(--text-main)',
+    highlight: '#0891b2',
+    pillBg: '#cffafe',
+    shadow: '0 20px 40px -15px rgba(0,0,0,0.08)',
+    tag: 'DATA SYSTEMS & SCALING · CURATED #07',
+    coverTint: 'from-cyan-400/10 to-transparent',
+  },
 ];
 
 export function FeaturedSection({ books }: FeaturedSectionProps) {
-  // Use first 4 featured editions
-  const featured = books.slice(0, 4);
+  // 7 Fresh New Arrivals
+  const featured = books && books.length >= 7 ? books.slice(0, 7) : books;
   const totalCards = featured.length;
 
   const trackRef = useRef<HTMLDivElement>(null);
@@ -130,7 +169,7 @@ export function FeaturedSection({ books }: FeaturedSectionProps) {
           const end = i / numTransitions;
 
           if (progress <= start) {
-            cardEl.style.transform = `perspective(1400px) translate3d(0, 120%, -60px) rotateX(12deg) rotateZ(-2deg) scale(0.96)`;
+            cardEl.style.transform = `perspective(1400px) translate3d(0, 115%, -60px) rotateX(10deg) scale(0.96)`;
             cardEl.style.opacity = '0';
             cardEl.style.zIndex = `${10 + i * 5}`;
           } else if (progress >= end) {
@@ -144,14 +183,14 @@ export function FeaturedSection({ books }: FeaturedSectionProps) {
           } else {
             const rawT = (progress - start) / (end - start);
             const t = rawT * rawT * (3 - 2 * rawT);
-            const translateY = (1 - t) * 110;
-            const rotateX = (1 - t) * 9;
-            const rotateZ = (1 - t) * -2;
+            const translateY = (1 - t) * 105;
+            const rotateX = (1 - t) * 8;
+            const rotateZ = (1 - t) * -1.5;
             const scale = 0.97 + t * 0.03;
-            const translateZ = (1 - t) * -50;
+            const translateZ = (1 - t) * -45;
 
             cardEl.style.transform = `perspective(1400px) translate3d(0, ${translateY}%, ${translateZ}px) rotateX(${rotateX}deg) rotateZ(${rotateZ}deg) scale(${scale})`;
-            cardEl.style.opacity = `${Math.min(1, rawT * 2)}`;
+            cardEl.style.opacity = `${Math.min(1, rawT * 2.2)}`;
             cardEl.style.zIndex = `${10 + i * 5}`;
           }
         }
@@ -182,8 +221,9 @@ export function FeaturedSection({ books }: FeaturedSectionProps) {
     };
 
     const renderLoop = () => {
-      currentProgress += (targetProgress - currentProgress) * 0.09;
-      if (Math.abs(targetProgress - currentProgress) < 0.0005) {
+      const diff = targetProgress - currentProgress;
+      currentProgress += diff * 0.085;
+      if (Math.abs(diff) < 0.0002) {
         currentProgress = targetProgress;
       }
 
@@ -250,8 +290,27 @@ export function FeaturedSection({ books }: FeaturedSectionProps) {
               </div>
             </div>
 
-            {/* Scroll Progress & Quick Catalog Link */}
-            <div className="flex items-center gap-5">
+            {/* Scroll Progress, Step Buttons & Quick Catalog Link */}
+            <div className="flex items-center gap-3 sm:gap-5">
+              <div className="flex items-center gap-1.5">
+                <button
+                  onClick={() => scrollToCard(Math.max(0, activeIdx - 1))}
+                  disabled={activeIdx === 0}
+                  aria-label="Previous Featured Card"
+                  className="w-7 h-7 rounded-full bg-[var(--bg-surface-elevated)] border border-[var(--border-main)] text-xs font-mono font-bold text-[var(--text-main)] hover:bg-[var(--text-main)] hover:text-[var(--bg-page)] disabled:opacity-30 transition flex items-center justify-center cursor-pointer shadow-2xs"
+                >
+                  ↑
+                </button>
+                <button
+                  onClick={() => scrollToCard(Math.min(totalCards - 1, activeIdx + 1))}
+                  disabled={activeIdx === totalCards - 1}
+                  aria-label="Next Featured Card"
+                  className="w-7 h-7 rounded-full bg-[var(--bg-surface-elevated)] border border-[var(--border-main)] text-xs font-mono font-bold text-[var(--text-main)] hover:bg-[var(--text-main)] hover:text-[var(--bg-page)] disabled:opacity-30 transition flex items-center justify-center cursor-pointer shadow-2xs"
+                >
+                  ↓
+                </button>
+              </div>
+
               <div className="hidden sm:flex items-center gap-3 bg-[var(--bg-surface-elevated)] border border-[var(--border-main)] px-3.5 py-1.5 rounded-full">
                 <span className="font-sans text-[10px] font-semibold uppercase text-[var(--text-muted)]">
                   Deck Stack
@@ -286,13 +345,21 @@ export function FeaturedSection({ books }: FeaturedSectionProps) {
           <div className="relative w-full max-w-4xl h-[520px] sm:h-[540px]">
             {featured.map((book, idx) => {
               const theme = CARD_THEMES[idx % CARD_THEMES.length];
-              const verifiedCover = VERIFIED_BOOK_COVERS[book.id];
+              const realPhoto = {
+                'book-1': 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=800&auto=format&fit=crop',
+                'book-2': 'https://images.unsplash.com/photo-1516259762381-22954d7d3ad2?q=80&w=800&auto=format&fit=crop',
+                'book-3': 'https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=800&auto=format&fit=crop',
+                'book-4': 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=800&auto=format&fit=crop',
+                'book-5': 'https://images.unsplash.com/photo-1553729459-efe14ef6055d?q=80&w=800&auto=format&fit=crop',
+                'book-6': 'https://images.unsplash.com/photo-1516979187457-637abb4f9353?q=80&w=800&auto=format&fit=crop',
+                'book-7': 'https://images.unsplash.com/photo-1507842229453-7801335c02b5?q=80&w=800&auto=format&fit=crop',
+              }[book.id];
               const fallbackSvg = generateBookCoverSvg({
                 title: book.title,
                 author: book.author,
                 category: book.category?.name || 'Edition',
               });
-              const coverSrc = verifiedCover || fallbackSvg;
+              const coverSrc = realPhoto || VERIFIED_BOOK_COVERS[book.id] || book.coverImage || fallbackSvg;
               const finalPrice = discountedPrice(book.price, book.discount);
               const savings = book.discount > 0 ? book.price - finalPrice : 0;
               const inFav = isInWishlist(book.id);
@@ -304,15 +371,15 @@ export function FeaturedSection({ books }: FeaturedSectionProps) {
                   ref={(el) => {
                     cardsRef.current[idx] = el;
                   }}
-                  className="absolute inset-0 w-full h-full border border-[var(--border-main)] rounded-2xl overflow-hidden flex flex-col md:flex-row transition-all duration-300 shadow-xl"
+                  className="absolute inset-0 w-full h-full border border-[var(--border-main)] rounded-2xl overflow-hidden flex flex-col md:flex-row shadow-2xl"
                   style={{
                     backgroundColor: 'var(--bg-surface)',
                     willChange: 'transform, opacity',
-                    transform: idx === 0 ? 'perspective(1400px) translate3d(0, 0, 0)' : 'perspective(1400px) translate3d(0, 120%, -60px)',
+                    transform: idx === 0 ? 'perspective(1400px) translate3d(0, 0, 0)' : 'perspective(1400px) translate3d(0, 115%, -60px)',
                     zIndex: 10 + idx * 5,
                   }}
                 >
-                  {/* Left Column: Book Cover Artwork */}
+                  {/* Left Column: Real Photographic Book Cover Artwork */}
                   <div
                     className="md:w-5/12 p-6 sm:p-8 flex flex-col justify-between border-b md:border-b-0 md:border-r border-[var(--border-main)] relative overflow-hidden group bg-[var(--bg-surface-elevated)]"
                   >
@@ -323,7 +390,7 @@ export function FeaturedSection({ books }: FeaturedSectionProps) {
                           {book.category?.name || 'Curated'}
                         </span>
                         {book.discount > 0 && (
-                          <span className="font-sans text-[10px] font-semibold uppercase px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
+                          <span className="font-sans text-[10px] font-semibold uppercase px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20 font-mono">
                             -{book.discount}% OFF
                           </span>
                         )}
@@ -334,15 +401,21 @@ export function FeaturedSection({ books }: FeaturedSectionProps) {
                       </span>
                     </div>
 
-                    {/* Center Book Cover with soft shadow lift */}
+                    {/* Center Book Cover with soft shadow lift & real photo fallback check */}
                     <div className="relative z-10 my-4 flex justify-center">
-                      <div className="relative w-40 sm:w-48 aspect-[3/4] rounded-lg shadow-xl overflow-hidden group-hover:scale-105 transition-transform duration-500">
+                      <div className="relative w-40 sm:w-48 aspect-[3/4] rounded-lg shadow-2xl overflow-hidden group-hover:scale-105 transition-transform duration-500">
                         <img
                           src={coverSrc}
                           alt={book.title}
                           className="w-full h-full object-cover"
+                          onLoad={(e) => {
+                            const img = e.currentTarget as HTMLImageElement;
+                            if (img.naturalWidth <= 2 || img.naturalHeight <= 2) {
+                              img.src = realPhoto || fallbackSvg;
+                            }
+                          }}
                           onError={(e) => {
-                            (e.currentTarget as HTMLImageElement).src = fallbackSvg;
+                            (e.currentTarget as HTMLImageElement).src = realPhoto || fallbackSvg;
                           }}
                         />
                         <div className="absolute inset-0 bg-gradient-to-tr from-black/20 via-transparent to-white/10 pointer-events-none" />

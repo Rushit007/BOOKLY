@@ -9,6 +9,7 @@ import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { useCompare } from '../../context/CompareContext';
 import { useToast } from '../../components/common/Toast';
+import { getAuthenticCover } from '../../utils/bookCovers';
 
 type ReadingPreference = 'any' | 'habits' | 'engineering' | 'inspiration';
 
@@ -190,23 +191,23 @@ export default function BookMatchPage() {
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14'>
           <div className='flex flex-wrap items-center justify-between gap-3 mb-4'>
             <div className='flex flex-wrap items-center gap-2'>
-              <span className='px-3 py-1 rounded-full text-xs font-sans font-semibold bg-[var(--bg-surface-elevated)] text-[var(--text-main)] border border-[var(--border-main)]'>
+              <span className='px-3 py-1 rounded-full text-xs font-array uppercase tracking-wider font-semibold bg-[#42BFDD]/15 text-[#084B83] dark:text-[#42BFDD] border border-[#42BFDD]/30'>
                 Match Engine
               </span>
-              <span className='px-3 py-1 rounded-full text-xs font-sans font-semibold bg-[var(--text-main)] text-[var(--bg-page)]'>
+              <span className='px-3 py-1 rounded-full text-xs font-array uppercase tracking-wider font-semibold bg-[#084B83] text-white'>
                 Zero Bias
               </span>
             </div>
             <button
               onClick={() => setShowMatchInfoModal(true)}
-              className='px-3.5 py-1.5 rounded-full border border-[var(--border-main)] bg-[var(--bg-surface-elevated)] text-[var(--text-main)] font-sans text-xs font-semibold hover:bg-[var(--text-main)] hover:text-[var(--bg-page)] transition-colors flex items-center gap-1.5 shadow-xs cursor-pointer'
+              className='px-3.5 py-1.5 rounded-full border border-[var(--border-main)] bg-[var(--bg-surface-elevated)] text-[var(--text-main)] font-array text-xs uppercase tracking-wider font-semibold hover:bg-[#084B83] hover:text-white transition-colors flex items-center gap-1.5 shadow-xs cursor-pointer'
             >
-              <span>ℹ</span>
+              <span className='text-[#42BFDD]'>ℹ</span>
               <span>How Scoring Works</span>
             </button>
           </div>
 
-          <h1 className='font-editorial-serif text-4xl sm:text-6xl text-[var(--text-main)] leading-[1.05] font-bold'>
+          <h1 className='font-comico text-4xl sm:text-6xl text-[#084B83] dark:text-[#F0F6F6] leading-[1.05] font-bold'>
             Find Your Next Ideal Read
           </h1>
           <p className='font-sans text-base text-[var(--text-muted)] mt-3 max-w-2xl leading-relaxed'>
@@ -221,16 +222,16 @@ export default function BookMatchPage() {
           <div className='max-w-lg w-full bg-[var(--bg-surface)] border border-[var(--border-main)] rounded-2xl p-6 sm:p-8 shadow-2xl animate-scale-in'>
             <div className='flex items-center justify-between border-b border-[var(--border-subtle)] pb-3 mb-4'>
               <div className='flex items-center gap-2.5'>
-                <span className='w-8 h-8 rounded-full bg-amber-500/10 text-amber-600 flex items-center justify-center text-base font-bold'>
+                <span className='w-8 h-8 rounded-full bg-[#42BFDD]/20 text-[#084B83] flex items-center justify-center text-base font-bold'>
                   ✦
                 </span>
-                <h3 className='font-editorial-serif text-2xl font-bold text-[var(--text-main)]'>
+                <h3 className='font-comico text-2xl font-bold text-[var(--text-main)]'>
                   Book Match Engine
                 </h3>
               </div>
               <button
                 onClick={() => setShowMatchInfoModal(false)}
-                className='text-xl font-bold text-[var(--text-main)] hover:text-rose-500'
+                className='text-xl font-bold text-[var(--text-main)] hover:text-[#FF66B3]'
               >
                 ✕
               </button>
@@ -284,7 +285,7 @@ export default function BookMatchPage() {
                 setInStockOnly(true);
                 setReadingGoal('any');
               }}
-              className='font-editorial-mono text-[10px] font-bold uppercase tracking-wider text-[var(--text-faint)] hover:text-[var(--bg-accent-pink)] transition-colors'
+              className='font-editorial-mono text-xs font-bold uppercase tracking-wider text-[var(--text-faint)] hover:text-[var(--text-accent-pink)] transition-colors'
             >
               Reset Filters
             </button>
@@ -314,10 +315,10 @@ export default function BookMatchPage() {
             {/* 2. Budget Slider */}
             <div className='space-y-1.5'>
               <div className='flex justify-between items-center'>
-                <label htmlFor='budget-slider' className='text-[10px] font-bold uppercase tracking-wider text-[var(--text-faint)]'>
+                <label htmlFor='budget-slider' className='text-[10px] font-array font-bold uppercase tracking-wider text-[var(--text-faint)]'>
                   Budget Ceiling:
                 </label>
-                <span className='font-bold text-[var(--text-main)] font-editorial-serif text-base'>
+                <span className='font-bold text-[#FF66B3] font-pixel text-xs'>
                   {budget >= 1000 ? 'No Limit' : `${rupee}${budget}`}
                 </span>
               </div>
@@ -329,9 +330,9 @@ export default function BookMatchPage() {
                 step='50'
                 value={budget}
                 onChange={(e) => setBudget(Number(e.target.value))}
-                className='w-full accent-black dark:accent-white cursor-pointer py-1'
+                className='w-full accent-[#FF66B3] cursor-pointer py-1'
               />
-              <div className='flex justify-between text-[9px] text-[var(--text-faint)] font-bold'>
+              <div className='flex justify-between text-[9px] text-[var(--text-faint)] font-array font-bold'>
                 <span>{rupee}200</span>
                 <span>{rupee}500</span>
                 <span>{rupee}750</span>
@@ -341,14 +342,14 @@ export default function BookMatchPage() {
 
             {/* 3. Rating */}
             <div className='space-y-1.5'>
-              <label htmlFor='match-rating' className='block text-[10px] font-bold uppercase tracking-wider text-[var(--text-faint)]'>
+              <label htmlFor='match-rating' className='block text-[10px] font-array font-bold uppercase tracking-wider text-[var(--text-faint)]'>
                 Quality Standard
               </label>
               <select
                 id='match-rating'
                 value={minRating}
                 onChange={(e) => setMinRating(Number(e.target.value))}
-                className='w-full p-3 font-editorial-mono text-xs bg-[var(--bg-surface-elevated)] border-2 border-[var(--border-main)] text-[var(--text-main)] focus:outline-none'
+                className='w-full p-3 font-array text-xs bg-[var(--bg-surface-elevated)] border-2 border-[var(--border-main)] text-[var(--text-main)] focus:outline-none focus:border-[#FF66B3]'
               >
                 <option value='0'>Any Rating</option>
                 <option value='4.0'>4.0+ Stars (Recommended)</option>
@@ -359,14 +360,14 @@ export default function BookMatchPage() {
 
             {/* 4. Reading Goal */}
             <div className='space-y-1.5'>
-              <label htmlFor='match-reading-goal' className='block text-[10px] font-bold uppercase tracking-wider text-[var(--text-faint)]'>
+              <label htmlFor='match-reading-goal' className='block text-[10px] font-array font-bold uppercase tracking-wider text-[var(--text-faint)]'>
                 Thematic Aim
               </label>
               <select
                 id='match-reading-goal'
                 value={readingGoal}
                 onChange={(e) => setReadingGoal(e.target.value as ReadingPreference)}
-                className='w-full p-3 font-editorial-mono text-xs bg-[var(--bg-surface-elevated)] border-2 border-[var(--border-main)] text-[var(--text-main)] focus:outline-none'
+                className='w-full p-3 font-array text-xs bg-[var(--bg-surface-elevated)] border-2 border-[var(--border-main)] text-[var(--text-main)] focus:outline-none focus:border-[#FF66B3]'
               >
                 <option value='any'>Any Reading Style</option>
                 <option value='habits'>Practical Systems &amp; Habits</option>
@@ -382,9 +383,9 @@ export default function BookMatchPage() {
                   type='checkbox'
                   checked={inStockOnly}
                   onChange={(e) => setInStockOnly(e.target.checked)}
-                  className='w-4 h-4 accent-black dark:accent-white'
+                  className='w-4 h-4 accent-[#FF66B3]'
                 />
-                <span className='text-[10px] font-bold uppercase tracking-wider text-[var(--text-main)]'>
+                <span className='text-[10px] font-array font-bold uppercase tracking-wider text-[var(--text-main)]'>
                   Show in-stock volumes only
                 </span>
               </label>
@@ -396,14 +397,14 @@ export default function BookMatchPage() {
         <section className='space-y-6'>
           <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b-2 border-[var(--border-main)]'>
             <div className='flex items-center gap-3'>
-              <span className='font-editorial-serif text-2xl text-[var(--text-main)]'>
+              <span className='font-pixel text-base sm:text-lg text-[var(--text-main)]'>
                 Compatible Recommendations
               </span>
-              <span className='px-2.5 py-0.5 border border-[var(--border-main)] bg-[var(--bg-accent-yellow)] text-black font-editorial-mono text-[10px] font-bold'>
+              <span className='px-2.5 py-0.5 border border-[#FF66B3] bg-[#FF66B3] text-white font-pixel text-[9px] font-bold'>
                 {matchedBooks.length} TITLES
               </span>
             </div>
-            <span className='font-editorial-mono text-[9px] uppercase tracking-wider text-[var(--text-faint)]'>
+            <span className='font-array text-[9px] uppercase tracking-wider text-[var(--text-faint)]'>
               Ranked by deterministic compatibility score
             </span>
           </div>
@@ -460,13 +461,7 @@ export default function BookMatchPage() {
                     {/* Book Presentation */}
                     <div className='flex gap-4 items-start mb-4'>
                       <div className='w-20 aspect-[3/4] border-2 border-[var(--border-main)] bg-[var(--bg-surface-elevated)] overflow-hidden shrink-0 shadow-[2px_2px_0px_var(--border-main)] relative'>
-                        {book.coverImage ? (
-                          <img src={book.coverImage} alt={book.title} className='w-full h-full object-cover' />
-                        ) : (
-                          <div className='w-full h-full p-2 flex flex-col justify-end text-[8px] font-editorial-mono text-[var(--text-faint)]'>
-                            <span>{book.title}</span>
-                          </div>
-                        )}
+                        <img src={getAuthenticCover(book)} alt={book.title} className='w-full h-full object-cover' />
                         {book.discount > 0 && (
                           <span className='badge-pill-pink absolute top-0 left-0 px-1.5 py-0.2 text-[8px] font-bold'>
                             −{book.discount}%
@@ -475,17 +470,17 @@ export default function BookMatchPage() {
                       </div>
 
                       <div className='flex-1 overflow-hidden space-y-1'>
-                        <span className='font-editorial-mono text-[9px] uppercase tracking-widest text-[var(--text-faint)] block truncate'>
+                        <span className='font-editorial-mono text-xs uppercase tracking-wider text-[var(--text-faint)] font-bold block truncate'>
                           {book.category?.name || 'CURATED'}
                         </span>
 
                         <Link href={`/books/${book.id}`}>
-                          <h3 className='font-editorial-serif font-bold text-base text-[var(--text-main)] hover:text-[var(--bg-accent-blue)] line-clamp-2 leading-tight'>
+                          <h3 className='font-editorial-serif font-bold text-base text-[var(--text-main)] hover:text-[var(--text-accent-blue)] line-clamp-2 leading-tight'>
                             {book.title}
                           </h3>
                         </Link>
 
-                        <p className='font-editorial-mono text-[10px] text-[var(--text-muted)] truncate'>
+                        <p className='font-editorial-mono text-xs text-[var(--text-muted)] truncate'>
                           {book.author}
                         </p>
 

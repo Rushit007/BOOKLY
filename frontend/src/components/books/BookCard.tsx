@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Book } from '../../types/book';
@@ -9,6 +9,7 @@ import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { useCompare } from '../../context/CompareContext';
 import { useAuth } from '../../context/AuthContext';
+import { getAuthenticCover } from '../../utils/bookCovers';
 
 interface BookCardProps {
   book: Book;
@@ -25,16 +26,21 @@ const GENRE_COLORS: Record<string, { bg: string; accent: string }> = {
   'ગુજરાતી પુસ્તકો': { bg: '#001a2d', accent: '#22d3ee' },
 };
 
-const BACKUP_COVER = 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=600&auto=format&fit=crop';
-
 export function BookCard({ book }: BookCardProps) {
   const router = useRouter();
   const { isAuthenticated } = useAuth();
   const { addToCart } = useCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
   const { isInCompare, addToCompare, removeFromCompare } = useCompare();
-  const [imgSrc, setImgSrc] = useState<string>(book.coverImage || BACKUP_COVER);
+
+  const authenticCover = getAuthenticCover(book);
+  const [imgSrc, setImgSrc] = useState<string>(authenticCover || book.coverImage || '');
   const [imgErrorCount, setImgErrorCount] = useState(0);
+
+  useEffect(() => {
+    setImgSrc(getAuthenticCover(book));
+    setImgErrorCount(0);
+  }, [book]);
 
   const isFavorite = isInWishlist(book.id);
   const inCompare = isInCompare(book.id);
@@ -57,7 +63,7 @@ export function BookCard({ book }: BookCardProps) {
 
   const handleImageError = () => {
     if (imgErrorCount === 0) {
-      setImgSrc(BACKUP_COVER);
+      setImgSrc(getAuthenticCover(book));
       setImgErrorCount(1);
     } else {
       setImgErrorCount(2);
@@ -118,15 +124,27 @@ export function BookCard({ book }: BookCardProps) {
         {/* Badge strip — top-left */}
         <div className='absolute top-3 left-3 flex flex-col gap-1.5 z-10'>
           {book.discount > 0 && (
-            <span className='px-2.5 py-1 rounded-full text-[10px] font-sans font-bold bg-rose-500 text-white shadow-sm'>
+            <span className='px-2.5 py-1 rounded-full text-[9px] font-mono font-bold bg-zinc-900 text-white shadow-sm'>
               -{book.discount}%
             </span>
           )}
-          {book.rating >= 4.8 && (
-            <span className='px-2.5 py-1 rounded-full text-[10px] font-sans font-bold bg-amber-500 text-black shadow-sm'>
-              ★ 4.8+
-            </span>
-          )}
+          <span className={`px-2.5 py-1 rounded-full text-[9px] font-mono font-extrabold uppercase shadow-sm border ${
+            book.tierRating === 'perfection' || book.rating >= 4.8
+              ? 'bg-emerald-500 text-black border-emerald-400'
+              : book.tierRating === 'go_for_it' || book.rating >= 4.5
+              ? 'bg-blue-500 text-white border-blue-400'
+              : book.tierRating === 'timepass' || book.rating >= 4.0
+              ? 'bg-amber-500 text-black border-amber-400'
+              : 'bg-rose-500 text-white border-rose-400'
+          }`}>
+            {book.tierRating === 'perfection' || book.rating >= 4.8
+              ? '👑 Perfection'
+              : book.tierRating === 'go_for_it' || book.rating >= 4.5
+              ? '⚡ Go For It'
+              : book.tierRating === 'timepass' || book.rating >= 4.0
+              ? '☕ Timepass'
+              : '⛔ Skip'}
+          </span>
         </div>
 
         {/* Action icons — top right (Wishlist + Compare) */}
@@ -138,8 +156,8 @@ export function BookCard({ book }: BookCardProps) {
             className={
               'w-8 h-8 rounded-full flex items-center justify-center border border-[var(--border-main)] transition-all shadow-sm cursor-pointer ' +
               (isFavorite
-                ? 'bg-rose-500 text-white border-rose-500'
-                : 'bg-[var(--bg-surface)] text-[var(--text-main)] hover:bg-[var(--bg-surface-elevated)]')
+                ? 'bg-[#FF66B3] text-white border-[#FF66B3]'
+                : 'bg-[var(--bg-surface)] text-[var(--text-main)] hover:bg-[#E5F3F4]')
             }
           >
             <svg className='w-4 h-4' fill={isFavorite ? 'currentColor' : 'none'} viewBox='0 0 24 24' stroke='currentColor'>
@@ -154,8 +172,8 @@ export function BookCard({ book }: BookCardProps) {
             className={
               'w-8 h-8 rounded-full flex items-center justify-center border border-[var(--border-main)] transition-all shadow-sm font-bold text-xs cursor-pointer ' +
               (inCompare
-                ? 'bg-blue-600 text-white border-blue-600'
-                : 'bg-[var(--bg-surface)] text-[var(--text-main)] hover:bg-[var(--bg-surface-elevated)]')
+                ? 'bg-[#42BFDD] text-white border-[#42BFDD]'
+                : 'bg-[var(--bg-surface)] text-[var(--text-main)] hover:bg-[#E5F3F4]')
             }
           >
             ⇄
@@ -164,8 +182,8 @@ export function BookCard({ book }: BookCardProps) {
 
         {/* Out of stock overlay */}
         {isOutOfStock && (
-          <div className='absolute inset-0 bg-black/70 backdrop-blur-xs flex items-center justify-center z-10'>
-            <span className='px-4 py-1.5 rounded-full text-white font-sans text-xs font-bold uppercase tracking-widest bg-black/80 border border-white/20'>
+          <div className='absolute inset-0 bg-[#084B83]/80 backdrop-blur-xs flex items-center justify-center z-10'>
+            <span className='px-4 py-1.5 rounded-full text-white font-pixel text-[10px] uppercase tracking-wider bg-[#084B83] border border-[#BBE6E4]/40'>
               Sold Out
             </span>
           </div>
@@ -177,23 +195,23 @@ export function BookCard({ book }: BookCardProps) {
         <div>
           {/* Category */}
           <div className='flex items-center justify-between mb-1'>
-            <span className='font-sans text-[11px] uppercase tracking-wider font-semibold text-[var(--text-faint)]'>
+            <span className='font-array text-[11px] uppercase tracking-wider font-semibold text-[#42BFDD]'>
               {book.category?.name || 'Book'}
             </span>
-            <span className='font-mono text-[11px] text-[var(--text-faint)]'>
+            <span className='font-array text-[11px] text-[var(--text-faint)]'>
               Stock: {book.stock}
             </span>
           </div>
 
           {/* Title */}
           <Link href={`/books/${book.id}`}>
-            <h3 className='font-editorial-serif text-lg sm:text-xl font-bold leading-snug text-[var(--text-main)] line-clamp-2 hover:opacity-75 transition-opacity'>
+            <h3 className='font-pixel text-xs sm:text-sm font-bold leading-relaxed text-[#084B83] dark:text-[#F0F6F6] line-clamp-2 hover:text-[#FF66B3] transition-colors'>
               {book.title}
             </h3>
           </Link>
 
           {/* Author */}
-          <p className='font-sans text-xs font-medium text-[var(--text-muted)] mt-1 truncate'>
+          <p className='font-array text-xs text-[var(--text-muted)] mt-1 truncate'>
             {book.author}
           </p>
 
@@ -207,17 +225,17 @@ export function BookCard({ book }: BookCardProps) {
           {/* Price Row */}
           <div className='flex items-baseline justify-between py-2 border-t border-b border-[var(--border-subtle)] mb-3'>
             <div className='flex items-baseline gap-2'>
-              <span className='font-editorial-serif text-xl sm:text-2xl font-bold text-[var(--text-main)]'>
+              <span className='font-pixel text-sm sm:text-base font-bold text-[#FF66B3]'>
                 ₹{discountedPrice}
               </span>
               {book.discount > 0 && (
-                <span className='font-mono text-xs text-[var(--text-faint)] line-through'>
+                <span className='font-array text-xs text-[var(--text-faint)] line-through'>
                   ₹{book.price}
                 </span>
               )}
             </div>
             {book.discount > 0 && (
-              <span className='text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 font-sans'>
+              <span className='text-[9px] font-pixel font-bold text-[#FF66B3]'>
                 Save ₹{book.price - discountedPrice}
               </span>
             )}
@@ -227,7 +245,7 @@ export function BookCard({ book }: BookCardProps) {
           <div className='grid grid-cols-2 gap-2'>
             <Link
               href={`/books/${book.id}`}
-              className='py-2 px-3 rounded-full text-center font-sans text-xs font-semibold border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-main)] hover:bg-[var(--bg-surface-elevated)] transition-colors'
+              className='py-2 px-3 rounded-full text-center font-array text-xs uppercase tracking-wider font-semibold border border-[#BBE6E4] bg-[var(--bg-surface)] text-[#084B83] hover:bg-[#E5F3F4] transition-colors'
             >
               Details
             </Link>
@@ -240,7 +258,7 @@ export function BookCard({ book }: BookCardProps) {
                 addToCart(book);
               }}
               disabled={isOutOfStock}
-              className='py-2 px-3 rounded-full font-sans text-xs font-semibold bg-[var(--text-main)] text-[var(--bg-page)] hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer shadow-xs'
+              className='py-2 px-3 rounded-full font-array text-xs uppercase tracking-wider font-bold bg-[#FF66B3] text-white hover:bg-[#42BFDD] hover:text-[#084B83] transition-all shadow-md shadow-[#FF66B3]/25 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer'
             >
               {isOutOfStock ? 'Sold Out' : '+ Cart'}
             </button>

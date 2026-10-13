@@ -2,6 +2,8 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { BooklyLogo } from '../common/BooklyLogo';
 
 const GENRES = [
   { label: 'Computer Science', slug: 'computer-science' },
@@ -29,6 +31,9 @@ const LEGAL_LINKS = [
 ];
 
 export function Footer() {
+  const pathname = usePathname();
+  if (pathname.startsWith('/admin')) return null;
+
   return (
     <footer className='border-t border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-muted)] transition-colors'>
       <div className='max-w-7xl mx-auto px-6 lg:px-8 py-16'>
@@ -36,18 +41,8 @@ export function Footer() {
 
           {/* Brand column */}
           <div className='space-y-4'>
-            <Link href='/' className='inline-flex items-center gap-2.5 group'>
-              <div className='w-8 h-8 rounded-lg bg-[var(--text-main)] text-[var(--bg-page)] flex items-center justify-center font-editorial-serif font-bold text-base shadow-xs'>
-                B
-              </div>
-              <div>
-                <span className='font-editorial-serif text-xl font-bold text-[var(--text-main)] tracking-tight leading-none block'>
-                  BOOKLY
-                </span>
-                <span className='font-sans text-[9px] uppercase tracking-[0.2em] text-[var(--text-faint)] font-semibold block mt-0.5'>
-                  Curated Editions
-                </span>
-              </div>
+            <Link href='/' className='inline-flex items-center group'>
+              <BooklyLogo size="md" showText={true} />
             </Link>
             <p className='font-sans text-xs leading-relaxed text-[var(--text-muted)] max-w-sm'>
               Curated physical editions for inquisitive minds. Built on archival craft, timeless ideas, and deliberate reading.

@@ -47,7 +47,20 @@ export function middleware(request: NextRequest) {
     );
   }
 
-  // ── Auth Route Protection ──────────────────────────────────────
+  // ── STRICT ADMIN SECURITY CHECK ────────────────────────────────
+  if (pathname.startsWith('/admin')) {
+    const roleCookie = request.cookies.get('bookly_role')?.value;
+    const authToken = request.cookies.get('bookly_auth_token')?.value;
+
+    if (!authToken || roleCookie !== 'ADMIN') {
+      const loginUrl = new URL('/login', request.url);
+      loginUrl.searchParams.set('redirect', pathname);
+      loginUrl.searchParams.set('error', 'admin_clearance_required');
+      return NextResponse.redirect(loginUrl);
+    }
+  }
+
+  // ── Customer Auth Route Protection ──────────────────────────────
   const authToken = request.cookies.get('bookly_auth_token')?.value
     || request.cookies.get('bookly_session')?.value;
 

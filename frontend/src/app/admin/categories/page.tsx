@@ -59,93 +59,96 @@ export default function AdminCategoriesPage() {
     try {
       if (editingCategory) {
         await api.updateCategory(editingCategory.id, formData);
-        setMessage({ type: 'success', text: `Category "${formData.name}" updated!` });
+        setMessage({ type: 'success', text: `Genre "${formData.name}" updated successfully` });
       } else {
         await api.createCategory(formData);
-        setMessage({ type: 'success', text: `Category "${formData.name}" created!` });
+        setMessage({ type: 'success', text: `Genre "${formData.name}" established in taxonomy` });
       }
       setIsModalOpen(false);
       loadCategories();
     } catch (err: any) {
-      setMessage({ type: 'error', text: err.message || 'Action failed' });
+      setMessage({ type: 'error', text: err.message || 'Operation failed' });
     }
   };
 
   const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`Are you sure you want to delete category "${name}"?`)) return;
+    if (!confirm(`Are you sure you want to retire genre "${name}"? Books in this category may need reassignment.`)) return;
     try {
       await api.deleteCategory(id);
-      setMessage({ type: 'success', text: `Category "${name}" deleted.` });
+      setMessage({ type: 'success', text: `Genre "${name}" deleted` });
       loadCategories();
     } catch (err: any) {
-      setMessage({ type: 'error', text: err.message || 'Failed to delete category' });
+      setMessage({ type: 'error', text: err.message || 'Delete operation failed' });
     }
   };
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
-      {/* Header */}
-      <div className="flex items-center justify-between">
+    <div className="space-y-6 max-w-7xl mx-auto animate-fade-in font-sans">
+      {/* ── Header ── */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-2xl bg-[var(--bg-surface)] border-2 border-[var(--border-main)] shadow-[4px_4px_0px_var(--border-main)]">
         <div>
-          <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
-            Book Categories
+          <div className="flex items-center gap-2 mb-1">
+            <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#FF66B3]">
+              LITERARY TAXONOMY
+            </span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-serif font-black text-[var(--text-main)] tracking-tight">
+            Categories & Genres
           </h1>
-          <p className="text-xs text-slate-500">
-            Organize catalog classifications, URLs, and collection tags.
+          <p className="text-xs text-[var(--text-muted)] mt-0.5">
+            Organize catalog volumes into genres, disciplines, and curatorial themes.
           </p>
         </div>
         <button
           onClick={openAddModal}
-          className="flex items-center gap-1.5 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-md shadow-indigo-600/20 transition cursor-pointer"
+          className="flex items-center gap-2 px-4 py-2.5 bg-[var(--text-main)] text-[var(--bg-page)] rounded-xl text-xs font-mono font-bold uppercase tracking-wider hover:opacity-90 border-2 border-[var(--border-main)] shadow-[3px_3px_0px_var(--border-main)] transition cursor-pointer self-start sm:self-center"
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-          </svg>
-          Add Category
+          <span>+</span>
+          <span>Create Genre</span>
         </button>
       </div>
 
       {message && (
         <div
-          className={`p-4 rounded-xl text-xs font-semibold flex items-center justify-between ${
+          className={`p-4 rounded-xl text-xs font-semibold flex items-center justify-between border-2 animate-scale-in ${
             message.type === 'success'
-              ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800'
-              : 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800'
+              ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30'
+              : 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/30'
           }`}
         >
           <span>{message.text}</span>
-          <button onClick={() => setMessage(null)} className="text-slate-400 hover:text-slate-600">✕</button>
+          <button onClick={() => setMessage(null)} className="opacity-70 hover:opacity-100 cursor-pointer">✕</button>
         </div>
       )}
 
-      {/* Categories Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {/* ── Categories Grid ── */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {categories.map((cat) => (
           <div
             key={cat.id}
-            className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between"
+            className="p-6 rounded-2xl bg-[var(--bg-surface)] border-2 border-[var(--border-main)] shadow-[4px_4px_0px_var(--border-main)] hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between"
           >
             <div>
               <div className="flex items-center justify-between mb-2">
-                <h3 className="font-extrabold text-sm text-slate-900 dark:text-white">{cat.name}</h3>
-                <span className="font-mono text-[10px] text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded">
+                <h3 className="font-serif font-black text-lg text-[var(--text-main)]">{cat.name}</h3>
+                <span className="font-mono text-[10px] text-amber-500 bg-amber-400/15 border border-amber-400/30 px-2 py-0.5 rounded-full font-bold">
                   /{cat.slug}
                 </span>
               </div>
-              <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 mb-4">
-                {cat.description || 'No description provided.'}
+              <p className="text-xs text-[var(--text-muted)] line-clamp-3 mb-5 leading-relaxed">
+                {cat.description || 'Curated physical editions cataloged under this archival genre.'}
               </p>
             </div>
-            <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800 text-xs">
+            <div className="flex items-center justify-end gap-2 pt-3 border-t border-[var(--border-subtle)] text-xs">
               <button
                 onClick={() => openEditModal(cat)}
-                className="px-2.5 py-1 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 font-semibold"
+                className="px-3 py-1.5 rounded-lg bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface)] border border-[var(--border-main)] font-mono font-bold text-[10px] text-[var(--text-main)] transition cursor-pointer"
               >
                 Edit
               </button>
               <button
                 onClick={() => handleDelete(cat.id, cat.name)}
-                className="px-2.5 py-1 rounded bg-rose-50 text-rose-600 hover:bg-rose-100 dark:bg-rose-950/40 font-semibold"
+                className="px-3 py-1.5 rounded-lg bg-rose-500/10 text-rose-500 hover:bg-rose-600 hover:text-white border border-rose-500/20 font-mono font-bold text-[10px] transition cursor-pointer"
               >
                 Delete
               </button>
@@ -154,63 +157,73 @@ export default function AdminCategoriesPage() {
         ))}
       </div>
 
-      {/* Modal */}
+      {/* ── Modal ── */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 max-w-md w-full border border-slate-200 dark:border-slate-800 shadow-2xl">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
-              <h2 className="text-base font-bold text-slate-900 dark:text-white">
-                {editingCategory ? 'Edit Category' : 'Create New Category'}
-              </h2>
-              <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600">✕</button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
+          <div className="bg-[var(--bg-surface)] rounded-2xl p-6 sm:p-8 max-w-md w-full border-2 border-[var(--border-main)] shadow-2xl animate-scale-in font-sans">
+            <div className="flex items-center justify-between pb-3 border-b-2 border-[var(--border-main)]">
+              <div>
+                <span className="font-mono text-[10px] uppercase font-bold text-amber-500">
+                  GENRE DEFINITION
+                </span>
+                <h2 className="text-xl font-serif font-black text-[var(--text-main)]">
+                  {editingCategory ? 'Edit Category' : 'Establish New Category'}
+                </h2>
+              </div>
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="w-8 h-8 rounded-full bg-[var(--bg-surface-elevated)] border border-[var(--border-main)] text-sm font-bold flex items-center justify-center text-[var(--text-muted)] hover:text-[var(--text-main)] cursor-pointer"
+              >
+                ✕
+              </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4 mt-4 text-xs">
+            <form onSubmit={handleSubmit} className="space-y-4 mt-5 text-xs">
               <div>
-                <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">Name *</label>
+                <label className="font-mono font-bold uppercase text-[10px] text-[var(--text-faint)] block mb-1">Genre Name *</label>
                 <input
                   type="text"
                   required
                   value={formData.name}
                   onChange={(e) => handleNameChange(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-indigo-500"
+                  className="w-full px-3 py-2 bg-[var(--bg-surface-elevated)] text-[var(--text-main)] rounded-xl border border-[var(--border-main)] focus:outline-none focus:border-amber-400 font-sans font-semibold"
                 />
               </div>
 
               <div>
-                <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">Slug *</label>
+                <label className="font-mono font-bold uppercase text-[10px] text-[var(--text-faint)] block mb-1">Slug URL Identifier *</label>
                 <input
                   type="text"
                   required
                   value={formData.slug}
                   onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 font-mono"
+                  className="w-full px-3 py-2 bg-[var(--bg-surface-elevated)] text-[var(--text-main)] rounded-xl border border-[var(--border-main)] focus:outline-none font-mono"
                 />
               </div>
 
               <div>
-                <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">Description</label>
+                <label className="font-mono font-bold uppercase text-[10px] text-[var(--text-faint)] block mb-1">Description</label>
                 <textarea
                   rows={3}
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700"
+                  className="w-full px-3 py-2 bg-[var(--bg-surface-elevated)] text-[var(--text-main)] rounded-xl border border-[var(--border-main)] focus:outline-none"
                 />
               </div>
 
-              <div className="flex justify-end gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+              <div className="flex justify-end gap-3 pt-4 border-t-2 border-[var(--border-main)]">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 font-semibold"
+                  className="px-4 py-2.5 rounded-xl bg-[var(--bg-surface-elevated)] font-mono font-bold uppercase text-[11px] text-[var(--text-muted)] hover:text-[var(--text-main)] border border-[var(--border-subtle)] cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold"
+                  className="px-5 py-2.5 rounded-xl bg-[var(--text-main)] text-[var(--bg-page)] font-mono font-bold uppercase text-[11px] hover:opacity-90 border-2 border-[var(--border-main)] shadow-[3px_3px_0px_var(--border-main)] cursor-pointer"
                 >
-                  {editingCategory ? 'Update' : 'Create'}
+                  {editingCategory ? 'Update Genre' : 'Save Genre'}
                 </button>
               </div>
             </form>

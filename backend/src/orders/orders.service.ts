@@ -21,7 +21,7 @@ export class OrdersService {
 
   async checkout(userId: string, dto: CheckoutDto) {
     // 1. Fetch user's cart
-    const cart = await this.prisma.cart.findUnique({
+    let cart = await this.prisma.cart.findUnique({
       where: { userId },
       include: {
         items: {
@@ -31,6 +31,37 @@ export class OrdersService {
         },
       },
     });
+
+    // If user's database cart is empty but frontend passed items:
+    if ((!cart || !cart.items || cart.items.length === 0) && dto.items && dto.items.length > 0) {
+      if (!cart) {
+        cart = await this.prisma.cart.create({
+          data: { userId },
+          include: { items: { include: { book: true } } },
+        });
+      }
+      for (const it of dto.items) {
+        const bId = it.bookId || it.book?.id;
+        if (bId) {
+          const qty = it.quantity || 1;
+          await this.prisma.cartItem.upsert({
+            where: { cartId_bookId: { cartId: cart.id, bookId: bId } },
+            create: { cartId: cart.id, bookId: bId, quantity: qty },
+            update: { quantity: qty },
+          });
+        }
+      }
+      cart = await this.prisma.cart.findUnique({
+        where: { userId },
+        include: {
+          items: {
+            include: {
+              book: true,
+            },
+          },
+        },
+      });
+    }
 
     if (!cart || !cart.items || cart.items.length === 0) {
       throw new BadRequestException('Cannot checkout with an empty cart');
@@ -94,6 +125,8 @@ export class OrdersService {
       const discountAmount = Math.max(0, totalAmount - finalAmount);
       const orderNumber = this.generateOrderNumber();
 
+      const isCodMethod = dto.paymentMethod && dto.paymentMethod.toUpperCase() === 'COD';
+
       // Create Order and OrderItems
       const createdOrder = await tx.order.create({
         data: {
@@ -105,6 +138,13 @@ export class OrdersService {
           shippingAddress: dto.shippingAddress.trim(),
           orderStatus: OrderStatus.PENDING,
           paymentStatus: PaymentStatus.PENDING,
+          payment: {
+            create: {
+              paymentProvider: isCodMethod ? 'COD' : 'RAZORPAY',
+              amount: finalAmount,
+              status: PaymentStatus.PENDING,
+            },
+          },
           items: {
             create: orderItemsData.map((item) => ({
               bookId: item.bookId,
@@ -114,6 +154,7 @@ export class OrdersService {
           },
         },
         include: {
+          payment: true,
           items: {
             include: {
               book: {
@@ -139,6 +180,7 @@ export class OrdersService {
     return this.prisma.order.findMany({
       where: { userId },
       include: {
+        payment: true,
         items: {
           include: {
             book: {
@@ -157,6 +199,7 @@ export class OrdersService {
     const order = await this.prisma.order.findUnique({
       where: { id: orderId },
       include: {
+        payment: true,
         items: {
           include: {
             book: {

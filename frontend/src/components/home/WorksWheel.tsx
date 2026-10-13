@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { Book } from '../../types/book';
-import { generateBookCoverSvg, VERIFIED_BOOK_COVERS } from '../../utils/bookCovers';
+import { generateBookCoverSvg, VERIFIED_BOOK_COVERS, getAuthenticCover } from '../../utils/bookCovers';
 
 interface WorksWheelProps {
   books: Book[];
@@ -20,6 +20,7 @@ export function WorksWheel({ books, label = 'Discover Your Next Read', action = 
   // rotationDeg: the current rotation of the whole wheel in degrees
   const [rotationDeg, setRotationDeg] = useState(0);
   const [activeIdx, setActiveIdx] = useState(0);
+  const [scrollProgress, setScrollProgress] = useState(0);
   const [imgErrors, setImgErrors] = useState<Record<string, boolean>>({});
   const [reducedMotion, setReducedMotion] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -41,10 +42,10 @@ export function WorksWheel({ books, label = 'Discover Your Next Read', action = 
     return () => mq.removeEventListener('change', h);
   }, []);
 
-  // Smooth interpolation toward target rotation
+  // Smooth interpolation toward target rotation (Silky and responsive)
   const animateToTarget = useCallback(() => {
     const diff = targetRotRef.current - rotationRef.current;
-    if (Math.abs(diff) < 0.05) {
+    if (Math.abs(diff) < 0.04) {
       rotationRef.current = targetRotRef.current;
       setRotationDeg(rotationRef.current);
       const idx = Math.round((-rotationRef.current / sliceDeg + total * 1000)) % total;
@@ -52,7 +53,8 @@ export function WorksWheel({ books, label = 'Discover Your Next Read', action = 
       rafRef.current = null;
       return;
     }
-    rotationRef.current += diff * 0.09;
+    // Smooth responsive damping
+    rotationRef.current += diff * 0.055;
     setRotationDeg(rotationRef.current);
 
     const idx = Math.round((-rotationRef.current / sliceDeg + total * 1000)) % total;
@@ -61,7 +63,7 @@ export function WorksWheel({ books, label = 'Discover Your Next Read', action = 
     rafRef.current = requestAnimationFrame(animateToTarget);
   }, [sliceDeg, total]);
 
-  // Scroll handler: rotate wheel smoothly only when visible
+  // Scroll handler: rotate wheel smoothly across the generous 360vh track
   useEffect(() => {
     if (!mounted || total === 0) return;
 
@@ -85,7 +87,9 @@ export function WorksWheel({ books, label = 'Discover Your Next Read', action = 
       const maxScroll = sectionRef.current.offsetHeight - window.innerHeight;
       if (maxScroll > 0) {
         const progress = Math.max(0, Math.min(1, -rect.top / maxScroll));
-        targetRotRef.current = progress * 360 * 1.5;
+        setScrollProgress(progress);
+        // Distribute rotation so the user scrolls all the way through every book in the wheel
+        targetRotRef.current = -progress * (total - 1) * sliceDeg;
         if (!rafRef.current) {
           rafRef.current = requestAnimationFrame(animateToTarget);
         }
@@ -100,7 +104,7 @@ export function WorksWheel({ books, label = 'Discover Your Next Read', action = 
       window.removeEventListener('scroll', onScroll);
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, [mounted, animateToTarget, total]);
+  }, [mounted, animateToTarget, total, sliceDeg]);
 
   // Manual navigation
   const goTo = (idx: number) => {
@@ -111,11 +115,11 @@ export function WorksWheel({ books, label = 'Discover Your Next Read', action = 
     }
   };
   const goPrev = () => {
-    targetRotRef.current -= sliceDeg;
+    targetRotRef.current += sliceDeg;
     if (!rafRef.current) rafRef.current = requestAnimationFrame(animateToTarget);
   };
   const goNext = () => {
-    targetRotRef.current += sliceDeg;
+    targetRotRef.current -= sliceDeg;
     if (!rafRef.current) rafRef.current = requestAnimationFrame(animateToTarget);
   };
 
@@ -135,27 +139,35 @@ export function WorksWheel({ books, label = 'Discover Your Next Read', action = 
       ref={sectionRef as any}
       id="works-wheel"
       className="relative w-full border-b-2 border-[var(--border-main)] bg-[var(--bg-page)]"
-      style={{ height: '130vh' }}
+      style={{ height: '360vh' }}
     >
       <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-between select-none">
-        {/* ── Header bar ── */}
-        <div className="border-b-2 border-[var(--border-main)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <span className="inline-block w-3 h-3 bg-[var(--bg-accent-pink)] border-2 border-[var(--border-main)]" />
-            <div>
-              <p className="font-editorial-mono text-[9px] uppercase tracking-[0.22em] text-[var(--text-faint)]">
-                SCROLL TO SPIN · CIRCULAR WHEEL VIEW
-              </p>
-              <h2 className="font-editorial-serif text-2xl sm:text-3xl text-[var(--text-main)] mt-0.5">
-                {label}
-              </h2>
-            </div>
+        {/* ── Header bar with Scroll Progress Tracker ── */}
+        <div className="border-b-2 border-[var(--border-main)] bg-[var(--bg-page)]">
+          {/* Active Scroll Runway Progress Bar */}
+          <div className="w-full bg-[var(--border-main)]/40 h-1 overflow-hidden">
+            <div
+              className="h-full bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-300 transition-all duration-75"
+              style={{ width: `${Math.min(100, Math.round(scrollProgress * 100))}%` }}
+            />
           </div>
-          <div className="hidden sm:flex items-center gap-3">
-            <span className="font-editorial-mono text-[10px] text-[var(--text-faint)] uppercase tracking-wider">
-              {activeIdx + 1} / {total}
-            </span>
+
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <span className="inline-block w-3 h-3 bg-amber-400 border-2 border-[var(--border-main)] shadow-[0_0_8px_#f59e0b]" />
+              <div>
+                <p className="font-editorial-mono text-[9px] uppercase tracking-[0.22em] text-[var(--text-faint)]">
+                  SCROLL DOWN TO TRAVERSE ALL VOLUMES ({Math.round(scrollProgress * 100)}% EXPLORED)
+                </p>
+                <h2 className="font-editorial-serif text-2xl sm:text-3xl text-[var(--text-main)] mt-0.5">
+                  {label}
+                </h2>
+              </div>
+            </div>
+            <div className="hidden sm:flex items-center gap-3">
+              <span className="font-editorial-mono text-[10px] text-[var(--text-faint)] uppercase tracking-wider">
+                Volume {activeIdx + 1} of {total}
+              </span>
             <button
               onClick={goPrev}
               aria-label="Previous"
@@ -177,7 +189,7 @@ export function WorksWheel({ books, label = 'Discover Your Next Read', action = 
           {/* ─── THE CIRCULAR WHEEL ─── */}
           <div
             className="relative flex-shrink-0 outline-none"
-            style={{ width: '420px', height: '420px', maxWidth: '90vw', maxHeight: '90vw' }}
+            style={{ width: '540px', height: '540px', maxWidth: '90vw', maxHeight: '90vw' }}
             tabIndex={0}
             onKeyDown={onKeyDown}
             aria-label="Book wheel — scroll page or use arrow keys"
@@ -198,13 +210,13 @@ export function WorksWheel({ books, label = 'Discover Your Next Read', action = 
                 position: 'absolute',
                 top: '50%',
                 left: '50%',
-                width: '56px',
-                height: '56px',
+                width: '64px',
+                height: '64px',
                 transform: 'translate(-50%, -50%)',
                 borderRadius: '50%',
-                backgroundColor: 'var(--bg-accent-pink)',
-                border: '3px solid var(--border-main)',
-                boxShadow: '3px 3px 0 var(--border-main)',
+                backgroundColor: 'var(--bg-surface)',
+                border: '2px solid var(--border-main)',
+                boxShadow: '0 8px 24px rgba(0,0,0,0.1)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -212,7 +224,7 @@ export function WorksWheel({ books, label = 'Discover Your Next Read', action = 
                 pointerEvents: 'none',
               }}
             >
-              <span style={{ fontSize: '22px' }}>📚</span>
+              <span style={{ fontSize: '26px' }}>📖</span>
             </div>
 
             {/* Active book indicator pointer (at bottom, 270deg position) */}
@@ -222,11 +234,12 @@ export function WorksWheel({ books, label = 'Discover Your Next Read', action = 
                 bottom: '-2px',
                 left: '50%',
                 transform: 'translateX(-50%)',
-                width: '12px',
-                height: '12px',
+                width: '14px',
+                height: '14px',
                 borderRadius: '50%',
-                backgroundColor: 'var(--bg-accent-yellow)',
-                border: '2px solid var(--border-main)',
+                backgroundColor: '#c5a059',
+                border: '2px solid #ffffff',
+                boxShadow: '0 0 10px rgba(197,160,89,0.5)',
                 zIndex: 25,
                 pointerEvents: 'none',
               }}
@@ -246,7 +259,7 @@ export function WorksWheel({ books, label = 'Discover Your Next Read', action = 
               {books.map((book, i) => {
                 const angleDeg = i * sliceDeg;
                 const angleRad = (angleDeg * Math.PI) / 180;
-                const radius = 165;
+                const radius = 215;
                 const cx = Math.round(Math.sin(angleRad) * radius * 100) / 100;
                 const cy = Math.round(-Math.cos(angleRad) * radius * 100) / 100;
 
@@ -264,7 +277,7 @@ export function WorksWheel({ books, label = 'Discover Your Next Read', action = 
                       position: 'absolute',
                       top: '50%',
                       left: '50%',
-                      width: '88px',
+                      width: '115px',
                       height: 'auto',
                       transform: `translate(calc(-50% + ${cx}px), calc(-50% + ${cy}px)) rotate(${-currentRot}deg)`,
                       transition: reducedMotion ? 'none' : 'opacity 0.3s ease, box-shadow 0.3s ease',
@@ -278,23 +291,23 @@ export function WorksWheel({ books, label = 'Discover Your Next Read', action = 
                         width: '100%',
                         aspectRatio: '3/4',
                         border: isActive
-                          ? '3px solid var(--border-main)'
-                          : '2px solid var(--border-subtle)',
+                          ? '2px solid #c5a059'
+                          : '1px solid var(--border-main)',
                         boxShadow: isActive
-                          ? '5px 5px 0 var(--border-main)'
-                          : '2px 2px 0 var(--border-subtle)',
+                          ? '0 12px 28px -4px rgba(0,0,0,0.25), 0 0 16px rgba(197,160,89,0.35)'
+                          : '0 4px 10px rgba(0,0,0,0.08)',
                         overflow: 'hidden',
-                        borderRadius: '4px',
-                        backgroundColor: 'var(--bg-surface-elevated)',
-                        opacity: isActive ? 1 : 0.65,
-                        transform: isActive ? 'scale(1.18)' : 'scale(1)',
+                        borderRadius: '6px',
+                        backgroundColor: 'var(--bg-surface)',
+                        transform: isActive ? 'scale(1.15)' : 'scale(0.95)',
+                        opacity: isActive ? 1 : 0.7,
                         transition: reducedMotion
                           ? 'none'
-                          : 'transform 0.4s cubic-bezier(0.16,1,0.3,1), opacity 0.3s ease, box-shadow 0.3s ease',
+                          : 'transform 0.4s cubic-bezier(0.16,1,0.3,1), opacity 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease',
                       }}
                     >
                       {(() => {
-                        const verified = VERIFIED_BOOK_COVERS[book.id] || book.coverImage;
+                        const verified = getAuthenticCover(book);
                         const fallbackSvg = generateBookCoverSvg({
                           title: book.title,
                           author: book.author,
@@ -358,27 +371,21 @@ export function WorksWheel({ books, label = 'Discover Your Next Read', action = 
             >
               {/* Badges */}
               <div className="flex items-center gap-2 mb-4 flex-wrap">
-                <span
-                  className="font-editorial-mono text-[9px] uppercase tracking-[0.22em] font-bold px-2.5 py-1 border-2 border-[var(--border-main)]"
-                  style={{ backgroundColor: 'var(--bg-accent-yellow)', color: '#000' }}
-                >
+                <span className="font-editorial-mono text-[9px] uppercase tracking-[0.22em] font-bold px-2.5 py-1 rounded-md border border-amber-300 dark:border-amber-800 bg-amber-100 dark:bg-amber-950/70 text-amber-950 dark:text-amber-200 shadow-2xs">
                   {activeBook.category?.name ?? 'Book'}
                 </span>
                 {activeBook.discount > 0 && (
-                  <span
-                    className="font-editorial-mono text-[9px] uppercase tracking-[0.18em] font-bold px-2.5 py-1 border-2 border-[var(--border-main)]"
-                    style={{ backgroundColor: 'var(--bg-accent-pink)', color: '#fff' }}
-                  >
+                  <span className="font-editorial-mono text-[9px] uppercase tracking-[0.18em] font-bold px-2.5 py-1 rounded-md border border-rose-300 dark:border-rose-800 bg-rose-100 dark:bg-rose-950/70 text-rose-950 dark:text-rose-200 shadow-2xs">
                     -{activeBook.discount}% OFF
                   </span>
                 )}
-                <span
-                  className="font-editorial-mono text-[9px] uppercase font-bold px-2.5 py-1 border-2 border-[var(--border-main)]"
-                  style={{
-                    backgroundColor: activeBook.stock > 50 ? 'var(--bg-accent-mint)' : activeBook.stock > 10 ? 'var(--bg-accent-yellow)' : 'var(--bg-accent-red)',
-                    color: activeBook.stock > 50 ? '#fff' : '#000',
-                  }}
-                >
+                <span className={`font-editorial-mono text-[9px] uppercase font-bold px-2.5 py-1 rounded-md border shadow-2xs ${
+                  activeBook.stock > 50
+                    ? 'border-emerald-300 dark:border-emerald-800 bg-emerald-100 dark:bg-emerald-950/70 text-emerald-950 dark:text-emerald-200'
+                    : activeBook.stock > 10
+                    ? 'border-amber-300 dark:border-amber-800 bg-amber-100 dark:bg-amber-950/70 text-amber-950 dark:text-amber-200'
+                    : 'border-rose-300 dark:border-rose-800 bg-rose-100 dark:bg-rose-950/70 text-rose-950 dark:text-rose-200'
+                }`}>
                   {activeBook.stock > 50 ? 'In Stock' : activeBook.stock > 0 ? `${activeBook.stock} left` : 'Sold Out'}
                 </span>
               </div>

@@ -5,15 +5,70 @@ import Link from 'next/link';
 import { Book } from '../../types/book';
 import { generateBookCoverSvg, VERIFIED_BOOK_COVERS } from '../../utils/bookCovers';
 import { FlyingPosters, PosterItem, Canvas } from './FlyingPosters';
-import { CreepyButton } from '../common/CreepyButton';
+import { useCart } from '../../context/CartContext';
+import { MOCK_BOOKS } from '../../data/mockBooks';
 
 interface FlyingPostersGalleryProps {
-  books: Book[];
+  books?: Book[];
 }
 
 function discountedPrice(price: number, discount: number) {
   return Math.round(price * (1 - discount / 100));
 }
+
+// 10 Curated Books of the Month with editorial commentary
+const EDITORIAL_SUMMARIES: Record<string, { badge: string; reason: string; quote: string }> = {
+  'book-1': {
+    badge: 'ENGINEERING MASTERWORK',
+    reason: 'Selected for its timeless influence on professional software craftsmanship and foundational readable coding discipline.',
+    quote: '"Clean code always looks like it was written by someone who cares."',
+  },
+  'book-2': {
+    badge: 'SYSTEMS ARCHITECTURE LANDMARK',
+    reason: 'The definitive architectural compass for distributed fault-tolerant systems, data streams, and database internals.',
+    quote: '"A good system design anticipates failures rather than hiding them."',
+  },
+  'book-3': {
+    badge: 'CAREER ACCELERATOR',
+    reason: 'Celebrated for 25+ years of pragmatic mindset guidance, engineering mastery, and iterative refinement.',
+    quote: '"Don’t live with broken windows in your codebase."',
+  },
+  'book-4': {
+    badge: 'BEHAVIORAL TITAN',
+    reason: 'Over 15 million readers transformed by James Clear’s 4 laws of behavior change and atomic compounding.',
+    quote: '"You do not rise to the level of your goals. You fall to the level of your systems."',
+  },
+  'book-5': {
+    badge: 'FINANCIAL WISDOM CLASSIC',
+    reason: 'Morgan Housel illustrates that managing wealth is 80% behavior and psychology, and only 20% spreadsheet math.',
+    quote: '"Doing well with money has a little to do with how smart you are and a lot to do with how you behave."',
+  },
+  'book-6': {
+    badge: 'GLOBAL ALLEGORY OF DESTINY',
+    reason: 'Paulo Coelho’s lyrical masterpiece on listening to one’s heart and pursuing a personal legend.',
+    quote: '"When you want something, all the universe conspires in helping you to achieve it."',
+  },
+  'book-10': {
+    badge: 'COSMIC PERSPECTIVE HEIRLOOM',
+    reason: 'Carl Sagan’s sweeping poetic journey through 15 billion years of cosmic evolution and planetary curiosity.',
+    quote: '"We are a way for the cosmos to know itself."',
+  },
+  'book-11': {
+    badge: 'HISTORICAL REVOLUTION',
+    reason: 'Yuval Noah Harari’s tour de force explaining how an insignificant ape became the master of planet Earth.',
+    quote: '"Fiction has enabled us not merely to imagine things, but to do so collectively."',
+  },
+  'hindi-1': {
+    badge: 'INDIAN LITERARY SOUL',
+    reason: 'Munshi Premchand’s monumental magnum opus capturing the tragic, noble, and enduring essence of rural India.',
+    quote: '"संसार में गाय जैसा सीधा और परोपकारी कोई प्राणी नहीं है।"',
+  },
+  'guj-1': {
+    badge: 'GUJARATI CLASSICAL OPUS',
+    reason: 'Govardhanram Tripathi’s epic four-volume narrative exploring the synthesis of Indian heritage and modernity.',
+    quote: '"ધર્મ, નીતિ અને જ્ઞાનનું ચિરંતન સ્મારક."',
+  },
+};
 
 export function FlyingPostersGallery({ books }: FlyingPostersGalleryProps) {
   const trackRef = useRef<HTMLDivElement>(null);
@@ -23,13 +78,21 @@ export function FlyingPostersGallery({ books }: FlyingPostersGalleryProps) {
   const [activeIdx, setActiveIdx] = useState(0);
   const [mounted, setMounted] = useState(false);
 
+  const { addToCart } = useCart();
+
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Map books into PosterItem format with verified covers and fallback SVGs (Memoized)
+  // Use 10 Books of the Month
+  const galleryBooks = useMemo(() => {
+    const list = books && books.length >= 10 ? books : MOCK_BOOKS;
+    return list.slice(0, 10);
+  }, [books]);
+
+  // Map into PosterItem format
   const posterItems: PosterItem[] = useMemo(() => {
-    return books.map((book) => {
+    return galleryBooks.map((book) => {
       const verifiedUrl = VERIFIED_BOOK_COVERS[book.id] || book.coverImage;
       const fallbackSvg = generateBookCoverSvg({
         title: book.title,
@@ -47,17 +110,20 @@ export function FlyingPostersGallery({ books }: FlyingPostersGalleryProps) {
         category: book.category?.name || 'Curated',
       };
     });
-  }, [books]);
+  }, [galleryBooks]);
 
-  const activeBook = books[activeIdx % books.length] || books[0];
+  const activeBook = galleryBooks[activeIdx % galleryBooks.length] || galleryBooks[0];
   const finalPrice = activeBook ? discountedPrice(activeBook.price, activeBook.discount || 0) : 0;
+  const activeEditorial = EDITORIAL_SUMMARIES[activeBook?.id] || {
+    badge: 'CURATOR’S CHOICE',
+    reason: 'Handpicked for exceptional literary prose, enduring intellectual depth, and collector binding appeal.',
+    quote: '"A book must be the axe for the frozen sea inside us."',
+  };
 
-  // Callback from FlyingPosters when Canvas instance is ready
   const handleCanvasRef = useCallback((instance: Canvas | null) => {
     canvasInstanceRef.current = instance;
   }, []);
 
-  // Synchronize Page Scroll with 3D Poster Flying Motion only when visible
   useEffect(() => {
     if (!mounted) return;
 
@@ -93,16 +159,17 @@ export function FlyingPostersGallery({ books }: FlyingPostersGalleryProps) {
 
       const progress = Math.max(0, Math.min(1, scrolled / totalScrollable));
 
+      // Synchronize 3D WebGL distortion gallery with page scroll
+      if (canvasInstanceRef.current && typeof (canvasInstanceRef.current as any).scrollToProgress === 'function') {
+        (canvasInstanceRef.current as any).scrollToProgress(progress);
+      }
+
       if (progressBarRef.current) {
         progressBarRef.current.style.width = `${Math.round(progress * 100)}%`;
       }
       if (scrollIndicatorRef.current) {
         scrollIndicatorRef.current.style.height = `${Math.max(15, progress * 100)}%`;
       }
-
-      const singlePosterHeight = canvasInstanceRef.current.medias?.[0]?.height || 10;
-      const totalTravel = singlePosterHeight * posterItems.length;
-      canvasInstanceRef.current.setScrollTarget(progress * totalTravel * 1.6);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -112,62 +179,57 @@ export function FlyingPostersGallery({ books }: FlyingPostersGalleryProps) {
       observer.disconnect();
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [mounted, posterItems.length]);
+  }, [mounted]);
 
-  // Step controls
   const stepPoster = (direction: 'next' | 'prev') => {
     if (!canvasInstanceRef.current) return;
-    const singlePosterHeight = canvasInstanceRef.current.medias?.[0]?.height || 10;
-    const delta = direction === 'next' ? singlePosterHeight : -singlePosterHeight;
-    canvasInstanceRef.current.scroll.target += delta;
+    const canvas = canvasInstanceRef.current as any;
+    const newIdx = direction === 'next'
+      ? Math.min(posterItems.length - 1, activeIdx + 1)
+      : Math.max(0, activeIdx - 1);
+    
+    if (typeof canvas.scrollToIndex === 'function') {
+      canvas.scrollToIndex(newIdx);
+    }
+    setActiveIdx(newIdx);
+  };
+
+  const jumpToBook = (idx: number) => {
+    if (!canvasInstanceRef.current) return;
+    const canvas = canvasInstanceRef.current as any;
+    if (typeof canvas.scrollToIndex === 'function') {
+      canvas.scrollToIndex(idx);
+    }
+    setActiveIdx(idx);
   };
 
   return (
     <div
       ref={trackRef}
-      id="flying-posters-showcase"
-      className="relative w-full border-b-2 border-black"
-      style={{
-        height: '140vh',
-        backgroundColor: '#121516',
-      }}
+      className="relative w-full bg-[#09090b] text-white"
+      style={{ height: '380vh' }}
     >
-      {/* ── Sticky Fullscreen Viewport (Locks screen while scrolling through this section) ── */}
-      <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-between select-none">
-        {/* Subtle Ambient Background Glows */}
-        <div
-          className="absolute -top-40 -left-40 w-96 h-96 rounded-full pointer-events-none opacity-20 blur-3xl"
-          style={{ backgroundColor: '#ffe17c' }}
-        />
-        <div
-          className="absolute -bottom-40 -right-40 w-96 h-96 rounded-full pointer-events-none opacity-15 blur-3xl"
-          style={{ backgroundColor: '#38bdf8' }}
-        />
-
-        {/* ── Top HUD ── */}
-        <div className="relative z-20 pt-6 sm:pt-8 px-6 lg:px-12 flex flex-col sm:flex-row sm:items-center justify-between gap-4 pointer-events-none">
+      {/* ── Sticky Viewport ── */}
+      <div className="sticky top-0 w-full h-screen overflow-hidden flex flex-col justify-between">
+        
+        {/* Top Header Bar */}
+        <div className="relative z-30 pt-6 px-6 lg:px-12 flex flex-col sm:flex-row sm:items-center justify-between gap-4 pointer-events-none">
           <div>
             <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-3.5 py-1 mb-2 pointer-events-auto">
-              <span className="w-2 h-2 rounded-full bg-[#ffe17c] animate-pulse" />
-              <span className="font-editorial-mono font-bold text-xs text-[#ffe17c] uppercase tracking-widest">
-                WebGL 3D Distortion Gallery
+              <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+              <span className="font-mono font-bold text-xs text-amber-300 uppercase tracking-widest">
+                10 Curated Books of the Month
               </span>
             </div>
-            <h2
-              className="font-editorial-serif font-black text-white tracking-tight"
-              style={{ fontSize: 'clamp(1.8rem, 4vw, 2.75rem)', lineHeight: 1.1 }}
-            >
-              Curated Volumes in Flight.
+            <h2 className="text-2xl sm:text-3xl font-serif font-black text-white tracking-tight">
+              Curator’s Choice in 3D Flight
             </h2>
-            <p className="font-editorial-sans text-[#b7c6c2]/80 text-xs sm:text-sm mt-1 max-w-lg">
-              Scroll down to fly through our editions. Watch the GPU warp and fold 3D planes dynamically as velocity changes.
-            </p>
           </div>
 
-          {/* Controls & Progress Badge */}
-          <div className="flex items-center gap-3 bg-black/60 backdrop-blur-md border border-white/15 px-4 py-2 self-start sm:self-auto rounded-xl pointer-events-auto shadow-lg">
-            <div className="font-editorial-mono text-xs font-bold text-white/70">
-              <span className="text-[#ffe17c]">
+          {/* Progress and controls */}
+          <div className="flex items-center gap-3 bg-zinc-900/90 backdrop-blur-md border border-white/15 px-4 py-2 self-start sm:self-auto rounded-xl pointer-events-auto shadow-lg">
+            <div className="font-mono text-xs font-bold text-white/70">
+              <span className="text-amber-400">
                 {String((activeIdx % posterItems.length) + 1).padStart(2, '0')}
               </span>
               <span className="text-white/40"> / {String(posterItems.length).padStart(2, '0')}</span>
@@ -176,7 +238,7 @@ export function FlyingPostersGallery({ books }: FlyingPostersGalleryProps) {
             <div className="w-24 h-1.5 bg-white/10 rounded-full overflow-hidden">
               <div
                 ref={progressBarRef}
-                className="h-full bg-[#ffe17c] transition-all duration-75"
+                className="h-full bg-amber-400 transition-all duration-75"
                 style={{ width: '0%' }}
               />
             </div>
@@ -184,15 +246,15 @@ export function FlyingPostersGallery({ books }: FlyingPostersGalleryProps) {
             <div className="flex items-center gap-1 border-l border-white/15 pl-2">
               <button
                 onClick={() => stepPoster('prev')}
-                aria-label="Previous Poster"
-                className="w-7 h-7 flex items-center justify-center rounded bg-white/10 hover:bg-white/20 text-white font-bold transition-colors text-xs"
+                aria-label="Previous Book"
+                className="w-7 h-7 flex items-center justify-center rounded bg-white/10 hover:bg-white/20 text-white font-bold transition-colors text-xs cursor-pointer"
               >
                 ↑
               </button>
               <button
                 onClick={() => stepPoster('next')}
-                aria-label="Next Poster"
-                className="w-7 h-7 flex items-center justify-center rounded bg-white/10 hover:bg-white/20 text-white font-bold transition-colors text-xs"
+                aria-label="Next Book"
+                className="w-7 h-7 flex items-center justify-center rounded bg-white/10 hover:bg-white/20 text-white font-bold transition-colors text-xs cursor-pointer"
               >
                 ↓
               </button>
@@ -200,14 +262,14 @@ export function FlyingPostersGallery({ books }: FlyingPostersGalleryProps) {
           </div>
         </div>
 
-        {/* ── WebGL 3D Flying Posters Canvas ── */}
-        <div className="absolute inset-0 z-10 flex items-center justify-center">
+        {/* ── WebGL 3D Flying Posters Canvas (Center) ── */}
+        <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-auto">
           {mounted && (
             <FlyingPosters
               items={posterItems}
-              planeWidth={380}
-              planeHeight={510}
-              distortion={3.6}
+              planeWidth={360}
+              planeHeight={490}
+              distortion={3.2}
               scrollEase={0.06}
               cameraFov={45}
               cameraZ={20}
@@ -218,72 +280,129 @@ export function FlyingPostersGallery({ books }: FlyingPostersGalleryProps) {
           )}
         </div>
 
-        {/* ── Bottom HUD: Active Book Showcase + Replay / Action CTA ── */}
-        <div className="relative z-20 pb-8 px-6 lg:px-12 flex flex-col sm:flex-row sm:items-end justify-between gap-5 pointer-events-none">
-          {/* Active Book Card Preview */}
+        {/* ── Left Sidebar: 10 Books Index & "Why this Book of the Month?" ── */}
+        <div className="absolute left-6 lg:left-12 top-28 bottom-28 w-72 hidden xl:flex flex-col justify-between z-20 pointer-events-auto">
+          {/* 10 Books Jump List */}
+          <div className="bg-zinc-950/80 backdrop-blur-md border border-white/15 rounded-2xl p-4 shadow-xl max-h-[45vh] overflow-y-auto space-y-1.5">
+            <p className="text-[10px] font-mono font-bold uppercase tracking-widest text-zinc-400 pb-2 border-b border-white/10">
+              The 10 Books of the Month
+            </p>
+            {galleryBooks.map((b, idx) => {
+              const isSelected = (activeIdx % galleryBooks.length) === idx;
+              return (
+                <button
+                  key={b.id}
+                  onClick={() => jumpToBook(idx)}
+                  className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-medium transition flex items-center justify-between cursor-pointer ${
+                    isSelected
+                      ? 'bg-amber-400 text-black font-bold shadow-sm'
+                      : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  <span className="truncate pr-2">
+                    {idx + 1}. {b.title}
+                  </span>
+                  {isSelected && <span className="text-[10px]">●</span>}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Editorial Review Box */}
+          <div className="bg-zinc-950/80 backdrop-blur-md border border-amber-500/30 rounded-2xl p-4 shadow-xl space-y-2">
+            <div className="flex items-center gap-1.5">
+              <span className="text-amber-400 text-xs">✦</span>
+              <span className="text-[10px] font-mono uppercase font-black text-amber-300 tracking-wider">
+                Why Book of the Month?
+              </span>
+            </div>
+            <p className="text-xs text-zinc-300 leading-relaxed font-sans">
+              {activeEditorial.reason}
+            </p>
+            <blockquote className="text-[11px] italic text-zinc-400 border-l border-amber-400/40 pl-2 pt-1 font-serif">
+              {activeEditorial.quote}
+            </blockquote>
+          </div>
+        </div>
+
+        {/* ── Right Sidebar: Enlarged Book Specification & Actions ── */}
+        <div className="absolute right-6 lg:right-12 top-28 bottom-28 w-80 hidden lg:flex flex-col justify-end z-20 pointer-events-auto">
           {activeBook && (
-            <div
-              className="bg-black/80 backdrop-blur-md border-2 border-white/20 p-5 rounded-2xl max-w-md w-full pointer-events-auto transition-all duration-300 shadow-[6px_6px_0px_#ffe17c]"
-            >
-              <div className="flex items-start justify-between gap-3 mb-2">
-                <span className="font-editorial-mono text-[10px] font-black uppercase tracking-widest px-2 py-0.5 bg-[#ffe17c] text-black">
-                  {activeBook.category?.name || 'FEATURED EDITION'}
+            <div className="bg-zinc-950/90 backdrop-blur-md border border-white/20 p-6 rounded-3xl shadow-2xl space-y-4">
+              <div className="flex items-center justify-between gap-2">
+                <span className="px-2.5 py-1 rounded-full text-[9px] font-mono font-bold uppercase bg-amber-400 text-black">
+                  {activeEditorial.badge}
                 </span>
-                <div className="flex items-center gap-1 text-[#ffbc2e] text-xs">
-                  ★ ★ ★ ★ ★ <span className="text-white/60 text-[11px] ml-1">({activeBook.rating})</span>
-                </div>
+                <span className="text-xs text-emerald-400 font-bold">
+                  👑 Perfection 99%
+                </span>
               </div>
 
-              <h3 className="font-editorial-serif font-black text-xl sm:text-2xl text-white truncate">
-                {activeBook.title}
-              </h3>
-              <p className="font-editorial-mono text-xs text-white/60 mt-0.5 mb-3">
-                By {activeBook.author} · {activeBook.publisher || 'Archival Edition'}
+              <div>
+                <h3 className="text-xl sm:text-2xl font-serif font-black text-white leading-tight">
+                  {activeBook.title}
+                </h3>
+                <p className="text-xs text-zinc-400 font-mono mt-1">
+                  By {activeBook.author} · {activeBook.publisher || 'Archival Edition'}
+                </p>
+              </div>
+
+              <p className="text-xs text-zinc-300 line-clamp-3 leading-relaxed">
+                {activeBook.description}
               </p>
 
-              <div className="flex items-center justify-between pt-3 border-t border-white/10">
-                <div className="flex items-baseline gap-2">
-                  <span className="font-editorial-serif text-2xl font-black text-white">
+              <div className="flex items-baseline justify-between pt-3 border-t border-white/10">
+                <div>
+                  <span className="text-2xl font-serif font-black text-white">
                     ₹{finalPrice}
                   </span>
                   {activeBook.discount > 0 && (
-                    <span className="font-editorial-mono text-xs text-white/40 line-through">
+                    <span className="text-xs text-zinc-500 line-through ml-2">
                       ₹{activeBook.price}
                     </span>
                   )}
                 </div>
+                <span className="text-[10px] font-mono text-zinc-400 uppercase">
+                  ISBN: {activeBook.isbn.slice(-6)}
+                </span>
+              </div>
 
-                <Link href={`/books/${activeBook.id}`}>
-                  <CreepyButton
-                    primary="#ffe17c"
-                    primaryHover="#ffd447"
-                    eyeColor="#0c0c0c"
-                    className="font-editorial-mono text-xs font-black uppercase text-black py-2.5 px-5 rounded-full"
-                  >
-                    View Edition ↗
-                  </CreepyButton>
+              <div className="grid grid-cols-2 gap-2 pt-1">
+                <button
+                  onClick={() => addToCart(activeBook, 1)}
+                  className="w-full py-2.5 rounded-xl bg-amber-400 text-black hover:bg-amber-300 font-bold text-xs uppercase tracking-wider transition cursor-pointer shadow-md"
+                >
+                  Add to Cart
+                </button>
+                <Link
+                  href={`/books/${activeBook.id}`}
+                  className="w-full py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs uppercase tracking-wider transition text-center flex items-center justify-center cursor-pointer"
+                >
+                  Details ↗
                 </Link>
               </div>
             </div>
           )}
+        </div>
 
-          {/* Scroll Down Prompt Indicator */}
-          <div className="flex flex-col items-end gap-2 text-right pointer-events-auto">
-            <span className="font-editorial-mono text-[11px] uppercase tracking-[0.25em] text-white/50 font-bold">
-              Scroll to fly
-            </span>
-            <div className="w-1 h-12 bg-white/20 rounded-full relative overflow-hidden">
+        {/* Bottom Scroll Prompt */}
+        <div className="relative z-20 pb-6 px-6 lg:px-12 flex justify-between items-center pointer-events-none">
+          <p className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">
+            Drag posters or scroll page to warp through 3D editions
+          </p>
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-mono uppercase text-zinc-500">Scroll Depth</span>
+            <div className="w-16 h-1 bg-white/20 rounded-full overflow-hidden">
               <div
                 ref={scrollIndicatorRef}
-                className="w-full bg-[#ffe17c] rounded-full transition-all duration-75"
-                style={{ height: '15%' }}
+                className="h-full bg-amber-400 rounded-full transition-all"
+                style={{ width: '15%' }}
               />
             </div>
           </div>
         </div>
+
       </div>
     </div>
   );
 }
-
-export default FlyingPostersGallery;

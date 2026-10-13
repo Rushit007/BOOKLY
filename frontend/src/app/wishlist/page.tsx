@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { useWishlist } from '../../context/WishlistContext';
 import { useCart } from '../../context/CartContext';
+import { getAuthenticCover } from '../../utils/bookCovers';
 
 export default function WishlistPage() {
   const { items, wishlistCount, removeFromWishlist } = useWishlist();
@@ -67,22 +68,11 @@ export default function WishlistPage() {
                   >
                     {/* Cover */}
                     <div className='relative aspect-[3/4] border-b border-[var(--border-subtle)] overflow-hidden bg-[var(--bg-surface-elevated)]'>
-                      {book.coverImage ? (
-                        <img
-                          src={book.coverImage}
-                          alt={book.title}
-                          className='w-full h-full object-cover'
-                        />
-                      ) : (
-                        <div className='w-full h-full flex flex-col justify-end p-3'>
-                          <p className='font-editorial-serif text-sm text-[var(--text-main)] line-clamp-3'>
-                            {book.title}
-                          </p>
-                          <p className='font-editorial-mono text-[8px] uppercase tracking-widest text-[var(--text-faint)] mt-1'>
-                            {book.author}
-                          </p>
-                        </div>
-                      )}
+                      <img
+                        src={getAuthenticCover(book)}
+                        alt={book.title}
+                        className='w-full h-full object-cover'
+                      />
                     </div>
 
                     {/* Info */}
@@ -90,19 +80,19 @@ export default function WishlistPage() {
                       <div>
                         <Link
                           href={'/books/' + book.id}
-                          className='font-editorial-serif text-sm text-[var(--text-main)] line-clamp-2 hover:text-[var(--bg-accent-blue)] transition-colors block'
+                          className='font-editorial-serif text-base font-bold text-[var(--text-main)] line-clamp-2 hover:text-[var(--text-accent-blue)] transition-colors block'
                         >
                           {book.title}
                         </Link>
-                        <p className='font-editorial-mono text-[9px] text-[var(--text-faint)] mt-0.5 truncate'>
+                        <p className='font-editorial-mono text-xs text-[var(--text-muted)] mt-0.5 truncate'>
                           {book.author}
                         </p>
-                        <div className='flex items-baseline gap-1.5 mt-2'>
-                          <span className='font-editorial-serif text-base font-bold text-[var(--text-main)]'>
+                        <div className='flex items-baseline gap-2 mt-2'>
+                          <span className='font-editorial-serif text-lg font-bold text-[var(--text-main)]'>
                             {rupee}{discountedPrice}
                           </span>
                           {book.discount > 0 && (
-                            <span className='font-editorial-mono text-[9px] text-[var(--text-faint)] line-through'>
+                            <span className='font-editorial-mono text-xs text-[var(--text-faint)] line-through'>
                               {rupee}{book.price}
                             </span>
                           )}
@@ -110,20 +100,20 @@ export default function WishlistPage() {
                       </div>
 
                       {/* Actions */}
-                      <div className='flex gap-1.5 mt-3 border-t border-[var(--border-subtle)] pt-3'>
+                      <div className='flex gap-2 mt-3 border-t border-[var(--border-subtle)] pt-3'>
                         <button
                           onClick={() => {
                             addToCart(book, 1);
                             removeFromWishlist(book.id);
                           }}
-                          className='flex-1 neo-btn-primary py-2 text-[9px] font-bold uppercase tracking-wider text-center'
+                          className='flex-1 neo-btn-primary py-2 text-xs font-bold uppercase tracking-wider text-center'
                         >
                           Add to Cart
                         </button>
                         <button
                           onClick={() => removeFromWishlist(book.id)}
                           title='Remove'
-                          className='w-8 h-8 flex items-center justify-center border border-[var(--border-subtle)] text-[var(--text-faint)] hover:border-[var(--bg-accent-pink)] hover:text-[var(--bg-accent-pink)] transition-colors'
+                          className='w-9 h-9 text-base flex items-center justify-center border border-[var(--border-subtle)] text-[var(--text-faint)] hover:border-[var(--text-accent-pink)] hover:text-[var(--text-accent-pink)] transition-colors'
                         >
                           ×
                         </button>

@@ -73,15 +73,15 @@ export function HeroSection() {
             <div className='grid grid-cols-3 gap-6 pt-6 border-t-2 border-[var(--border-subtle)] max-w-lg'>
               <div>
                 <span className='font-editorial-serif text-3xl font-black text-[var(--text-main)] block'>10,000+</span>
-                <span className='font-editorial-mono text-[10px] uppercase tracking-wider text-[var(--text-faint)]'>PRINTED VOLUMES</span>
+                <span className='font-editorial-mono text-xs font-bold uppercase tracking-wider text-[var(--text-faint)]'>PRINTED VOLUMES</span>
               </div>
               <div>
-                <span className='font-editorial-serif text-3xl font-black text-[var(--bg-accent-blue)] block'>4.9★</span>
-                <span className='font-editorial-mono text-[10px] uppercase tracking-wider text-[var(--text-faint)]'>READER SATISFACTION</span>
+                <span className='font-editorial-serif text-3xl font-black text-[var(--text-accent-blue)] block'>4.9★</span>
+                <span className='font-editorial-mono text-xs font-bold uppercase tracking-wider text-[var(--text-faint)]'>READER SATISFACTION</span>
               </div>
               <div>
-                <span className='font-editorial-serif text-3xl font-black text-[var(--bg-accent-pink)] block'>24H</span>
-                <span className='font-editorial-mono text-[10px] uppercase tracking-wider text-[var(--text-faint)]'>DISPATCH WINDOW</span>
+                <span className='font-editorial-serif text-3xl font-black text-[var(--text-accent-pink)] block'>24H</span>
+                <span className='font-editorial-mono text-xs font-bold uppercase tracking-wider text-[var(--text-faint)]'>DISPATCH WINDOW</span>
               </div>
             </div>
           </div>

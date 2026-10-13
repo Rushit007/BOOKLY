@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 
 interface Message {
   id: string;
@@ -96,11 +97,43 @@ const QUICK_QUESTIONS = [
 function generateResponse(userMessage: string): { text: string; links?: { label: string; href: string }[] } {
   const msg = userMessage.toLowerCase();
 
-  // Greetings
-  if (/^(hi|hello|hey|namaste|kem cho|namaskar|sat sri akal)\b/.test(msg)) {
+  // 4-Tier Rating consensus
+  if (msg.includes('rating') || msg.includes('perfection') || msg.includes('go for it') || msg.includes('timepass') || msg.includes('skip') || msg.includes('review')) {
     return {
-      text: "Namaste! 👋 I'm **BookBuddy**, your BOOKLY reading assistant! I can help you:\n• 📚 Find the perfect book\n• 🇮🇳 Discover Hindi & Gujarati books\n• 💳 Understand payments & shipping\n• ⇄ Use Compare, Wishlist, Book Match features\n\nWhat are you looking for today?",
-      links: [{ label: 'Browse Catalog', href: '/books' }, { label: 'Try Book Match', href: '/book-match' }],
+      text: "⭐ **BOOKLY 4-Tier Reader Consensus System:**\n\nUnlike generic 5-star ratings, every BOOKLY volume is voted by real readers into 4 transparent categories:\n\n1. 👑 **Perfection (100% Masterpiece)**: Flawless literature. Essential reading (e.g. *Clean Code*, *Atomic Habits*, *Sapiens*, *Godan*).\n2. ⚡ **Go For It (Highly Recommended)**: Sharp insights, memorable storytelling, and high return on time.\n3. ☕ **Timepass (Casual Read)**: Light, easy reading when you want relaxation.\n4. ⛔ **Skip (Not Recommended)**: Disappointing or repetitive; you can safely pass.\n\nYou can vote your own verdict on any book page and filter the catalog by consensus tier!",
+      links: [{ label: 'View Catalog & Ratings', href: '/books' }, { label: 'Explore Authors', href: '/#authors' }],
+    };
+  }
+
+  // Order Tracking Lifecycle (Packed, Shipped, Out for Delivery, Delivered)
+  if (msg.includes('track') || msg.includes('where is my order') || msg.includes('packed') || msg.includes('shipped') || msg.includes('out for delivery') || msg.includes('delivery status')) {
+    return {
+      text: "🚚 **Live Shipment Tracking Lifecycle:**\n\nYou can follow every stage of your order in real-time at **/orders**:\n\n1. 📝 **Order Placed**: Verified and queued in fulfillment database.\n2. 📦 **Packed**: Sealed in bubble wrap and our custom Cardboard Vault box.\n3. 🚚 **Shipped**: Handed over to BlueDart express courier with live tracking.\n4. 🛵 **Out for Delivery**: Assigned to delivery executive on the route to your doorstep.\n5. 🏡 **Delivered**: Handed to you in pristine condition.\n\nVisit **/orders** to view your visual stepper and download your official Tax Invoice!",
+      links: [{ label: 'Track My Orders', href: '/orders' }, { label: 'Admin Portal', href: '/admin/orders' }],
+    };
+  }
+
+  // Returns & Reverse Logistics
+  if (msg.includes('return') || msg.includes('reverse') || msg.includes('boss') || msg.includes('exchange') || msg.includes('defect') || msg.includes('damaged book')) {
+    return {
+      text: "↺ **Hassle-Free Returns & Reverse Logistics:**\n\nIf your book arrived damaged, misprinted, or with the wrong title, you can request a return directly from **/orders**:\n\n1. Click **\"Request Return\"** on the delivered order and state the reason with proof notes.\n2. We schedule a **free doorstep pickup** with our courier partner.\n3. Parcel travels in reverse transit directly to our **Central Warehouse & Headquarters (Mumbai)**.\n4. Once received and inspected at headquarters, **100% refund** is credited to your provided UPI ID / Bank Account within 48 hours!\n\nBoth Prepaid and Cash on Delivery orders are 100% eligible.",
+      links: [{ label: 'My Orders & Returns', href: '/orders' }, { label: 'Contact Support', href: '/contact' }],
+    };
+  }
+
+  // Cash on Delivery (COD) & Invoices
+  if (msg.includes('cod') || msg.includes('cash on delivery') || msg.includes('invoice') || msg.includes('bill') || msg.includes('payment method')) {
+    return {
+      text: "💵 **Cash on Delivery (COD) & Invoices Explained:**\n\n• **When you place a COD order:** Your Tax Invoice is generated immediately labeled as *\"Payment Due Upon Delivery: ₹...\"*.\n• **When the parcel arrives:** Hand the exact cash amount to the delivery agent.\n• **After delivery:** The delivery agent marks the parcel as *Delivered & Cash Collected*. Your invoice status automatically updates to *\"PAID IN FULL (CASH ON DELIVERY RECEIPT)\"*.\n• **Digital Invoice:** Download or print your GST tax invoice anytime from **/orders** with itemized breakdown!\n\n💳 Prefer online? UPI and Cards also get an extra 5% instant discount.",
+      links: [{ label: 'View Orders & Invoices', href: '/orders' }, { label: 'View Cart', href: '/cart' }],
+    };
+  }
+
+  // Authors & Upcoming books
+  if (msg.includes('author') || msg.includes('james clear') || msg.includes('uncle bob') || msg.includes('harari') || msg.includes('upcoming') || msg.includes('interested')) {
+    return {
+      text: "✍️ **Authors of the Month & Upcoming Releases:**\n\nMeet this month’s spotlight authors:\n• **James Clear** (*Atomic Habits* · 99% Perfection)\n• **Robert C. Martin (\"Uncle Bob\")** (*Clean Code* · 98% Perfection)\n• **Yuval Noah Harari** (*Sapiens* · 99% Perfection)\n• **Munshi Premchand** (*Godan* · 100% Perfection)\n• **Morgan Housel** (*The Psychology of Money* · 97% Perfection)\n\nCheck out the **Upcoming Releases** section on the homepage and tap **\"❤️ I'm Interested\"** to reserve priority subscriber notice for future editions!",
+      links: [{ label: 'Explore Authors on Home', href: '/#authors' }, { label: 'Catalog', href: '/books' }],
     };
   }
 
@@ -271,6 +304,9 @@ function generateResponse(userMessage: string): { text: string; links?: { label:
 }
 
 export function AIChatbot() {
+  const pathname = usePathname();
+  if (pathname.startsWith('/admin')) return null;
+
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -415,7 +451,7 @@ export function AIChatbot() {
                       <a
                         key={link.href}
                         href={link.href}
-                        className='px-2.5 py-1 text-[10px] font-editorial-mono font-bold uppercase tracking-wider border border-[var(--bg-accent-violet)] text-[var(--bg-accent-violet)] hover:bg-[var(--bg-accent-violet)] hover:text-white transition-colors rounded-sm'
+                        className='px-2.5 py-1 text-xs font-editorial-mono font-bold uppercase tracking-wider border border-[var(--text-accent-violet)] text-[var(--text-accent-violet)] hover:bg-[var(--text-accent-violet)] hover:text-white transition-colors rounded-sm'
                       >
                         {link.label} →
                       </a>

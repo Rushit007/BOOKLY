@@ -7,6 +7,8 @@ export interface Category {
   updatedAt?: string;
 }
 
+export type BookTierRating = 'perfection' | 'go_for_it' | 'timepass' | 'skip';
+
 export interface Book {
   id: string;
   title: string;
@@ -22,6 +24,13 @@ export interface Book {
   coverImage?: string | null;
   rating: number;
   numReviews: number;
+  tierRating?: BookTierRating;
+  tierVotes?: {
+    perfection: number;
+    go_for_it: number;
+    timepass: number;
+    skip: number;
+  };
   createdAt?: string;
   updatedAt?: string;
   category?: Category;
@@ -42,6 +51,7 @@ export interface BookQueryParams {
   minPrice?: number;
   maxPrice?: number;
   minRating?: number;
+  tierRating?: BookTierRating;
   inStock?: boolean;
   sort?: BookSortOption;
 }
@@ -55,3 +65,4 @@ export interface PaginatedBooks {
     totalPages: number;
   };
 }
+

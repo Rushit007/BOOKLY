@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { ThemeToggle } from '../common/ThemeToggle';
@@ -9,6 +9,7 @@ import { useWishlist } from '../../context/WishlistContext';
 import { useAuth } from '../../context/AuthContext';
 import { useCompare } from '../../context/CompareContext';
 import { PillNav } from './PillNav';
+import { BooklyLogo } from '../common/BooklyLogo';
 
 export function Navbar() {
   const pathname = usePathname();
@@ -18,9 +19,14 @@ export function Navbar() {
   const { compareBooks } = useCompare();
   const { user, isAuthenticated, logout } = useAuth();
 
+  const [mounted, setMounted] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,7 +42,7 @@ export function Navbar() {
     { label: 'Index', href: '/' },
     { label: 'Catalog', href: '/books' },
     { label: 'Book Match', href: '/book-match' },
-    { label: 'Compare', href: '/compare', count: compareBooks.length > 0 ? compareBooks.length : undefined },
+    { label: 'Compare', href: '/compare', count: mounted && compareBooks.length > 0 ? compareBooks.length : undefined },
     { label: 'About', href: '/about' },
     { label: 'FAQ', href: '/faq' },
     { label: 'Contact', href: '/contact' },
@@ -61,28 +67,43 @@ export function Navbar() {
     return match?.href ?? (pathname === '/' ? '/' : undefined);
   })();
 
+  const isIndexPage = pathname === '/';
+
   const BooklyLogoIcon = (
-    <span className="text-amber-500 font-black text-sm">✦</span>
+    <div className={`relative flex items-center justify-center ${isIndexPage ? 'animate-pulse' : ''}`}>
+      <span className="text-amber-400 font-black text-sm drop-shadow-[0_0_8px_#f59e0b]">✦</span>
+      {isIndexPage && (
+        <>
+          <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-amber-400 animate-ping" />
+          <span className="absolute -top-1 -right-1 w-1.5 h-1.5 rounded-full bg-amber-400" />
+        </>
+      )}
+    </div>
   );
+
+  if (pathname.startsWith('/admin')) {
+    return null;
+  }
 
   return (
     <header className='sticky top-0 z-40 w-full border-b border-[var(--border-main)] bg-[var(--bg-surface)]/90 backdrop-blur-md transition-colors' style={{ height: '72px' }}>
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
         <div className='flex items-center justify-between h-[72px] gap-4'>
 
-          {/* ── Minimalist Logo ── */}
-          <Link href='/' className='flex items-center gap-2.5 shrink-0 group' data-cursor='interactive'>
-            <div className='w-8 h-8 rounded-lg bg-[var(--text-main)] text-[var(--bg-page)] flex items-center justify-center font-editorial-serif font-bold text-base transition-transform group-hover:scale-105 shadow-xs'>
-              B
-            </div>
-            <div>
-              <span className='font-editorial-serif text-xl tracking-tight text-[var(--text-main)] font-bold leading-none block'>
-                BOOKLY
-              </span>
-              <span className='font-sans text-[9px] uppercase tracking-[0.2em] text-[var(--text-faint)] font-semibold block mt-0.5'>
-                Curated Library
-              </span>
-            </div>
+          {/* ── Custom Archival Logo ── */}
+          <Link
+            href='/'
+            onClick={(e) => {
+              if (pathname === '/') {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }
+            }}
+            className='flex items-center shrink-0 group'
+            data-cursor='interactive'
+            title="Bookly - Return to top"
+          >
+            <BooklyLogo size="sm" showText={true} />
           </Link>
 
           {/* ── PillNav — Desktop center navigation ── */}
@@ -91,10 +112,10 @@ export function Navbar() {
               logo={BooklyLogoIcon}
               items={pillNavItems}
               activeHref={activePillHref}
-              baseColor='var(--text-main)'
-              pillColor='var(--text-main)'
-              pillTextColor='var(--bg-page)'
-              hoveredPillTextColor='var(--text-main)'
+              baseColor='#09090b'
+              pillColor='#18181b'
+              pillTextColor='#FFFFFF'
+              hoveredPillTextColor='#c5a059'
               initialLoadAnimation={true}
             />
           </div>
@@ -108,18 +129,31 @@ export function Navbar() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder='Search editions...'
-                className='w-40 focus:w-52 px-3.5 py-1.5 text-xs font-sans rounded-full border border-[var(--border-main)] bg-[var(--bg-surface-elevated)] text-[var(--text-main)] placeholder:text-[var(--text-faint)] focus:outline-none focus:border-[var(--text-main)] transition-all shadow-xs'
+                className='w-40 focus:w-52 px-3.5 py-1.5 text-xs font-array rounded-full border border-[var(--border-main)] bg-[var(--bg-surface-elevated)] text-[var(--text-main)] placeholder:text-[var(--text-faint)] focus:outline-none focus:border-[#42BFDD] transition-all shadow-xs'
               />
               <button
                 type='submit'
                 aria-label='Search'
-                className='absolute right-2.5 text-[var(--text-faint)] hover:text-[var(--text-main)] transition-colors'
+                className='absolute right-2.5 text-[var(--text-faint)] hover:text-[#084B83] transition-colors'
               >
                 <svg className='w-3.5 h-3.5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
                   <path strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z' />
                 </svg>
               </button>
             </form>
+
+            <button
+              onClick={() => {
+                if (typeof window !== 'undefined') {
+                  sessionStorage.removeItem('bookly_intro_completed');
+                  window.location.href = '/?replay=true';
+                }
+              }}
+              className='hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-zinc-200 dark:border-zinc-800 text-xs font-mono font-bold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 hover:text-amber-500 hover:border-amber-400 transition cursor-pointer'
+              title='Replay Archival Prologue Video Sequence'
+            >
+              <span>✨ Replay Intro</span>
+            </button>
 
             <ThemeToggle />
 
@@ -134,8 +168,8 @@ export function Navbar() {
               <svg className='w-4 h-4' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
                 <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={1.8} d='M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z' />
               </svg>
-              {wishlistCount > 0 && (
-                <span className='absolute -top-1 -right-1 min-w-4 h-4 px-1 rounded-full bg-rose-500 text-white text-[9px] font-sans font-bold flex items-center justify-center'>
+              {mounted && wishlistCount > 0 && (
+                <span className='absolute -top-1 -right-1 min-w-4 h-4 px-1 rounded-full bg-[#FF66B3] text-white text-[9px] font-pixel font-bold flex items-center justify-center'>
                   {wishlistCount}
                 </span>
               )}
@@ -152,15 +186,15 @@ export function Navbar() {
               <svg className='w-4 h-4' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
                 <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={1.8} d='M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z' />
               </svg>
-              {itemCount > 0 && (
-                <span className='absolute -top-1 -right-1 min-w-4 h-4 px-1 rounded-full bg-[var(--text-main)] text-[var(--bg-page)] text-[9px] font-sans font-bold flex items-center justify-center'>
+              {mounted && itemCount > 0 && (
+                <span className='absolute -top-1 -right-1 min-w-4 h-4 px-1 rounded-full bg-[#FF66B3] text-white text-[9px] font-pixel font-bold flex items-center justify-center'>
                   {itemCount}
                 </span>
               )}
             </button>
 
             {/* User Account / Auth */}
-            {isAuthenticated && user ? (
+            {mounted && isAuthenticated && user ? (
               <div className='relative'>
                 <button
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
@@ -172,46 +206,133 @@ export function Navbar() {
                 </button>
 
                 {isUserMenuOpen && (
-                  <div className='absolute right-0 mt-2 w-52 bg-[var(--bg-surface)] border border-[var(--border-main)] rounded-2xl shadow-xl py-2 z-50 font-sans text-xs animate-scale-in'>
-                    <div className='px-4 py-2 border-b border-[var(--border-subtle)]'>
-                      <p className='font-semibold text-[var(--text-main)] truncate'>{user.name}</p>
-                      <p className='text-[11px] text-[var(--text-faint)] truncate'>{user.email}</p>
-                      <span className='inline-block mt-1 px-2 py-0.5 text-[9px] font-semibold rounded-full bg-[var(--bg-surface-elevated)] text-[var(--text-muted)]'>
-                        {user.role}
-                      </span>
+                  <div className='absolute right-0 mt-2 w-80 sm:w-96 max-h-[85vh] overflow-y-auto overscroll-contain bg-[var(--bg-surface)] border-2 border-[var(--border-main)] rounded-2xl shadow-2xl p-3.5 z-50 font-sans text-sm animate-scale-in'>
+                    {/* User Profile Header Card */}
+                    <div className='p-4 rounded-xl bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)] mb-3'>
+                      <div className='flex items-center gap-3.5'>
+                        <div className='w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-[#FF66B3] text-black font-black text-xl flex items-center justify-center shadow-md shrink-0'>
+                          {user.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div className='min-w-0 flex-1'>
+                          <p className='font-bold text-base sm:text-lg text-[var(--text-main)] truncate'>
+                            {user.name}
+                          </p>
+                          <p className='text-xs text-[var(--text-muted)] truncate font-mono mt-0.5'>
+                            {user.email}
+                          </p>
+                          <div className='flex items-center gap-1.5 mt-1.5'>
+                            <span className='px-2.5 py-1 text-[11px] font-bold rounded-full bg-amber-400/20 text-amber-600 dark:text-amber-300 border border-amber-400/40 uppercase tracking-wide'>
+                              {user.role === 'ADMIN' ? '⚡ System Administrator' : '👑 Verified Archival Patron'}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Quick Metrics Bar */}
+                      <div className='grid grid-cols-3 gap-2 mt-3.5 pt-3.5 border-t border-[var(--border-subtle)] text-center'>
+                        <div className='p-2 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-subtle)]'>
+                          <p className='text-[11px] text-[var(--text-faint)] font-mono uppercase font-semibold'>Wishlist</p>
+                          <p className='font-bold text-sm text-[var(--text-main)] mt-0.5'>{wishlistCount}</p>
+                        </div>
+                        <div className='p-2 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-subtle)]'>
+                          <p className='text-[11px] text-[var(--text-faint)] font-mono uppercase font-semibold'>Compare</p>
+                          <p className='font-bold text-sm text-[var(--text-main)] mt-0.5'>{compareBooks.length}</p>
+                        </div>
+                        <div className='p-2 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-subtle)]'>
+                          <p className='text-[11px] text-[var(--text-faint)] font-mono uppercase font-semibold'>Cart</p>
+                          <p className='font-bold text-sm text-[#FF66B3] mt-0.5'>{itemCount}</p>
+                        </div>
+                      </div>
                     </div>
-                    {user.role === 'ADMIN' && (
+
+                    {/* Features List */}
+                    <div className='space-y-1.5'>
+                      {user.role === 'ADMIN' && (
+                        <Link
+                          href='/admin'
+                          onClick={() => setIsUserMenuOpen(false)}
+                          className='p-3 rounded-xl flex items-center gap-3.5 font-semibold text-blue-600 hover:bg-blue-500/10 transition-colors'
+                        >
+                          <span className='w-8 h-8 rounded-lg bg-blue-500/15 text-blue-500 flex items-center justify-center text-base font-bold shrink-0'>
+                            ⚡
+                          </span>
+                          <div>
+                            <p className='text-sm font-bold text-[var(--text-main)]'>Admin Command Deck</p>
+                            <p className='text-xs text-[var(--text-muted)] font-normal mt-0.5'>Manage book inventory, categories & system orders</p>
+                          </div>
+                        </Link>
+                      )}
+
                       <Link
-                        href='/admin'
+                        href='/orders'
                         onClick={() => setIsUserMenuOpen(false)}
-                        className='block px-4 py-2 font-semibold text-blue-600 hover:bg-[var(--bg-surface-elevated)]'
+                        className='p-3 rounded-xl flex items-center gap-3.5 text-[var(--text-main)] hover:bg-[var(--bg-surface-elevated)] transition-colors'
                       >
-                        ⚡ Admin Dashboard
+                        <span className='w-8 h-8 rounded-lg bg-emerald-500/15 text-emerald-500 flex items-center justify-center text-base font-bold shrink-0'>
+                          📦
+                        </span>
+                        <div>
+                          <p className='text-sm font-bold text-[var(--text-main)]'>Orders & Invoices</p>
+                          <p className='text-xs text-[var(--text-muted)] mt-0.5'>Track dispatch status & download GST receipts</p>
+                        </div>
                       </Link>
-                    )}
-                    <Link
-                      href='/orders'
-                      onClick={() => setIsUserMenuOpen(false)}
-                      className='block px-4 py-2 text-[var(--text-main)] hover:bg-[var(--bg-surface-elevated)]'
-                    >
-                      Orders & Invoices
-                    </Link>
-                    <Link
-                      href='/wishlist'
-                      onClick={() => setIsUserMenuOpen(false)}
-                      className='block px-4 py-2 text-[var(--text-main)] hover:bg-[var(--bg-surface-elevated)]'
-                    >
-                      Wishlist ({wishlistCount})
-                    </Link>
-                    <button
-                      onClick={() => {
-                        logout();
-                        setIsUserMenuOpen(false);
-                      }}
-                      className='w-full text-left px-4 py-2 text-rose-500 hover:bg-rose-500/10 border-t border-[var(--border-subtle)] mt-1 font-semibold'
-                    >
-                      Sign Out ↗
-                    </button>
+
+                      <Link
+                        href='/wishlist'
+                        onClick={() => setIsUserMenuOpen(false)}
+                        className='p-3 rounded-xl flex items-center gap-3.5 text-[var(--text-main)] hover:bg-[var(--bg-surface-elevated)] transition-colors'
+                      >
+                        <span className='w-8 h-8 rounded-lg bg-[#FF66B3]/15 text-[#FF66B3] flex items-center justify-center text-base font-bold shrink-0'>
+                          ❤️
+                        </span>
+                        <div>
+                          <p className='text-sm font-bold text-[var(--text-main)]'>My Wishlist ({wishlistCount})</p>
+                          <p className='text-xs text-[var(--text-muted)] mt-0.5'>Curated editions saved for subsequent orders</p>
+                        </div>
+                      </Link>
+
+                      <Link
+                        href='/compare'
+                        onClick={() => setIsUserMenuOpen(false)}
+                        className='p-3 rounded-xl flex items-center gap-3.5 text-[var(--text-main)] hover:bg-[var(--bg-surface-elevated)] transition-colors'
+                      >
+                        <span className='w-8 h-8 rounded-lg bg-[#42BFDD]/15 text-[#42BFDD] flex items-center justify-center text-base font-bold shrink-0'>
+                          ⚖️
+                        </span>
+                        <div>
+                          <p className='text-sm font-bold text-[var(--text-main)]'>Compare Editions ({compareBooks.length})</p>
+                          <p className='text-xs text-[var(--text-muted)] mt-0.5'>Side-by-side volume specifications</p>
+                        </div>
+                      </Link>
+
+                      <Link
+                        href='/book-match'
+                        onClick={() => setIsUserMenuOpen(false)}
+                        className='p-3 rounded-xl flex items-center gap-3.5 text-[var(--text-main)] hover:bg-[var(--bg-surface-elevated)] transition-colors'
+                      >
+                        <span className='w-8 h-8 rounded-lg bg-amber-500/15 text-amber-500 flex items-center justify-center text-base font-bold shrink-0'>
+                          ✦
+                        </span>
+                        <div>
+                          <p className='text-sm font-bold text-[var(--text-main)]'>Personal Book Match Quiz</p>
+                          <p className='text-xs text-[var(--text-muted)] mt-0.5'>AI-powered tailored reading recommendations</p>
+                        </div>
+                      </Link>
+                    </div>
+
+                    {/* Sign Out CTA */}
+                    <div className='pt-2.5 mt-2.5 border-t border-[var(--border-subtle)]'>
+                      <button
+                        onClick={() => {
+                          logout();
+                          setIsUserMenuOpen(false);
+                        }}
+                        className='w-full p-3 rounded-xl text-left text-rose-500 hover:bg-rose-500/10 font-bold transition-colors flex items-center justify-between cursor-pointer'
+                      >
+                        <span className='text-sm'>Sign Out of Session</span>
+                        <span className='text-sm font-mono font-bold'>↗</span>
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>

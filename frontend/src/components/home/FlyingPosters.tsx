@@ -500,7 +500,21 @@ export class Canvas {
   }
 
   onWheel(e: WheelEvent) {
-    this.scroll.target += e.deltaY * 0.005;
+    const itemHeight = this.medias?.[0]?.height || 8.5;
+    this.scroll.target += (e.deltaY * 0.002) * itemHeight;
+  }
+
+  scrollToIndex(index: number) {
+    if (!this.medias || this.medias.length === 0) return;
+    const itemHeight = this.medias[0].height;
+    this.scroll.target = index * itemHeight;
+  }
+
+  scrollToProgress(progress: number) {
+    if (!this.medias || this.medias.length === 0) return;
+    const itemHeight = this.medias[0].height;
+    const totalDist = (this.items.length - 1) * itemHeight;
+    this.scroll.target = progress * totalDist;
   }
 
   isPaused: boolean = false;
@@ -559,6 +573,7 @@ export class Canvas {
     this.container.addEventListener('touchstart', this.onTouchDown as EventListener, { passive: true });
     window.addEventListener('touchmove', this.onTouchMove as EventListener, { passive: true });
     window.addEventListener('touchend', this.onTouchUp as EventListener);
+    this.container.addEventListener('wheel', this.onWheel as EventListener, { passive: true });
   }
 
   destroy() {
@@ -569,6 +584,7 @@ export class Canvas {
     this.container.removeEventListener('touchstart', this.onTouchDown as EventListener);
     window.removeEventListener('touchmove', this.onTouchMove as EventListener);
     window.removeEventListener('touchend', this.onTouchUp as EventListener);
+    this.container.removeEventListener('wheel', this.onWheel as EventListener);
     cancelAnimationFrame(this.rafId);
   }
 }

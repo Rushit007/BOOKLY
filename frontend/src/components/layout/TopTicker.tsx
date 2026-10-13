@@ -1,8 +1,11 @@
 'use client';
 
 import React from 'react';
+import { usePathname } from 'next/navigation';
 
 export function TopTicker() {
+  const pathname = usePathname();
+  if (pathname.startsWith('/admin')) return null;
   const items = [
     'INDEPENDENT BOOKSELLER',
     'CURATED EDITIONS',

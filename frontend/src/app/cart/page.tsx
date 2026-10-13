@@ -12,6 +12,7 @@ import {
   CreatePaymentOrderResponse,
   VerifyPaymentResponse,
 } from '../../types/order';
+import { getAuthenticCover } from '../../utils/bookCovers';
 
 // ── Razorpay window type augmentation ───────────────────────────────────────
 declare global {
@@ -64,6 +65,7 @@ export default function CartPage() {
     totalAmount,
     updateQuantity,
     removeFromCart,
+    clearCart,
     refreshCart,
   } = useCart();
 
@@ -110,12 +112,28 @@ export default function CartPage() {
       setCheckoutStep('creating_order');
       const order = await api.checkout({
         shippingAddress: shippingAddress.trim(),
+        paymentMethod,
+        items: items.map((it) => ({
+          bookId: it.bookId,
+          quantity: it.quantity,
+          price:
+            it.book?.discount > 0
+              ? Math.round(it.book.price * (1 - it.book.discount / 100))
+              : it.book?.price || 0,
+          book: it.book,
+        })),
+        totalAmount: subtotal,
+        discountAmount: totalDiscount + paymentOfferDiscount,
+        finalAmount: finalPayable,
+        shippingName: user?.name || 'Reader',
+        shippingPhone: (user as any)?.phone || '',
+        userId: user?.id,
       });
       setCreatedOrder(order);
 
       // ── Handle Cash on Delivery (COD) ──
       if (paymentMethod === 'COD') {
-        await refreshCart();
+        await clearCart();
         setVerifyResponse({
           success: true,
           message: `Order confirmed! Please keep ${rupee}${finalPayable} ready in cash or UPI at delivery.`,
@@ -399,20 +417,20 @@ export default function CartPage() {
             {[
               { label: 'Order Reference', value: verifyResponse.orderNumber, mono: true },
               { label: 'Order Status', value: verifyResponse.orderStatus },
-              { label: 'Payment Method', value: paymentMethod === 'COD' ? 'Cash on Delivery' : verifyResponse.paymentStatus },
+              { label: 'Payment Method', value: paymentMethod === 'COD' ? '💵 Cash on Delivery (Due at Doorstep)' : '💳 Prepaid Online (Razorpay / UPI)' },
               ...(createdOrder
                 ? [{ label: 'Total Payable', value: `${rupee}${createdOrder.finalAmount}` }]
                 : []),
             ].map((row) => (
               <div key={row.label} className='flex justify-between items-center px-5 py-3.5'>
-                <span className='font-editorial-mono text-[10px] uppercase tracking-[0.18em] text-[var(--text-faint)] font-bold'>
+                <span className='font-editorial-mono text-xs uppercase tracking-[0.18em] text-[var(--text-faint)] font-bold'>
                   {row.label}
                 </span>
                 <span
                   className={
                     'font-bold text-sm ' +
                     (row.mono
-                      ? 'font-editorial-mono text-[var(--bg-accent-blue)]'
+                      ? 'font-editorial-mono text-[var(--text-accent-blue)]'
                       : 'font-editorial-serif text-[var(--text-main)]')
                   }
                 >
@@ -473,7 +491,7 @@ export default function CartPage() {
           <div className='neo-card-flat border-2 border-[var(--border-main)] p-5 mb-8 bg-[var(--bg-surface)] text-left shadow-[4px_4px_0px_var(--border-main)] space-y-3 font-editorial-mono text-xs'>
             <div className='flex justify-between border-b border-[var(--border-subtle)] pb-2'>
               <span className='text-[var(--text-faint)] uppercase'>Order Reference</span>
-              <span className='font-bold text-[var(--bg-accent-blue)]'>{createdOrder.orderNumber}</span>
+              <span className='font-bold text-[var(--text-accent-blue)]'>{createdOrder.orderNumber}</span>
             </div>
             <div className='flex justify-between border-b border-[var(--border-subtle)] pb-2'>
               <span className='text-[var(--text-faint)] uppercase'>Total Amount</span>
@@ -481,7 +499,7 @@ export default function CartPage() {
             </div>
             <div className='flex justify-between'>
               <span className='text-[var(--text-faint)] uppercase'>Payment Status</span>
-              <span className='font-bold text-[var(--bg-accent-pink)]'>PENDING</span>
+              <span className='font-bold text-[var(--text-accent-pink)]'>PENDING</span>
             </div>
           </div>
 
@@ -520,7 +538,7 @@ export default function CartPage() {
   // ── Main cart + checkout form ─────────────────────────────────────────────
   return (
     <div className='min-h-screen bg-[var(--bg-page)] animate-fade-in'>
-      {/* Page Header */}
+        {/* Page Header */}
       <div className='border-b border-[var(--border-main)] bg-[var(--bg-surface)]'>
         <div className='max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex items-baseline justify-between'>
           <div className='flex items-baseline gap-4'>
@@ -577,31 +595,23 @@ export default function CartPage() {
                     {/* Cover + info */}
                     <div className='flex items-start gap-4 min-w-0'>
                       <div className='w-16 h-22 border-2 border-[var(--border-main)] bg-[var(--bg-surface-elevated)] overflow-hidden shrink-0 shadow-[2px_2px_0px_var(--border-main)]'>
-                        {item.book?.coverImage ? (
-                          <img
-                            src={item.book.coverImage}
-                            alt={item.book.title}
-                            className='w-full h-full object-cover'
-                          />
-                        ) : (
-                          <div className='w-full h-full flex items-end p-1'>
-                            <span className='font-editorial-mono text-[7px] text-[var(--text-faint)] leading-tight line-clamp-3'>
-                              {item.book?.title}
-                            </span>
-                          </div>
-                        )}
+                        <img
+                          src={getAuthenticCover(item.book)}
+                          alt={item.book?.title}
+                          className='w-full h-full object-cover'
+                        />
                       </div>
                       <div className='space-y-0.5 min-w-0'>
                         <Link
                           href={'/books/' + item.bookId}
-                          className='font-editorial-serif text-base text-[var(--text-main)] hover:text-[var(--bg-accent-blue)] transition-colors block truncate font-bold'
+                          className='font-editorial-serif text-base text-[var(--text-main)] hover:text-[var(--text-accent-blue)] transition-colors block truncate font-bold'
                         >
                           {item.book?.title}
                         </Link>
-                        <p className='font-editorial-mono text-[9px] uppercase tracking-widest text-[var(--text-muted)]'>
+                        <p className='font-editorial-mono text-xs uppercase tracking-wider text-[var(--text-muted)]'>
                           {item.book?.author}
                         </p>
-                        <p className='font-editorial-mono text-[9px] text-[var(--text-faint)]'>
+                        <p className='font-editorial-mono text-xs text-[var(--text-faint)]'>
                           ISBN {item.book?.isbn}
                         </p>
                         <div className='flex items-baseline gap-2 pt-1'>
@@ -609,7 +619,7 @@ export default function CartPage() {
                             {rupee}{dp}
                           </span>
                           {item.book?.discount > 0 && (
-                            <span className='font-editorial-mono text-[9px] text-[var(--text-faint)] line-through'>
+                            <span className='font-editorial-mono text-xs text-[var(--text-faint)] line-through'>
                               {rupee}{item.book.price}
                             </span>
                           )}
@@ -627,7 +637,7 @@ export default function CartPage() {
                         >
                           −
                         </button>
-                        <span className='px-3 py-1.5 font-editorial-mono text-[10px] font-bold text-[var(--text-main)] min-w-[2rem] text-center'>
+                        <span className='px-3 py-1.5 font-editorial-mono text-xs font-bold text-[var(--text-main)] min-w-[2rem] text-center'>
                           {item.quantity}
                         </span>
                         <button
@@ -644,7 +654,7 @@ export default function CartPage() {
                         </span>
                         <button
                           onClick={() => removeFromCart(item.bookId)}
-                          className='font-editorial-mono text-[9px] uppercase tracking-wider text-[var(--bg-accent-pink)] hover:underline mt-1 font-bold'
+                          className='font-editorial-mono text-xs uppercase tracking-wider text-[var(--text-accent-pink)] hover:underline mt-1 font-bold'
                         >
                           Remove
                         </button>
@@ -732,12 +742,12 @@ export default function CartPage() {
                               5% OFF
                             </span>
                           </p>
-                          <p className='font-editorial-mono text-[9px] text-[var(--text-muted)] mt-0.5'>
+                          <p className='font-editorial-mono text-xs text-[var(--text-muted)] mt-0.5'>
                             Instant app payment with zero convenience fee
                           </p>
                         </div>
                       </div>
-                      <span className='font-editorial-mono text-[10px] font-bold text-[var(--bg-accent-mint)]'>
+                      <span className='font-editorial-mono text-xs font-bold text-[var(--text-accent-mint)]'>
                         Save 5%
                       </span>
                     </div>
@@ -746,10 +756,10 @@ export default function CartPage() {
                     {paymentMethod === 'ONLINE' && (
                       <div className='p-3 bg-neutral-100 dark:bg-neutral-900 border-2 border-dashed border-black dark:border-white/30 space-y-2.5 animate-fade-in'>
                         <div className='flex items-center justify-between'>
-                          <span className='font-editorial-mono text-[9px] uppercase tracking-wider font-bold text-neutral-700 dark:text-neutral-300'>
+                          <span className='font-editorial-mono text-xs uppercase tracking-wider font-bold text-neutral-700 dark:text-neutral-300'>
                             Choose UPI App:
                           </span>
-                          <span className='font-editorial-mono text-[9px] text-emerald-600 font-bold'>
+                          <span className='font-editorial-mono text-xs text-emerald-600 font-bold'>
                             Active: {selectedUpiApp}
                           </span>
                         </div>
@@ -773,12 +783,12 @@ export default function CartPage() {
                               }
                             >
                               <span className='text-sm'>{app.icon}</span>
-                              <span className='text-[10px] leading-none'>{app.badge}</span>
+                              <span className='text-xs leading-none'>{app.badge}</span>
                             </button>
                           ))}
                         </div>
 
-                        <div className='p-2 bg-[var(--bg-accent-yellow)]/15 border border-[var(--border-subtle)] text-[10px] font-editorial-mono text-[var(--text-muted)] flex items-center justify-between'>
+                        <div className='p-2 bg-[var(--bg-accent-yellow)]/15 border border-[var(--border-subtle)] text-xs font-editorial-mono text-[var(--text-muted)] flex items-center justify-between'>
                           <span>Instant UPI Handshake</span>
                           <span className='font-bold text-emerald-600 dark:text-emerald-400'>Verified Safe 🔒</span>
                         </div>
@@ -806,16 +816,16 @@ export default function CartPage() {
                         <div>
                           <p className='font-editorial-mono text-xs font-bold text-[var(--text-main)] flex items-center gap-1.5'>
                             <span>Credit &amp; Debit Cards</span>
-                            <span className='badge-pill-mint px-1.5 py-0.2 rounded text-[8px] font-black'>
+                            <span className='badge-pill-mint px-1.5 py-0.2 rounded text-[10px] font-black'>
                               5% OFF
                             </span>
                           </p>
-                          <p className='font-editorial-mono text-[9px] text-[var(--text-muted)] mt-0.5'>
+                          <p className='font-editorial-mono text-xs text-[var(--text-muted)] mt-0.5'>
                             Visa, MasterCard, RuPay, Amex
                           </p>
                         </div>
                       </div>
-                      <span className='font-editorial-mono text-[10px] font-bold text-[var(--bg-accent-mint)]'>
+                      <span className='font-editorial-mono text-xs font-bold text-[var(--text-accent-mint)]'>
                         Save 5%
                       </span>
                     </div>
@@ -842,12 +852,12 @@ export default function CartPage() {
                           <p className='font-editorial-mono text-xs font-bold text-[var(--text-main)]'>
                             Cash on Delivery (COD)
                           </p>
-                          <p className='font-editorial-mono text-[9px] text-[var(--text-muted)] mt-0.5'>
+                          <p className='font-editorial-mono text-xs text-[var(--text-muted)] mt-0.5'>
                             Pay cash or scan QR at delivery doorstep
                           </p>
                         </div>
                       </div>
-                      <span className='font-editorial-mono text-[9px] text-[var(--text-faint)]'>
+                      <span className='font-editorial-mono text-xs text-[var(--text-faint)]'>
                         Standard
                       </span>
                     </div>
@@ -856,31 +866,31 @@ export default function CartPage() {
                   {/* Price breakdown */}
                   <div className='border-t-2 border-[var(--border-subtle)] pt-4 space-y-2'>
                     <div className='flex justify-between'>
-                      <span className='font-editorial-mono text-[9px] uppercase tracking-wider text-[var(--text-faint)] font-bold'>Subtotal</span>
-                      <span className='font-editorial-mono text-[11px] font-bold text-[var(--text-main)]'>{rupee}{subtotal}</span>
+                      <span className='font-editorial-mono text-xs uppercase tracking-wider text-[var(--text-faint)] font-bold'>Subtotal</span>
+                      <span className='font-editorial-mono text-sm font-bold text-[var(--text-main)]'>{rupee}{subtotal}</span>
                     </div>
 
                     {totalDiscount > 0 && (
                       <div className='flex justify-between'>
-                        <span className='font-editorial-mono text-[9px] uppercase tracking-wider text-[var(--bg-accent-mint)] font-bold'>Catalogue Savings</span>
-                        <span className='font-editorial-mono text-[11px] font-bold text-[var(--bg-accent-mint)]'>−{rupee}{Math.round(totalDiscount)}</span>
+                        <span className='font-editorial-mono text-xs uppercase tracking-wider text-[var(--text-accent-mint)] font-bold'>Catalogue Savings</span>
+                        <span className='font-editorial-mono text-sm font-bold text-[var(--text-accent-mint)]'>−{rupee}{Math.round(totalDiscount)}</span>
                       </div>
                     )}
 
                     {isPrepaid && paymentOfferDiscount > 0 && (
-                      <div className='flex justify-between items-center py-1 px-2 bg-[var(--bg-accent-mint)]/10 border border-[var(--bg-accent-mint)]'>
-                        <span className='font-editorial-mono text-[9px] uppercase tracking-wider text-[var(--bg-accent-mint)] font-bold'>
+                      <div className='flex justify-between items-center py-1.5 px-3 bg-[var(--bg-accent-mint)]/10 border border-[var(--text-accent-mint)]'>
+                        <span className='font-editorial-mono text-xs uppercase tracking-wider text-[var(--text-accent-mint)] font-bold'>
                           ★ Prepaid 5% Offer
                         </span>
-                        <span className='font-editorial-mono text-[11px] font-bold text-[var(--bg-accent-mint)]'>
+                        <span className='font-editorial-mono text-sm font-bold text-[var(--text-accent-mint)]'>
                           −{rupee}{paymentOfferDiscount}
                         </span>
                       </div>
                     )}
 
                     <div className='flex justify-between'>
-                      <span className='font-editorial-mono text-[9px] uppercase tracking-wider text-[var(--text-faint)] font-bold'>Delivery</span>
-                      <span className='font-editorial-mono text-[11px] font-bold text-[var(--bg-accent-mint)]'>
+                      <span className='font-editorial-mono text-xs uppercase tracking-wider text-[var(--text-faint)] font-bold'>Delivery</span>
+                      <span className='font-editorial-mono text-sm font-bold text-[var(--text-accent-mint)]'>
                         {shippingFee === 0 ? 'FREE' : `${rupee}${shippingFee}`}
                       </span>
                     </div>
